@@ -86,7 +86,7 @@ def load_data():
         "auto_tool_path": "D:/VoLamTruyenKy/AutoVLBS19/TrainJX.exe"}
 
 def save_data(data):
-    with open(accounts_file_path, 'w') as file:
+    with open(os.path.join(GF.join_directory_data(), accounts_file_path), 'w') as file:
         json.dump(data, file, ensure_ascii=True, indent=4)
 
 def LoginSuccess():
@@ -448,7 +448,7 @@ def check_delete_fail_servers():
 
     # Nếu tất cả tài khoản đã đăng nhập, xóa dữ liệu trong fail_server.json
     if all_logged_in:
-        with open(fail_server_file, 'w', encoding='utf-8') as f:
+        with open(os.path.join(GF.join_directory_data(), fail_server_file), 'w', encoding='utf-8') as f:
             f.write('')  # Ghi file trống để xóa dữ liệu
         print("Dữ liệu trong fail_server.json đã được xóa.")
     else:
@@ -833,10 +833,10 @@ def save_gom_account():
             account['is_gom_tien'] = 0  # Tài khoản không được chọn
 
     # Bước 3: Ghi lại toàn bộ dữ liệu vào file accounts.json
-    with open(accounts_file_path, 'w', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), accounts_file_path), 'w', encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
     
-    with open(gom_account_file, 'w', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), gom_account_file), 'w', encoding='utf-8') as file:
         json.dump(selected_accounts, file, ensure_ascii=False, indent=4)
 
     print(f"Đã cập nhật trường 'is_gom_tien' cho các tài khoản trong {accounts_file_path}")
@@ -942,22 +942,22 @@ monitor_money_button = ttk.Button(button_money_frame, text="Theo dõi", command=
 monitor_money_button.grid(row=1, column=4, padx=10, pady=5)
 
 def load_monitor_time(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return data['monitor_time']
 
 def load_kpi(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return data['kpi']
 
 def load_total_servers(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return data['total_servers']
 
 def load_title_mail(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return data['title_mail']
 
@@ -967,7 +967,7 @@ def save_monitor_time(filepath='monitor_time.json'):
     data['kpi'] = entry_kpi.get().strip()
     data['total_servers'] = entry_total_servers.get().strip()
     data['title_mail'] = entry_title_mail.get().strip()
-    with open(filepath, 'w') as file:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'w') as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 ttk.Label(button_money_frame, text="Thời gian(phút):").grid(row=0, column=0, padx=5, pady=5)

@@ -44,7 +44,7 @@ py -m pip install --upgrade pip
 pip install -r requirements.txt
 
 :: Chạy chương trình Python
-py autoLogin.py
+py src/autoLogin.py
 
 pause
 ENDLOCAL

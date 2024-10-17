@@ -20,17 +20,17 @@ def enable_mouse():
     ctypes.windll.user32.BlockInput(False)  # Kích hoạt lại chuột và bàn phím
 
 def load_accounts(file_path='accounts.json'):
-    with open(file_path, 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
         data = json.load(file)
         return data['accounts']
 
 def load_auto_tool_path(file_path='accounts.json'):
-    with open(file_path, 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
         data = json.load(file)
         return data['auto_tool_path']
 
 def load_sleepTime(file_path='accounts.json'):
-    with open(file_path, 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
         data = json.load(file)
         return data['sleepTime']
 
@@ -184,9 +184,9 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
 def add_server_fail_value(file_path, new_value):
     try:
         # Kiểm tra nếu file không tồn tại hoặc file rỗng
-        if not os.path.exists(file_path) or os.stat(file_path).st_size == 0:
+        if not os.path.exists(os.path.join(join_directory_data(), file_path)) or os.stat(os.path.join(join_directory_data(), file_path)).st_size == 0:
             # Tạo file mới với cấu trúc mặc định
-            with open(file_path, 'w', encoding='utf-8') as file:
+            with open(os.path.join(GF.join_directory_data(), file_path), 'w', encoding='utf-8') as file:
                 json.dump({"server_fail": []}, file, ensure_ascii=False, indent=4)
             print("File JSON chưa tồn tại hoặc rỗng. Đã tạo file mới với cấu trúc mặc định.")
 
@@ -200,7 +200,7 @@ def add_server_fail_value(file_path, new_value):
             data["server_fail"] = [new_value]  # Tạo mới mảng nếu không tồn tại
 
         # Bước 3: Ghi lại nội dung đã cập nhật vào file JSON
-        with open(file_path, 'w', encoding='utf-8') as file:
+        with open(os.path.join(GF.join_directory_data(), file_path), 'w', encoding='utf-8') as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
         print("Đã thêm giá trị vào mảng server_fail thành công!")

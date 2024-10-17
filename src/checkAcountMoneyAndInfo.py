@@ -20,22 +20,22 @@ json_file = 'accounts_money_status.json'
 gom_account_file = 'gom_accounts.json'
 
 def load_monitor_time_and_convert_to_second(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return int(float(data['monitor_time']) * 60)
 
 def load_kpi_and_convert_to_hour(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return float(data['kpi']) / 24
 
 def load_total_servers(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return float(data['total_servers'])
 
 def load_title_mail(filepath='monitor_time.json'):
-    with open(filepath, 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return float(data['title_mail'])
 
@@ -129,7 +129,7 @@ def send_email(total_income, low_income_accounts, check_time, kpi_value, car_lis
         server.sendmail(EMAIL_ADDRESS, RECIPIENT_EMAIL, message.as_string())
 
 def load_gom_accounts(filepath = 'accounts.json'):
-    with open(filepath, 'r', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     # Bước 2: Lấy các tài khoản có is_logged_in = True và is_gom_tien = 1
@@ -139,7 +139,7 @@ def load_gom_accounts(filepath = 'accounts.json'):
     return filtered_ingames
 
 def load_xe_2_accounts(filepath = 'accounts.json'):
-    with open(filepath, 'r', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), filepath), 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     filtered_ingames = [account['ingame'] for account in data['accounts'] if account['is_xe_2'] == 1 and account['is_logged_in'] == True and account['is_gom_tien'] == 1]
@@ -211,7 +211,7 @@ def updateAcountMoneyAndInfo(name, callback):
         add_status_accounts_data(newdata, array_name)
     
     # Đọc và cập nhật dữ liệu JSON
-    with open(json_file, 'r', encoding='utf-8') as f:
+    with open(os.path.join(GF.join_directory_data(), json_file), 'r', encoding='utf-8') as f:
         data = json.load(f)
     
     print("Update thành công!")
@@ -228,7 +228,7 @@ def on_update_success():
 
 def add_status_accounts_data(newdata, array_name):
     # Hàm thêm dữ liệu mới vào file JSON
-    with open(json_file, 'r+', encoding='utf-8') as f:
+    with open(os.path.join(GF.join_directory_data(), json_file), 'r+', encoding='utf-8') as f:
         data = json.load(f)
 
         # Thêm dữ liệu mới vào tài khoản tương ứng
@@ -259,7 +259,7 @@ def readAcountMoneyAndInfo():
 
     GF.check_and_create_json_file(json_file)
 
-    with open(json_file, 'r', encoding='utf-8') as f:
+    with open(os.path.join(GF.join_directory_data(), json_file), 'r', encoding='utf-8') as f:
         data = json.load(f)
     
     latest_data = {}

@@ -2,6 +2,7 @@ import json
 from pywinauto import Application
 import time 
 import GlobalFunction as GF
+import os
 
 global_time_sleep = GF.load_global_time_sleep()
 
@@ -85,7 +86,7 @@ def run_update_ingame(username_to_update, ingame_value_to_update):
 
     updated_data = update_ingame(username_to_update, ingame_value_to_update, data)
     # Ghi lại dữ liệu đã cập nhật vào file JSON
-    with open('accounts.json', 'w', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'w', encoding='utf-8') as file:
         # Đảm bảo không chuyển đổi các ký tự Unicode sang ASCII
         json.dump(updated_data, file, ensure_ascii=False, indent=4)
 
@@ -107,7 +108,7 @@ def check_valid_ingame_value(username_to_update, autoName):
     ingame_value_to_update = getIngame(autoName)
     data = None
     # Đọc file JSON với encoding 'utf-8'
-    with open('accounts.json', 'r', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     ingame_in_jsonfile_with_username = getIngameValueByUserName(username_to_update, data)

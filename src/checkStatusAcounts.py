@@ -6,6 +6,7 @@ import autoClickVLBS
 import startLogin
 import pyautogui
 import re
+import os
 
 global_time_sleep = GF.load_global_time_sleep()
 
@@ -87,7 +88,7 @@ def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
     # Cập nhật trạng thái đăng nhập dựa trên checkData
     updated_data = update_login_status(data, checkData)
     # Ghi lại dữ liệu đã cập nhật vào file JSON với encoding 'utf-8'
-    with open('accounts.json', 'w', encoding='utf-8') as file:
+    with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'w', encoding='utf-8') as file:
         # Đảm bảo ensure_ascii=False để giữ nguyên ký tự Unicode
         json.dump(updated_data, file, ensure_ascii=False, indent=4)
 

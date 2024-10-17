@@ -4,7 +4,7 @@ import GlobalFunction as GF
 
 def copy_auto_update_path_to_auto_update_path(accounts_file, output_file):
     # Kiểm tra xem file accounts.json có tồn tại không
-    if not os.path.exists(accounts_file):
+    if not os.path.exists(os.path.join(join_directory_data(), accounts_file)):
         print(f"File {accounts_file} không tồn tại.")
         return
     
@@ -15,11 +15,11 @@ def copy_auto_update_path_to_auto_update_path(accounts_file, output_file):
     auto_update_paths = [account.get("auto_update_path") for account in data.get("accounts", [])]
     
     # Kiểm tra nếu file autoUpdate_path.json đã tồn tại
-    if os.path.exists(output_file):
+    if os.path.exists(os.path.join(join_directory_data(), output_file)):
         print(f"File {output_file} đã tồn tại, sẽ ghi đè nội dung.")
     
     # Ghi mảng auto_update_paths vào autoUpdate_path.json
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(os.path.join(GF.join_directory_data(), output_file), 'w', encoding='utf-8') as f:
         json.dump({"auto_update_paths": auto_update_paths}, f, ensure_ascii=False, indent=4)
     
     print(f"Sao chép đường dẫn auto_update_path thành công vào {output_file}.")
