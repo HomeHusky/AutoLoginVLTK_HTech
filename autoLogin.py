@@ -10,9 +10,28 @@ import threading
 import pyautogui
 import time
 import os
-import urllib.request
-import zipfile
 import datetime
+import subprocess
+
+
+def update_app():
+    try:
+        # Chạy lệnh git pull để cập nhật phiên bản mới nhất từ GitHub
+        result = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Hiển thị thông báo kết quả của git pull
+        if "Already up to date" in result.stdout:
+            messagebox.showinfo("Update", "Ứng dụng đã cập nhật phiên bản mới nhất.")
+        else:
+            messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Hãy khởi động lại.")
+            restart_app()
+    except Exception as e:
+        messagebox.showerror("Update Failed", f"Quá trình cập nhật thất bại: {e}")
+
+def restart_app():
+    # Khởi động lại ứng dụng
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
 
 global_time_sleep = GF.load_global_time_sleep()
 
@@ -598,6 +617,10 @@ delete_button.grid(row=0, column=2, padx=5, pady=10)
 cancel_button = ttk.Button(button_frame, text="Hủy", command=cancel_edit)
 cancel_button.grid(row=0, column=3, padx=5, pady=10)
 cancel_button.grid_remove()
+
+# Tạo nút update
+update_button = ttk.Button(button_frame, text="Check For Update Auto Login", command=update_app)
+update_button.grid(row=1, column=0, columnspan=3, padx=5, pady=10, sticky="ew")
 
 # Tạo checkbox
 checkbox = tk.Checkbutton(start_frame, text="Tự động click AutoVLBS", variable=varCheckBox, command=lambda: check_checkbox(varCheckBox))
