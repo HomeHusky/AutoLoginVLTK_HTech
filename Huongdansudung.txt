@@ -1,0 +1,3 @@
+- Chạy file run.bat để cài python với thư viện.
+- Nếu có lỗi thì chạy lại fie run.bat
+- Sau khi cài xong thì lần tiếp theo chỉ cần chạy quickrun.bat
