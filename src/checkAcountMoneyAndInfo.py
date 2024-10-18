@@ -338,7 +338,7 @@ def check_income_increase(name, callback, stop_monitor_event, stop_monitor_succe
                 current_income = float(item['thu_nhap'])
                 try:
                     income_difference = current_income - initial_income[key]
-                    total_income.append((key, current_income))
+                    total_income.append((key, income_difference))
                     print(key, f": {income_difference}")
                 except Exception as e:
                     print("Dữ liệu đầu: ", initial_income)
