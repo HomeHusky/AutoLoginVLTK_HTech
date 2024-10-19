@@ -1,7 +1,7 @@
 {
     "accounts": [
         {
-            "is_select": false,
+            "is_select": true,
             "username": "lskshtgomkv",
             "password": "Htech317@",
             "ingame": "LSKSÙGOMÙKV",
@@ -12,7 +12,7 @@
             "is_xe_2": 0
         },
         {
-            "is_select": false,
+            "is_select": true,
             "username": "ddkshtgomkv",
             "password": "Htech317@",
             "ingame": "DDKSÙGOMÙKV",
@@ -23,7 +23,7 @@
             "is_xe_2": 1
         },
         {
-            "is_select": false,
+            "is_select": true,
             "username": "ctcdshtgomkv",
             "password": "Htech317@",
             "ingame": "CTCDSÙGOMÙKV",
@@ -34,40 +34,40 @@
             "is_xe_2": 1
         },
         {
-            "is_select": false,
+            "is_select": true,
             "username": "phhoahtgomkv",
             "password": "Htech317@",
             "ingame": "PHHOAÙGOMÙKV",
             "game_path": "D:/VoLamTruyenKy/PARTH GAME/PHONG HOA/game.exe",
             "auto_update_path": "D:/VoLamTruyenKy/PARTH GAME/PHONG HOA/AutoUpdate.exe",
-            "is_logged_in": false,
+            "is_logged_in": true,
             "is_gom_tien": 0,
             "is_xe_2": 0
         },
         {
-            "is_select": false,
+            "is_select": true,
             "username": "ctcdghtgomkv",
             "password": "Htech317@",
             "ingame": "CTCDGÙGOMÙKV",
             "game_path": "D:/VoLamTruyenKy/PARTH GAME/CTC 3 DAI GIA/game.exe",
             "auto_update_path": "D:/VoLamTruyenKy/PARTH GAME/CTC 3 DAI GIA/AutoUpdate.exe",
-            "is_logged_in": false,
+            "is_logged_in": true,
             "is_gom_tien": 0,
             "is_xe_2": 0
         },
         {
-            "is_select": false,
+            "is_select": true,
             "username": "thtphttestauto",
             "password": "Htech317@",
             "ingame": "THTPÙTESTÙAUTO",
             "game_path": "D:/VoLamTruyenKy/PARTH GAME/VLTK TUONG PHUNG/game.exe",
             "auto_update_path": "D:/VoLamTruyenKy/PARTH GAME/VLTK TUONG PHUNG/AutoUpdate.exe",
-            "is_logged_in": true,
+            "is_logged_in": false,
             "is_gom_tien": 1,
             "is_xe_2": 0
         },
         {
-            "is_select": false,
+            "is_select": true,
             "username": "lsddhttestauto",
             "password": "Htech317@",
             "ingame": "LSDDÙTESTÙAUTO",
@@ -85,9 +85,9 @@
     ],
     "sleepTime": [
         {
-            "wait_time_open": 10,
-            "wait_time_load": 8,
-            "wait_time_server": 8,
+            "wait_time_open": 15,
+            "wait_time_load": 10,
+            "wait_time_server": 10,
             "wait_time_open_trainjx": 3,
             "wait_time_load_autovlbs": 5,
             "try_number": 2,

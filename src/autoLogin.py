@@ -1,5 +1,4 @@
 import json
-import sys
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 import startLogin as START_LOGIN
@@ -45,7 +44,10 @@ editting_account = None
 currentAutoName = None
 auto_tool_path = None
 sleepTime = None
-currentAutoName = GF.getNameAutoVLBS()
+try:
+    currentAutoName = GF.getNameAutoVLBS()
+except Exception as e:
+    print("Error", str(e))
 
 # Đường dẫn file JSON
 accounts_file_path = 'accounts.json'
@@ -105,19 +107,48 @@ def load_to_gui():
     # Hiển thị danh sách tài khoản
     stt = 1
     for account in data['accounts']:
-        tree_accounts.insert("", "end", values=(stt,account.get('is_select', False), account['username'], account['ingame'], account['game_path'], account.get('is_logged_in', False), account['is_gom_tien'], account['is_xe_2']))
+        is_logged_in_display = "Online" if account.get('is_logged_in', False) else ""
+        is_gom_tien_display = "✓" if account['is_gom_tien'] else ""
+        is_xe_2_display = "✓" if account['is_xe_2'] else ""
+        is_select_display = "✓" if account.get('is_select', False) else ""
+        tree_accounts.insert("", "end", values=(
+            stt,
+            is_select_display, 
+            account['username'], 
+            account['ingame'], 
+            account['game_path'], 
+            is_logged_in_display,  # Hiển thị Online nếu is_logged_in là True
+            is_gom_tien_display, 
+            is_xe_2_display
+        ))
         stt += 1
-    # # Thêm sự kiện click vào Treeview để cập nhật trạng thái checkbox
-    # tree_accounts.bind("<Button-1>", lambda event: on_click(event))
 
-    # def on_click(event):
-    #     region = tree_accounts.identify_region(event.x, event.y)
-    #     if region == "cell":
-    #         column = tree_accounts.identify_column(event.x)
-    #         if column == '#5':  # Cột checkbox
-    #             row_id = tree_accounts.identify_row(event.y)
-    #             if row_id:
-    #                 on_check(row_id)
+    def on_item_select(event):
+        selected_item = tree_accounts.selection()[0]
+        values = tree_accounts.item(selected_item, 'values')
+        stt = int(values[0]) - 1  # Lấy chỉ số hàng (STT)
+        
+        # Lấy thông tin account liên quan
+        account = data['accounts'][stt]
+        
+        # Thay đổi trạng thái của 'is_select'
+        account['is_select'] = not account['is_select']
+        
+        # Cập nhật hiển thị trong Treeview
+        is_select_display = "✓" if account['is_select'] else ""
+        tree_accounts.item(selected_item, values=(
+            values[0],  # STT
+            is_select_display,  # Cập nhật trạng thái
+            values[2],  # Username
+            values[3],  # Ingame
+            values[4],  # Game Path
+            values[5],  # Online
+            values[6],  # Gom Tiền
+            values[7]   # Xe 2
+        ))
+
+    # Ràng buộc sự kiện nhấp chuột
+    tree_accounts.bind("<Double-1>", on_item_select)
 
 # Kiểm tra tài khoản tồn tại
 def check_exist_account(username, gamepath, data):
@@ -270,6 +301,7 @@ def delete_account():
 def browse_game_path():
     file_path = filedialog.askopenfilename(
         title="Chọn đường dẫn Game",
+        initialfile="game.exe",  # Đặt tên mặc định là "game.exe"
         filetypes=(("Executable Files", "*.exe"), ("All Files", "*.*"))
     )
     if file_path:
@@ -620,8 +652,8 @@ cancel_button.grid(row=0, column=3, padx=5, pady=10)
 cancel_button.grid_remove()
 
 # Tạo nút update
-update_button = ttk.Button(button_frame, text="Check For Update Auto Login", command=update_app)
-update_button.grid(row=1, column=0, columnspan=3, padx=5, pady=10, sticky="ew")
+update_app_button = ttk.Button(button_frame, text="Check For Update Auto Login", command=update_app)
+update_app_button.grid(row=1, column=0, columnspan=3, padx=5, pady=10, sticky="ew")
 
 # Tạo checkbox
 checkbox = tk.Checkbutton(start_frame, text="Tự động click AutoVLBS", variable=varCheckBox, command=lambda: check_checkbox(varCheckBox))
@@ -667,7 +699,17 @@ tree_accounts.column("is_logged_in", width=40)
 tree_accounts.column("is_gom_tien", width=40)
 tree_accounts.column("is_xe_2", width=40)
 
-tree_accounts.pack(fill="both", expand=False)
+# Tạo thanh cuộn dọc (vertical scrollbar)
+v_scrollbar = ttk.Scrollbar(tree_frame, orient="vertical", command=tree_accounts.yview)
+v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+tree_accounts.configure(yscrollcommand=v_scrollbar.set)
+
+# Tạo thanh cuộn ngang (horizontal scrollbar)
+h_scrollbar = ttk.Scrollbar(tree_frame, orient="horizontal", command=tree_accounts.xview)
+h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+tree_accounts.configure(xscrollcommand=h_scrollbar.set)
+
+tree_accounts.pack(fill="both", expand=True)
 
 # ================================ Tab Quản lý Đường dẫn ======================================
 

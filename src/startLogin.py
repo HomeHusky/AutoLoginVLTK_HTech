@@ -90,13 +90,17 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
 
     isOpenExe = GF.checkWindowRunning('Vo Lam Truyen Ky')
     print('isOpenExe:', isOpenExe)
+    time.sleep(global_time_sleep)
 
     if isOpenExe == 0:
         GF.close_application('Vo Lam Truyen Ky')
         pyautogui.press('enter')
+        time.sleep(global_time_sleep)
         return 3
     else:
+        GF.activate_window('Vo Lam Truyen Ky')
         print("Đã mở game.exe")
+        time.sleep(global_time_sleep)
 
     if stop_login:
         return  # Kiểm tra cờ dừng
@@ -184,7 +188,7 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
 def add_server_fail_value(file_path, new_value):
     try:
         # Kiểm tra nếu file không tồn tại hoặc file rỗng
-        if not os.path.exists(os.path.join(join_directory_data(), file_path)) or os.stat(os.path.join(join_directory_data(), file_path)).st_size == 0:
+        if not os.path.exists(os.path.join(GF.join_directory_data(), file_path)) or os.stat(os.path.join(GF.join_directory_data(), file_path)).st_size == 0:
             # Tạo file mới với cấu trúc mặc định
             with open(os.path.join(GF.join_directory_data(), file_path), 'w', encoding='utf-8') as file:
                 json.dump({"server_fail": []}, file, ensure_ascii=False, indent=4)

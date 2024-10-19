@@ -1,6 +1,6 @@
 {
-    "monitor_time": "0.2",
-    "kpi": "1000",
+    "monitor_time": "120",
+    "kpi": "800",
     "total_servers": "10",
     "title_mail": "31"
 }

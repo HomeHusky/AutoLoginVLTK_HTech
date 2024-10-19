@@ -169,6 +169,17 @@ def show_application(window_name):
         print(f"Lỗi hiện cửa sổ {window_name}: {e}")
         return 0
 
+def activate_window(window_title):
+    # Tìm handle của cửa sổ dựa trên tên chính xác
+    hwnd = win32gui.FindWindow(None, window_title)
+    
+    if hwnd:
+        # Đặt cửa sổ lên phía trước (active)
+        win32gui.SetForegroundWindow(hwnd)
+        print(f"Cửa sổ '{window_title}' đã được kích hoạt.")
+    else:
+        print(f"Không tìm thấy cửa sổ với tiêu đề: {window_title}")
+
 def copy_auto_update_path_to_auto_update_path():
     accounts_file = 'accounts.json'
     output_file = 'autoUpdate_path.json'

@@ -146,31 +146,21 @@ def load_xe_2_accounts(filepath = 'accounts.json'):
 
     return filtered_ingames
 
-def updateAcountMoneyAndInfo(name, callback):
-    data = None
-    gom_accounts = load_gom_accounts()
-    print("Gom accounts: ", gom_accounts)
-    GF.checkBothAutoVlbsAndQuanLyRunning(name)
-
-    if GF.checkWindowRunning(name) == 1:
-        list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
-        if not list_control.exists():
-            print("Không tìm thấy bảng!")
+def run_right_click(name):
+    list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
+    if not list_control.exists():
+        print("Không tìm thấy bảng!")
+    else:
+        # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
+        items = list_control.children(control_type="ListItem")
+        if items:
+            items[0].right_click_input()
         else:
-            # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
-            items = list_control.children(control_type="ListItem")
-            if items:
-                items[0].right_click_input()
-            else:
-                print("Không có mục nào trong danh sách!")
-        time.sleep(1)
+            print("Không có mục nào trong danh sách!")
+    time.sleep(1)
 
-    app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
-
-    # Lấy cửa sổ chính của ứng dụng
-    dlg = app.window(title_re='^Quan ly nhan vat.*')
-
-    list_control = dlg.child_window(control_type="List")
+def run_update_accounts_money(name):
+    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
 
     items = list_control.children(control_type="ListItem")
 
@@ -210,13 +200,37 @@ def updateAcountMoneyAndInfo(name, callback):
         
         add_status_accounts_data(newdata, array_name)
     
-    # Đọc và cập nhật dữ liệu JSON
-    with open(os.path.join(GF.join_directory_data(), json_file), 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    print("Update thành công!")
-    callback()
-    return data
+def updateAcountMoneyAndInfo(name, callback):
+
+    data = None
+    try:
+        gom_accounts = load_gom_accounts()
+        print("Gom accounts: ", gom_accounts)
+        GF.checkBothAutoVlbsAndQuanLyRunning(name)
+
+        if GF.checkQuanlynhanvat():
+            pass
+        elif GF.checkWindowRunning(name) == 1:
+            run_right_click(name)
+            time.sleep(global_time_sleep)
+        elif GF.checkWindowRunning(name) == 2:
+            GF.show_application(name)
+            time.sleep(global_time_sleep)
+        run_update_accounts_money(name)
+        
+        # Đọc và cập nhật dữ liệu JSON
+        with open(os.path.join(GF.join_directory_data(), json_file), 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        print("Update thành công!")
+        callback()
+        return data
+    except Exception as e:
+        run_right_click(name)
+        updateAcountMoneyAndInfo(name, callback)
+        callback()
+        print("Lỗi dòng 228 file checkAccountMoneyAndInffo.py: " + str(e))
+        return None
 
 def update_account_thread(name):
     thread = threading.Thread(target=updateAcountMoneyAndInfo, args=(name, on_update_success,))

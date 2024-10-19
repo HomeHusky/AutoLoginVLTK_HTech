@@ -12,51 +12,59 @@ global_time_sleep = GF.load_global_time_sleep()
 
 def getCheckData(currentAutoName):
     useAutoVLBS = None
-    # try:
-    if GF.checkWindowRunning(currentAutoName) == 1:
-        useAutoVLBS = True
-        # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-        app = Application(backend="uia").connect(title_re=currentAutoName)
+    GF.checkBothAutoVlbsAndQuanLyRunning(currentAutoName)
+    try:
+        if GF.checkQuanlynhanvat():
+            # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+            app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
 
-        # Lấy cửa sổ chính của ứng dụng
-        dlg = app.window(title_re=currentAutoName)
-    else:
-        # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-        app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+            # Lấy cửa sổ chính của ứng dụng
+            dlg = app.window(title_re='^Quan ly nhan vat.*')
+        elif GF.checkWindowRunning(currentAutoName) == 1:
+            useAutoVLBS = True
+            # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+            app = Application(backend="uia").connect(title_re=currentAutoName)
 
-        # Lấy cửa sổ chính của ứng dụng
-        dlg = app.window(title_re='^Quan ly nhan vat.*')
+            # Lấy cửa sổ chính của ứng dụng
+            dlg = app.window(title_re=currentAutoName)
+        elif GF.checkWindowRunning(currentAutoName) == 2:
+            GF.show_application(currentAutoName)
+            useAutoVLBS = True
+            # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+            app = Application(backend="uia").connect(title_re=currentAutoName)
 
-    # try:
+            # Lấy cửa sổ chính của ứng dụng
+            dlg = app.window(title_re=currentAutoName)
 
-    # Tìm danh sách điều khiển
-    list_control = dlg.child_window(control_type="List")
+        # Tìm danh sách điều khiển
+        list_control = dlg.child_window(control_type="List")
 
-    if not list_control.exists():
-        print("Không tìm thấy bảng!")
-        return None
-    else:
-        items = list_control.children(control_type="ListItem")
-        data = []
-        if useAutoVLBS:
-            print("Truong hop 1")
-            for item in items:
-                if useAutoVLBS:
-                    item_text = item.window_text()  # Lấy văn bản của mục
-                    data.append(item_text)
+        if not list_control.exists():
+            print("Không tìm thấy bảng!")
+            return None
         else:
-            for item in items:
+            items = list_control.children(control_type="ListItem")
+            data = []
+            if useAutoVLBS:
+                print("Truong hop 1")
+                for item in items:
+                    if useAutoVLBS:
+                        item_text = item.window_text()  # Lấy văn bản của mục
+                        data.append(item_text)
+            else:
                 print("Truong hop 2")
-                count = 0
-                for child in item.children():
-                    if count == 1: 
-                        data.append(child.window_text())
-                    count += 1
-    time.sleep(global_time_sleep)
+                for item in items:
+                    count = 0
+                    for child in item.children():
+                        if count == 1: 
+                            data.append(child.window_text())
+                        count += 1
+        time.sleep(global_time_sleep)
 
-    return data
-    # except Exception as e:
-    #     print("Lỗi update Status: " + str(e))
+        return data
+    except Exception as e:
+        print("Lỗi update Status: " + str(e))
+        return None
 
 def update_login_status(json_data, checkData):
     for account in json_data['accounts']:
@@ -71,6 +79,7 @@ def update_login_status(json_data, checkData):
     return json_data
 
 def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
+    updated_data = None
     if not currentAutoName:
 
         currentAutoName = startLogin.auto_open_autoVLBS(auto_tool_path, sleepTime)

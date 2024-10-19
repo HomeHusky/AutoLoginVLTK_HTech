@@ -1,1 +1,125 @@
-{}
+{
+    "THTPÙTESTÙAUTO": [
+        {
+            "tong_tien": "0.00",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:3:44",
+            "TDP/C": "0 - 0",
+            "ban_do": "L©m An (176/206)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 12:40:54"
+        }
+    ],
+    "CTCDSÙGOMÙKV": [
+        {
+            "tong_tien": "80.73",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:8:46",
+            "TDP/C": "0 - 0",
+            "ban_do": "§¹i Lý phñ (197/195)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 12:40:54"
+        },
+        {
+            "tong_tien": "80.73",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:49:52",
+            "TDP/C": "0 - 0",
+            "ban_do": "§¹i Lý phñ (197/195)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:22:02"
+        },
+        {
+            "tong_tien": "80.73",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:50:30",
+            "TDP/C": "0 - 0",
+            "ban_do": "§¹i Lý phñ (197/195)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:22:40"
+        },
+        {
+            "tong_tien": "80.73",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:59:7",
+            "TDP/C": "0 - 0",
+            "ban_do": "§¹i Lý phñ (197/195)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:31:17"
+        },
+        {
+            "tong_tien": "80.73",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:59:13",
+            "TDP/C": "0 - 0",
+            "ban_do": "§¹i Lý phñ (197/195)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:31:23"
+        },
+        {
+            "tong_tien": "80.73",
+            "thu_nhap": "0.00",
+            "thoi_gian": "1:1:33",
+            "TDP/C": "0 - 0",
+            "ban_do": "§¹i Lý phñ (197/195)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:33:43"
+        }
+    ],
+    "LSKSÙGOMÙKV": [
+        {
+            "tong_tien": "4214.43",
+            "thu_nhap": "0.00",
+            "thoi_gian": "0:38:21",
+            "TDP/C": "0 - 0",
+            "ban_do": "T­¬ng D­¬ng (192/203)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 12:40:54"
+        },
+        {
+            "tong_tien": "4214.43",
+            "thu_nhap": "0.00",
+            "thoi_gian": "1:19:27",
+            "TDP/C": "0 - 0",
+            "ban_do": "T­¬ng D­¬ng (192/203)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:22:02"
+        },
+        {
+            "tong_tien": "4214.43",
+            "thu_nhap": "0.00",
+            "thoi_gian": "1:20:5",
+            "TDP/C": "0 - 0",
+            "ban_do": "T­¬ng D­¬ng (192/203)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:22:40"
+        },
+        {
+            "tong_tien": "4214.43",
+            "thu_nhap": "0.00",
+            "thoi_gian": "1:28:42",
+            "TDP/C": "0 - 0",
+            "ban_do": "T­¬ng D­¬ng (192/203)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:31:17"
+        },
+        {
+            "tong_tien": "4214.43",
+            "thu_nhap": "0.00",
+            "thoi_gian": "1:28:48",
+            "TDP/C": "0 - 0",
+            "ban_do": "T­¬ng D­¬ng (192/203)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:31:23"
+        },
+        {
+            "tong_tien": "4214.43",
+            "thu_nhap": "0.00",
+            "thoi_gian": "1:31:8",
+            "TDP/C": "0 - 0",
+            "ban_do": "T­¬ng D­¬ng (192/203)",
+            "server": "",
+            "thoi_diem_cap_nhat": "2024-10-19 13:33:43"
+        }
+    ]
+}
