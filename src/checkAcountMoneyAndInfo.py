@@ -159,7 +159,7 @@ def run_right_click(name):
             print("Không có mục nào trong danh sách!")
     time.sleep(1)
 
-def run_update_accounts_money(name):
+def run_update_accounts_money(name, gom_accounts):
     list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
 
     items = list_control.children(control_type="ListItem")
@@ -216,7 +216,7 @@ def updateAcountMoneyAndInfo(name, callback):
         elif GF.checkWindowRunning(name) == 2:
             GF.show_application(name)
             time.sleep(global_time_sleep)
-        run_update_accounts_money(name)
+        run_update_accounts_money(name, gom_accounts)
         
         # Đọc và cập nhật dữ liệu JSON
         with open(os.path.join(GF.join_directory_data(), json_file), 'r', encoding='utf-8') as f:
