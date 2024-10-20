@@ -103,7 +103,6 @@ currentAutoName = None
 auto_tool_path = None
 sleepTime = None
 try:
-    global currentAutoName
     currentAutoName = GF.getNameAutoVLBS()
 except Exception as e:
     print("Error", str(e))
@@ -118,7 +117,6 @@ def run_check_status(tryTest):
     global currentAutoName
     currentAutoName = GF.getNameAutoVLBS()
     if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
-        global currentAutoName
         currentAutoName = GF.getNameAutoVLBS()
         if not GF.checkAutoVlbsBackGroundRunning():
             if tryTest > 0:
