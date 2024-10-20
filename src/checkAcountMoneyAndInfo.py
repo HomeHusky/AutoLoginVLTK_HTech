@@ -372,12 +372,12 @@ def check_income_increase(name, callback, stop_monitor_event, stop_monitor_succe
 
         # Gửi email nếu có tài khoản có thu nhập thấp
         if low_income_accounts:
-            send_email(total_income, low_income_accounts, check_time=time.strftime("%Y-%m-%d %H:%M:%S"), kpi_value=testkpiForOneServer, car_list=accounts_xe_2, time_loop_send=time_loop_send)
+            send_email(total_income, low_income_accounts, check_time=time.strftime("%Y-%m-%d %H:%M:%S"), kpi_value=kpiXe4, car_list=accounts_xe_2, time_loop_send=time_loop_send)
             callback()
             print("Đã gửi mail thông báo!")
             time.sleep(2)
         else:
-            send_email(total_income, None, check_time=time.strftime("%Y-%m-%d %H:%M:%S"), kpi_value=testkpiForOneServer, car_list=accounts_xe_2, time_loop_send=time_loop_send)
+            send_email(total_income, None, check_time=time.strftime("%Y-%m-%d %H:%M:%S"), kpi_value=kpiXe4, car_list=accounts_xe_2, time_loop_send=time_loop_send)
             callback()
             print("Đã gửi mail thông báo!")
             time.sleep(2)
