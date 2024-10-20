@@ -306,14 +306,15 @@ def check_income_increase(name, callback, stop_monitor_event, stop_monitor_succe
     second = monitor_time_loop
     testkpi = load_kpi_and_convert_to_hour()
     testkpiForOneServer = testkpi / total_servers
+    kpiXe4 = (testkpiForOneServer / 3600) * monitor_time_loop
     print("testkpi: ", testkpi)
     
     if second < 60:
-        print(f"Kpi xe 4 trong {second} giây: ", (testkpiForOneServer / 3600) * monitor_time_loop)
+        print(f"Kpi xe 4 trong {second} giây: ", kpiXe4)
     elif second < 3600:
-        print(f"Kpi xe 4 trong {second / 60} phút: ", (testkpiForOneServer / 3600) * monitor_time_loop)
+        print(f"Kpi xe 4 trong {second / 60} phút: ", kpiXe4)
     else:
-        print(f"Kpi xe 4 trong {second / 3600} giờ: ", (testkpiForOneServer / 3600) * monitor_time_loop)
+        print(f"Kpi xe 4 trong {second / 3600} giờ: ", kpiXe4)
 
     data = readAcountMoneyAndInfo()  # Tải dữ liệu ban đầu từ file JSON
     initial_income = {}
@@ -343,10 +344,9 @@ def check_income_increase(name, callback, stop_monitor_event, stop_monitor_succe
         update_account_thread(name)
         data_updated = readAcountMoneyAndInfo()  # Tải dữ liệu mới
         for key, item in data_updated.items():
-            kpi = load_kpi_and_convert_to_hour()
+            kpiCheck = kpiXe4
             if key in accounts_xe_2:
-                kpi = kpi / 2
-            kpi = kpi / total_servers
+                kpiCheck = kpiCheck / 2
 
             if item:  # Kiểm tra nếu item hợp lệ
                 current_income = float(item['thu_nhap'])
@@ -359,7 +359,8 @@ def check_income_increase(name, callback, stop_monitor_event, stop_monitor_succe
                     continue
 
                 # Kiểm tra nếu thu nhập dưới 70% KPI
-                if income_difference < ((kpi / 3600) * monitor_time_loop * 0.7):
+                print(f"kpiCheck cho xe {key}: {kpiCheck}")
+                if income_difference < (kpiCheck * 0.7):
                     if monitor_time_loop < 60:
                         time_loop_send = f"{monitor_time_loop} giây"
                     elif monitor_time_loop < 3600:

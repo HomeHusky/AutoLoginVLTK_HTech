@@ -11,27 +11,85 @@ import pyautogui
 import time
 import os
 import datetime
-import subprocess
+import requests
+import zipfile
+import sys
 
-
-def update_app():
+def get_current_version():
+    version_file = "version.txt"
     try:
-        # Chạy lệnh git pull để cập nhật phiên bản mới nhất từ GitHub
-        result = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
-        # Hiển thị thông báo kết quả của git pull
-        if "Already up to date" in result.stdout:
-            messagebox.showinfo("Update", "Ứng dụng đã cập nhật phiên bản mới nhất.")
+        with open(version_file, "r") as file:
+            current_version = file.read().strip()
+            return current_version
+    except FileNotFoundError:
+        print(f"File {version_file} không tồn tại.")
+        return None
+
+def check_for_update():
+    # URL của file version trên GitHub
+    url = "https://raw.githubusercontent.com/HomeHusky/AutoLoginVLTK_HTech/master/version.txt"
+    
+    # Đọc phiên bản hiện tại từ file version.txt
+    current_version = get_current_version()
+    
+    if current_version is None:
+        print("Không thể kiểm tra phiên bản hiện tại.")
+        return False
+    
+    try:
+        # Lấy phiên bản mới nhất từ GitHub
+        response = requests.get(url)
+        if response.status_code == 200:
+            latest_version = response.text.strip()
+            if latest_version != current_version:
+                print(f"Có bản cập nhật mới: {latest_version}")
+                return True
+            else:
+                print("Bạn đang sử dụng phiên bản mới nhất.")
         else:
-            messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Hãy khởi động lại.")
-            restart_app()
+            print("Không thể kết nối đến GitHub.")
     except Exception as e:
-        messagebox.showerror("Update Failed", f"Quá trình cập nhật thất bại: {e}")
+        print(f"Lỗi khi kiểm tra cập nhật: {e}")
+    
+    return False
+
+def download_and_update():
+    url = "https://github.com/HomeHusky/AutoLoginVLTK_HTech/archive/refs/heads/master.zip"
+    try:
+        response = requests.get(url)
+        zip_path = "update.zip"
+        with open(zip_path, "wb") as file:
+            file.write(response.content)
+
+        # Giải nén file zip và ghi đè lên ứng dụng hiện tại
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(".")
+
+        # Xóa file zip sau khi cập nhật
+        os.remove(zip_path)
+        print("Cập nhật thành công!")
+    except Exception as e:
+        print(f"Lỗi khi cập nhật: {e}")
 
 def restart_app():
     # Khởi động lại ứng dụng
     python = sys.executable
     os.execl(python, python, *sys.argv)
+
+def update_app():
+    try:
+        # Chạy lệnh git pull để cập nhật phiên bản mới nhất từ GitHub
+        result = check_for_update()
+        
+        # Hiển thị thông báo kết quả của git pull
+        if not result:
+            messagebox.showinfo("Update", "Ứng dụng đã cập nhật phiên bản mới nhất.")
+        else:
+            download_and_update()
+            messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Hãy khởi động lại.")
+            restart_app()
+    except Exception as e:
+        messagebox.showerror("Update Failed", f"Quá trình cập nhật thất bại: {e}")
 
 global_time_sleep = GF.load_global_time_sleep()
 
