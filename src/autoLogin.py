@@ -554,6 +554,9 @@ def thread_auto_update(auto_update_data, callback):
     callback()
 
 def on_auto_update_success():
+    is_running_AutoUpdate = False
+    stop_AutoUpdate_event = True  # Kích hoạt trạng thái dừng
+    run_auto_update_button.config(text="AutoUpdate")  # Đổi nhãn nút thành "Bắt đầu"
     messagebox.showinfo("Thông báo", "Chạy AutoUpdate thành công!")
 
 def run_all_auto_update():
