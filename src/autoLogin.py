@@ -55,18 +55,35 @@ def check_for_update():
 
 def download_and_update():
     url = "https://github.com/HomeHusky/AutoLoginVLTK_HTech/archive/refs/heads/master.zip"
+    zip_path = "update.zip"
+    
     try:
+        # Tải file zip từ GitHub
         response = requests.get(url)
-        zip_path = "update.zip"
         with open(zip_path, "wb") as file:
             file.write(response.content)
-
-        # Giải nén file zip và ghi đè lên ứng dụng hiện tại
+        
+        # Giải nén file zip vào thư mục tạm thời
+        temp_dir = "temp_update"
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            zip_ref.extractall(".")
+            zip_ref.extractall(temp_dir)
 
-        # Xóa file zip sau khi cập nhật
+        # Di chuyển các file từ thư mục tạm về thư mục hiện tại
+        extracted_dir = os.path.join(temp_dir, os.listdir(temp_dir)[0])  # Lấy thư mục con đầu tiên
+        for item in os.listdir(extracted_dir):
+            s = os.path.join(extracted_dir, item)
+            d = os.path.join(".", item)
+            if os.path.isdir(s):
+                if os.path.exists(d):
+                    shutil.rmtree(d)  # Xóa thư mục cũ nếu cần
+                shutil.move(s, d)
+            else:
+                shutil.move(s, d)
+        
+        # Xóa file zip và thư mục tạm
         os.remove(zip_path)
+        shutil.rmtree(temp_dir)
+
         print("Cập nhật thành công!")
     except Exception as e:
         print(f"Lỗi khi cập nhật: {e}")
