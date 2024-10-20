@@ -217,5 +217,5 @@ def stop():
     global stop_login
     stop_login = True  # Đặt cờ dừng thành True
 
-if __name__ == "__main__":
-    runStartLogin()
+# if __name__ == "__main__":
+#     runStartLogin()

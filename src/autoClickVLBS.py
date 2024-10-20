@@ -12,6 +12,8 @@ def start_click(name, isAutoClickVLBS):
     print("name AutoVLBS:", name)
     # auto_name = ['vocongtruyenky', 'anotherapp', 'yetanotherapp']
     GF.checkBothAutoVlbsAndQuanLyRunning(name)
+    if name == None:
+        name = GF.getNameAutoVLBS()
 
     if GF.checkQuanlynhanvat():
         pass
