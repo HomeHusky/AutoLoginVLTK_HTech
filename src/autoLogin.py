@@ -14,6 +14,7 @@ import datetime
 import requests
 import zipfile
 import sys
+import shutil
 
 def get_current_version():
     version_file = "version.txt"
@@ -42,8 +43,12 @@ def check_for_update():
         if response.status_code == 200:
             latest_version = response.text.strip()
             if latest_version != current_version:
-                print(f"Có bản cập nhật mới: {latest_version}")
-                return True
+                confirm = messagebox.askyesno("Thông báo", "Có bản cập nhật mới, bạn có muốn cập nhật?")
+                if confirm:
+                    print(f"Chuẩn bị cập nhật mới: {latest_version}")
+                    return True
+                else:
+                    return 2
             else:
                 print("Bạn đang sử dụng phiên bản mới nhất.")
         else:
@@ -101,6 +106,8 @@ def update_app():
         # Hiển thị thông báo kết quả của git pull
         if not result:
             messagebox.showinfo("Update", "Bạn đang sử dụng phiên bản mới nhất.")
+        elif result == 2:
+            pass
         else:
             download_and_update()
             messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Bắt đầu khởi động lại.")
