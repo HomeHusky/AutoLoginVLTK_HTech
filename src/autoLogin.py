@@ -100,10 +100,10 @@ def update_app():
         
         # Hiển thị thông báo kết quả của git pull
         if not result:
-            messagebox.showinfo("Update", "Ứng dụng đã cập nhật phiên bản mới nhất.")
+            messagebox.showinfo("Update", "Bạn đang sử dụng phiên bản mới nhất.")
         else:
             download_and_update()
-            messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Hãy khởi động lại.")
+            messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Bắt đầu khởi động lại.")
             restart_app()
     except Exception as e:
         messagebox.showerror("Update Failed", f"Quá trình cập nhật thất bại: {e}")
