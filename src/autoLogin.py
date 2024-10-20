@@ -119,9 +119,15 @@ global_time_sleep = GF.load_global_time_sleep()
 
 # Biến toàn cục để quản lý luồng login
 login_thread = None
+
 monitor_thread = None
 is_running_monitor = False
 stop_monitor_event = threading.Event()  # Biến event để dừng luồng
+
+auto_update_thread = None
+is_running_AutoUpdate = False
+stop_AutoUpdate_event = False
+
 editting_account = None
 currentAutoName = None
 auto_tool_path = None
@@ -528,18 +534,14 @@ def on_login_complete():
     # check_delete_fail_servers()
     messagebox.showinfo("Error", f"Đăng nhập thành công")
 
-def run_all_auto_update():
-    confirm = messagebox.askyesno(
-        "Thông báo",
-        "Thao tác này sẽ chạy tất cả AutoUpdate của các server mà dữ liệu đang có!"
-    )
-    if confirm:  # Nếu người dùng xác nhận
-        GF.copy_auto_update_path_to_auto_update_path()
-        auto_update_file = 'autoUpdate_path.json'
-        # Đọc dữ liệu từ file accounts.json
-        auto_update_data = GF.read_json_file(auto_update_file)
-
-        for path in auto_update_data['auto_update_paths']:
+def thread_auto_update(auto_update_data, callback):
+    global stop_AutoUpdate_event
+    for path in auto_update_data['auto_update_paths']:
+        if stop_AutoUpdate_event:
+            messagebox.showinfo("Thông báo", "Dừng AutoUpdate thành công!")
+            return
+        try:
+            print(path)
             # Mở từng file .exe
             pyautogui.hotkey('win', 'r')
             time.sleep(global_time_sleep)
@@ -547,9 +549,40 @@ def run_all_auto_update():
             time.sleep(global_time_sleep)
             pyautogui.press('enter')
             time.sleep(2)  # Chờ 2 giây để đảm bảo file được mở
-        print("Đã chạy AutoUpdate của các server!")
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể mở file {path}: {str(e)}")
+    callback()
+
+def on_auto_update_success():
+    messagebox.showinfo("Thông báo", "Chạy AutoUpdate thành công!")
+
+def run_all_auto_update():
+    global stop_AutoUpdate_event, is_running_AutoUpdate, auto_update_thread
+    if not is_running_AutoUpdate:
+        confirm = messagebox.askyesno(
+            "Thông báo",
+            "Thao tác này sẽ chạy tất cả AutoUpdate của các server mà dữ liệu đang có!"
+        )
+        if confirm:  # Nếu người dùng xác nhận
+            stop_AutoUpdate_event = False
+            is_running_AutoUpdate = True
+            run_auto_update_button.config(text="Dừng")
+            GF.copy_auto_update_path_to_auto_update_path()
+            auto_update_file = 'autoUpdate_path.json'
+            # Đọc dữ liệu từ file accounts.json
+            auto_update_data = GF.read_json_file(auto_update_file)
+
+            print("Đã chạy AutoUpdate của các server!")
+            auto_update_thread = threading.Thread(target=thread_auto_update, args=(auto_update_data, on_auto_update_success))
+            auto_update_thread.daemon = True
+            auto_update_thread.start()  # Bắt đầu luồng login
+            
+        else:
+            return
     else:
-        return
+        is_running_AutoUpdate = False
+        stop_AutoUpdate_event = True  # Kích hoạt trạng thái dừng
+        run_auto_update_button.config(text="AutoUpdate")  # Đổi nhãn nút thành "Bắt đầu"
 
 def check_delete_fail_servers():
     # Đường dẫn tới file accounts.json và fail_server.json
