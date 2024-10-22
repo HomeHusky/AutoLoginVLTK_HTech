@@ -115,6 +115,14 @@ def update_app():
     except Exception as e:
         messagebox.showerror("Update Failed", f"Quá trình cập nhật thất bại: {e}")
 
+def alway_update_app():
+    try:
+        download_and_update()
+        messagebox.showinfo("Update", "Ứng dụng đã được cập nhật thành công. Bắt đầu khởi động lại.")
+        restart_app()
+    except Exception as e:
+        messagebox.showerror("Update Failed", f"Quá trình cập nhật thất bại: {e}")
+
 global_time_sleep = GF.load_global_time_sleep()
 
 # Biến toàn cục để quản lý luồng login
@@ -772,7 +780,10 @@ cancel_button.grid_remove()
 
 # Tạo nút update
 update_app_button = ttk.Button(button_frame, text="Check For Update Auto Login", command=update_app)
-update_app_button.grid(row=1, column=0, columnspan=3, padx=5, pady=10, sticky="ew")
+update_app_button.grid(row=1, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
+
+alway_update_app_button = ttk.Button(button_frame, text="Alway Update", command=alway_update_app)
+alway_update_app_button.grid(row=1, column=2, columnspan=1, padx=5, pady=10, sticky="ew")
 
 # Tạo checkbox
 checkbox = tk.Checkbutton(start_frame, text="Tự động click AutoVLBS", variable=varCheckBox, command=lambda: check_checkbox(varCheckBox))
