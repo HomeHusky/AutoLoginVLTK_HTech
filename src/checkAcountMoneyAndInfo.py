@@ -1,6 +1,7 @@
 from pywinauto import Application
 import json
 import smtplib
+import ssl
 import time
 from datetime import datetime
 from email.mime.text import MIMEText
@@ -123,11 +124,16 @@ def send_email(total_income, low_income_accounts, check_time, kpi_value, car_lis
     part = MIMEText(html_body, "html")
     message.attach(part)
 
-    # Gửi email
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+    # Tạo SSL context không xác thực
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+
+    # Gửi email qua SMTP với SSL không xác thực
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.sendmail(EMAIL_ADDRESS, RECIPIENT_EMAIL, message.as_string())
-
+        
 def load_gom_accounts(filepath = 'accounts.json'):
     with open(os.path.join(GF.join_directory_data(), filepath), 'r', encoding='utf-8') as file:
         data = json.load(file)

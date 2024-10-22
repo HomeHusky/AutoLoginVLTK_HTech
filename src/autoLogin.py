@@ -636,7 +636,7 @@ def test_accounts():
 
 # Tạo cửa sổ giao diện chính
 root = tk.Tk()
-root.title("Auto Login Võ Lâm 1")
+root.title("Auto Login Htechnology")
 root.geometry("850x650")
 root.resizable(False, False)
 
