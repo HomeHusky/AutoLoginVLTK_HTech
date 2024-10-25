@@ -701,7 +701,7 @@ def test_accounts():
 root = tk.Tk()
 root.title("Auto Login Htechnology")
 root.geometry("850x650")
-root.resizable(False, False)
+root.resizable(True, True)
 
 # Tạo biến để lưu trạng thái của checkbox clickAuto
 varCheckBox = tk.IntVar()
