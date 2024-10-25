@@ -246,6 +246,41 @@ def load_to_gui():
 
     # Ràng buộc sự kiện nhấp chuột
     tree_accounts.bind("<Double-1>", on_item_select)
+    
+    def on_heading_click(event):
+        try:
+            # Lấy cột được nhấn (ở đây kiểm tra với cột đầu tiên)
+            region = tree_accounts.identify_region(event.x, event.y)
+            column = tree_accounts.identify_column(event.x)
+            
+            if region == "heading" and column == "#2":  # "#2" là cột thứ hai trong treeview (tính từ 1)
+                for item_id in tree_accounts.get_children():
+                    values = tree_accounts.item(item_id, 'values')
+                    stt = int(values[0]) - 1  # Lấy chỉ số hàng (STT)
+                    
+                    # Lấy thông tin account liên quan
+                    account = data['accounts'][stt]
+                    
+                    # Thay đổi trạng thái của 'is_select' cho tất cả các hàng
+                    account['is_select'] = not account['is_select']
+                    
+                    # Cập nhật hiển thị trong Treeview
+                    is_select_display = "✓" if account['is_select'] else ""
+                    tree_accounts.item(item_id, values=(
+                        values[0],  # STT
+                        is_select_display,  # Cập nhật trạng thái
+                        values[2],  # Username
+                        values[3],  # Ingame
+                        values[4],  # Game Path
+                        values[5],  # Online
+                        values[6],  # Gom Tiền
+                        values[7]   # Xe 2
+                    ))
+        except Exception as e:
+            print("Lỗi double click: ", str(e))
+
+    # Ràng buộc sự kiện nhấp chuột vào heading
+    tree_accounts.bind("<Button-1>", on_heading_click)
 
 # Kiểm tra tài khoản tồn tại
 def check_exist_account(username, gamepath, data):
@@ -513,8 +548,28 @@ def cancel_edit():
     cancel_button.grid_forget()
     edit_button.grid(row=0, column=1, padx=5, pady=10)
 
+def update_selected_accounts():
+    for item_id in tree_accounts.get_children():
+        values = tree_accounts.item(item_id, 'values')
+        
+        # Lấy username và trạng thái is_select từ cột 1 và cột 2
+        username = values[2]  # Cột username (giả định là cột 2)
+        is_select_display = values[1]  # Cột is_select (giả định là cột 1)
+        
+        # Tìm account trong file JSON dựa trên username
+        for account in data['accounts']:
+            if account['username'] == username:
+                # Cập nhật giá trị is_select
+                account['is_select'] = True if is_select_display == "✓" else False
+                break
+
+    with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'w') as f:
+        json.dump(data, f, indent=4)
+
 def start_login(isAutoClickVLBS):
     global login_thread
+
+
 
     # Tạo popup yêu cầu xác nhận
     confirm = messagebox.askyesno(
@@ -812,7 +867,7 @@ tree_frame.pack(padx=5, pady=10, fill="x")
 columns = ("stt", "is_select", "username", "ingame", "game_path", "is_logged_in", "is_gom_tien", "is_xe_2")
 tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=10)
 tree_accounts.heading("stt", text="Stt")  # Cột stt
-tree_accounts.heading("is_select", text="Chọn")  # Cột checkbox
+tree_accounts.heading("is_select", text="Chọn tất cả")  # Cột checkbox
 tree_accounts.heading("username", text="Username")
 tree_accounts.heading("ingame", text="Ingame")
 tree_accounts.heading("game_path", text="Đường dẫn Game")

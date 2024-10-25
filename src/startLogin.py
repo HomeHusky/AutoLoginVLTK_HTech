@@ -155,6 +155,8 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
     sleepTime = load_sleepTime()
     accounts = load_accounts()
     for account in accounts:
+        if account['is_select'] == True:
+            continue
         tryLoginNumber = sleepTime[0]['try_number']
         login_success = 0
         isChangedServer = False
@@ -177,7 +179,7 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
                     login_success = auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, False)
             if i == (tryLoginNumber-1):
                 if login_success != 1:
-                    add_server_fail_value('fail_servers.json', account['auto_update_path'])
+                    # add_server_fail_value('fail_servers.json', account['auto_update_path'])
                     print(f"Server failed for account {account['username']}")
     print("Hoàn thành login!")
     
