@@ -118,8 +118,8 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     if stop_login:
         return  # Kiểm tra cờ dừng
 
-    if isChangeServer:
-        pyautogui.press('down')
+    # if isChangeServer:
+    #     pyautogui.press('down')
 
     pyautogui.press('enter')
     print("Đang đợi server!")
