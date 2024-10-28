@@ -98,7 +98,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         time.sleep(global_time_sleep)
         return 3
     else:
-        GF.activate_window('Vo Lam Truyen Ky')
+        # GF.activate_window('Vo Lam Truyen Ky')
         print("Đã mở game.exe")
         time.sleep(global_time_sleep)
 
