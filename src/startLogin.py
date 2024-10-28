@@ -169,7 +169,7 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
                 if login_success == 2:
                     if not isChangedServer:
                         isChangedServer = True
-                        print(f"Login lần {i+1} và thử đổi server!")
+                        print(f"Login lần {i+1} và thử lại!")
                         login_success = auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, True)
                 elif login_success == 3:
                     print(f"Login lần {i+1} vì trước đó không hiện gamme!")
