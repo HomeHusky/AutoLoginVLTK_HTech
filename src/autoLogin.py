@@ -703,7 +703,7 @@ def test_accounts():
 root = tk.Tk()
 version = get_current_version()
 
-root.title("Auto Login Htechnology - Version: {version}")
+root.title(f"Auto Login Htechnology - {version}")
 root.geometry("850x650")
 root.resizable(True, True)
 
