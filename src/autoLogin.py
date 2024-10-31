@@ -701,7 +701,9 @@ def test_accounts():
 
 # Tạo cửa sổ giao diện chính
 root = tk.Tk()
-root.title("Auto Login Htechnology")
+version = get_current_version()
+
+root.title("Auto Login Htechnology - Version: {version}")
 root.geometry("850x650")
 root.resizable(True, True)
 
