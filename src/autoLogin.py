@@ -704,7 +704,7 @@ root = tk.Tk()
 version = get_current_version()
 
 root.title(f"Auto Login Htechnology - {version}")
-root.geometry("850x650")
+root.geometry("850x650+0+0")
 root.resizable(True, True)
 
 # Tạo biến để lưu trạng thái của checkbox clickAuto

@@ -1,6 +1,9 @@
 @echo off
 SETLOCAL
 
+:: Đặt vị trí cửa sổ CMD ở góc trái dưới cùng
+powershell -command "&{(new-object -comobject shell.application).windows() | where-object { $_.title -eq '' } | foreach-object { $_.left = 0; $_.top = [System.Windows.SystemParameters]::PrimaryScreenHeight - 250 }}"
+
 :: Kiểm tra nếu script đang chạy với quyền quản trị viên
 NET SESSION >nul 2>&1
 IF %ERRORLEVEL% NEQ 0 (
