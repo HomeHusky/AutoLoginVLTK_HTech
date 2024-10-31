@@ -8,6 +8,8 @@ import pyautogui
 import re
 import os
 
+pyautogui.FAILSAFE = False
+
 global_time_sleep = GF.load_global_time_sleep()
 
 def getCheckData(currentAutoName):

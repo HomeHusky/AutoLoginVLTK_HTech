@@ -16,6 +16,8 @@ import zipfile
 import sys
 import shutil
 
+pyautogui.FAILSAFE = False
+
 def get_current_version():
     version_file = "version.txt"
     try:

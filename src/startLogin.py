@@ -8,6 +8,8 @@ import updateIngame
 import GlobalFunction as GF
 import os
 
+pyautogui.FAILSAFE = False
+
 global_time_sleep = GF.load_global_time_sleep()
 
 # Biến cờ để dừng quá trình login

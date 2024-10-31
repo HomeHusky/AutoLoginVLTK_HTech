@@ -5,6 +5,8 @@ import win32con
 import win32gui
 import pyautogui
 
+pyautogui.FAILSAFE = False
+
 def load_global_time_sleep(file_path='accounts.json'):
     with open(os.path.join(join_directory_data(), file_path), 'r') as file:
         data = json.load(file)
