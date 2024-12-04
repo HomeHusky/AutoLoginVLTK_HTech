@@ -7,6 +7,7 @@ import autoClickVLBS
 import updateIngame
 import GlobalFunction as GF
 import os
+from pywinauto.keyboard import send_keys
 
 pyautogui.FAILSAFE = False
 
@@ -100,7 +101,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         time.sleep(global_time_sleep)
         return 3
     else:
-        # GF.activate_window('Vo Lam Truyen Ky')
+        GF.activate_window('Vo Lam Truyen Ky')
         print("Đã mở game.exe")
         time.sleep(global_time_sleep)
 
@@ -116,12 +117,26 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
 
     pyautogui.press('enter')
     time.sleep(global_time_sleep)
+    
 
     if stop_login:
         return  # Kiểm tra cờ dừng
 
     # if isChangeServer:
     #     pyautogui.press('down')
+
+    send_keys("{UP}")
+    send_keys("{UP}")
+    send_keys("{UP}")
+    send_keys("{UP}")
+
+    try:
+        solanxuong = int(account['so_lan_xuong'])
+        for i in range(solanxuong):
+            send_keys("{DOWN}")
+    except Exception as e:
+        send_keys("{DOWN}")
+    
 
     pyautogui.press('enter')
     print("Đang đợi server!")
