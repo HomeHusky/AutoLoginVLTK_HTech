@@ -48,6 +48,7 @@ def run_down_enter(isAutoClickVLBS):
             print("Không tìm thấy bảng!")
         else:
             items = list_control.children(control_type="ListItem")
+            items[0].double_click_input()
             if isAutoClickVLBS:
                 items[0].right_click_input()
                 time.sleep(global_time_sleep)
@@ -55,7 +56,6 @@ def run_down_enter(isAutoClickVLBS):
                 time.sleep(global_time_sleep)
                 send_keys("{ENTER}") 
                 time.sleep(global_time_sleep)
-            items[0].double_click_input()
             time.sleep(global_time_sleep)
     except Exception as e:
         print(f"Lỗi dòng 59 file autoClickVLBS.py: ", e)
