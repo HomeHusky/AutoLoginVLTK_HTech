@@ -150,6 +150,11 @@ except Exception as e:
 # Đường dẫn file JSON
 accounts_file_path = 'accounts.json'
 accounts_money_status = 'accounts_money_status.json'
+servers_path = 'servers.json'
+servers_data = GF.read_config_file(servers_path)
+servers = servers_data['servers']
+folder_game = servers_data['folder_game']
+pass_accounts = []
 
 def run_check_status(tryTest):
     auto_tool_path = START_LOGIN.load_auto_tool_path()
@@ -241,6 +246,11 @@ def load_to_gui():
         
         # Cập nhật hiển thị trong Treeview
         is_select_display = "✓" if account['is_select'] else ""
+        if account['is_select']:
+            pass_accounts.append(account['username'])
+        else:
+            pass_accounts.remove(account['username'])
+        print(pass_accounts)
         tree_accounts.item(selected_item, values=(
             values[0],  # STT
             is_select_display,  # Cập nhật trạng thái
@@ -260,6 +270,7 @@ def load_to_gui():
             # Lấy cột được nhấn (ở đây kiểm tra với cột đầu tiên)
             region = tree_accounts.identify_region(event.x, event.y)
             column = tree_accounts.identify_column(event.x)
+            heading_name = tree_accounts.heading(column)["text"]
             
             if region == "heading" and column == "#2":  # "#2" là cột thứ hai trong treeview (tính từ 1)
                 for item_id in tree_accounts.get_children():
@@ -274,6 +285,11 @@ def load_to_gui():
                     
                     # Cập nhật hiển thị trong Treeview
                     is_select_display = "✓" if account['is_select'] else ""
+                    if account['is_select']:
+                        pass_accounts.append(account['username'])
+                    else:
+                        pass_accounts.remove(account['username'])
+
                     tree_accounts.item(item_id, values=(
                         values[0],  # STT
                         is_select_display,  # Cập nhật trạng thái
@@ -284,6 +300,15 @@ def load_to_gui():
                         values[6],  # Gom Tiền
                         values[7]   # Xe 2
                     ))
+                print(pass_accounts)
+
+            elif region == "heading" and column == "#5":
+                if heading_name == 'Servers':
+                    tree_accounts.heading(column, text='PathGame')
+                    update_server_to_pathgame()
+                else:
+                    tree_accounts.heading(column, text='Servers')
+                    update_pathgame_to_server()
         except Exception as e:
             print("Lỗi double click: ", str(e))
 
@@ -582,6 +607,41 @@ def update_selected_accounts():
     with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'w') as f:
         json.dump(data, f, indent=4)
 
+def update_pathgame_to_server():
+    for child in tree_accounts.get_children():
+        item = tree_accounts.item(child)
+        game_path = item["values"][4]  # Cột game_path
+        server_name = "Lỗi"
+        for server, path in servers.items():
+            if game_path == path:
+                server_name = server
+                break
+        # Cập nhật cột trạng thái (Tên server hoặc lỗi)
+        tree_accounts.set(child, "game_path", server_name)
+
+def update_server_to_pathgame():
+    for child in tree_accounts.get_children():
+        item = tree_accounts.item(child)
+        name = item["values"][4]  # Cột name
+        path_name = "Lỗi"
+        for server, path in servers.items():
+            if name == server:
+                path_name = path
+                break
+        # Cập nhật cột trạng thái (Tên server hoặc lỗi)
+        tree_accounts.set(child, "game_path", path_name)
+
+def update_status_to_logged_in(username):
+    # Duyệt qua tất cả các mục trong Treeview
+    for item in tree_accounts.get_children():
+        # Lấy giá trị của tài khoản
+        account_username = tree_accounts.item(item, "values")[2]
+        
+        # Nếu tên tài khoản trùng với username, cập nhật trạng thái
+        if account_username == username:
+            tree_accounts.set(item, "is_logged_in", "Login(1)")
+            break
+
 def start_login(isAutoClickVLBS):
     global login_thread
 
@@ -597,7 +657,7 @@ def start_login(isAutoClickVLBS):
         try:
             run_check_status(1)
             # Tạo luồng cho quá trình login
-            login_thread = threading.Thread(target=START_LOGIN.runStartLogin, args=(isAutoClickVLBS, on_login_complete, currentAutoName))
+            login_thread = threading.Thread(target=START_LOGIN.runStartLogin, args=(isAutoClickVLBS, on_login_complete, currentAutoName, pass_accounts, on_login_username))
             login_thread.start()  # Bắt đầu luồng login
         except Exception as e:
             messagebox.showerror("Error", f"Không thể bắt đầu quá trình đăng nhập: {e}")
@@ -608,11 +668,16 @@ def start_login(isAutoClickVLBS):
 # Hàm callback
 
 def on_login_complete():
+    pass_accounts.clear()
+    print(pass_accounts)
     run_check_status(1)
     load_to_gui()
     # check_delete_fail_servers()
     messagebox.showinfo("Error", f"Đăng nhập thành công")
 
+def on_login_username(username):
+    update_status_to_logged_in(username)
+    
 def thread_auto_update(auto_update_data, callback):
     global stop_AutoUpdate_event
     for path in auto_update_data['auto_update_paths']:
@@ -718,8 +783,37 @@ root = tk.Tk()
 version = get_current_version()
 
 root.title(f"Auto Login Htechnology - {version}")
-root.geometry("850x650+0+0")
+root.geometry("850x700+0+0")
 root.resizable(True, True)
+
+server_names = list(servers.keys())
+print(server_names)
+
+selected_server = tk.StringVar(value="Chọn server")
+print(selected_server)
+
+def create_server_buttons():
+    # Duyệt qua từng server trong JSON
+    for server_name, path in servers.items():
+
+        server_frame = ttk.LabelFrame(open_game_tab, text=server_name, padding=(10, 5))
+        server_frame.pack(padx=5, pady=10, fill="x")
+
+        # Hiển thị tên server
+        server_label = tk.Label(server_frame, text=server_name, font=("Arial", 10, "bold"))
+        server_label.pack()
+
+        # Hiển thị số tài khoản đã đăng nhập (chưa có nghiệp vụ, sẽ để mặc định là 0)
+        account_label = tk.Label(server_frame, text="Số tài khoản đã đăng nhập: 0", font=("Arial", 9))
+        account_label.pack()
+
+        # Tạo nút "Chạy Auto Update"
+        auto_update_button = tk.Button(server_frame, text="Chạy Auto Update", width=20, command=lambda s=server_name: print(f"Chạy Auto Update cho {s}"))
+        auto_update_button.pack(pady=5)
+
+        # Tạo nút "Chạy Game"
+        game_button = tk.Button(server_frame, text="Chạy Game", width=20, command=lambda s=server_name: print(f"Chạy Game cho {s}"))
+        game_button.pack(pady=5)
 
 # Tạo biến để lưu trạng thái của checkbox clickAuto
 varCheckBox = tk.IntVar()
@@ -761,6 +855,10 @@ account_tab = ttk.Frame(tab_control)
 tab_control.add(account_tab, text="Quản lý Tài khoản")
 
 # Tab Quản lý Đường dẫn
+open_game_tab = ttk.Frame(tab_control)
+tab_control.add(open_game_tab, text="Mở Autologin và game")
+
+# Tab Quản lý Đường dẫn
 path_tab = ttk.Frame(tab_control)
 tab_control.add(path_tab, text="Quản lý Đường dẫn")
 
@@ -800,27 +898,70 @@ entry_password = ttk.Entry(input_frame)
 entry_password.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Nhập Game Path
-ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=1, column=0, padx=5, pady=5)
+ttk.Label(input_frame, text="Server:").grid(row=1, column=0, padx=5, pady=5)
 entry_game_path = ttk.Entry(input_frame)
-entry_game_path.grid(row=1, column=1, columnspan=3, padx=5, pady=5, sticky="ew")
+entry_game_path.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky="ew")
+
+# Tạo Combobox servers
+ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=2, column=0, padx=5, pady=5)
+servers_dropdown = ttk.Combobox(input_frame, textvariable=selected_server, values=server_names, state="readonly")
+servers_dropdown.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
+
+# Hàm cập nhật path
+def update_path():
+
+    def save_servers_data(data):
+        with open(os.path.join(GF.join_directory_config(), servers_path), 'w') as file:
+            json.dump(data, file, ensure_ascii=True, indent=4)
+            print(f"Dữ liệu đã được ghi vào tệp {servers_path}.")
+
+    server = selected_server.get()
+    new_path = entry_game_path.get()
+
+    if server and new_path:
+        # Cập nhật path trong dữ liệu
+        servers[server] = new_path
+        servers_data["servers"] = servers
+
+        # Ghi lại vào file JSON
+        save_servers_data(servers_data)
+        print(f"Path của server '{server}' đã được cập nhật thành:\n{new_path}")
+    else:
+        print("Vui lòng chọn server và nhập đường dẫn mới.")
+
+# Hàm xử lý khi chọn server
+def on_server_select(event):
+    server = selected_server.get()
+    path = servers[server]
+    entry_game_path.insert(0, path)
+    entry_auto_update_path.delete(0, tk.END)
+    entry_auto_update_path.insert(0, path.replace("game.exe", "AutoUpdate.exe"))
+    print(f"Server đã chọn: {server}")
+    print(f"Đường dẫn: {path}")
+
+# Gắn sự kiện
+servers_dropdown.bind("<<ComboboxSelected>>", on_server_select)
 
 # Nhập AutoUpdate Path
-ttk.Label(input_frame, text="Đường dẫn AutoUpdate:").grid(row=2, column=0, padx=5, pady=5)
+ttk.Label(input_frame, text="Đường dẫn AutoUpdate:").grid(row=3, column=0, padx=5, pady=5)
 entry_auto_update_path = ttk.Entry(input_frame)
-entry_auto_update_path.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky="ew")
+entry_auto_update_path.grid(row=3, column=1, columnspan=2, padx=5, pady=5, sticky="ew")
 
 # Nút chọn đường dẫn game
 browse_button = ttk.Button(input_frame, text="Browse", command=browse_game_path)
-browse_button.grid(row=1, column=4, padx=5, pady=5)
+browse_button.grid(row=2, column=4, padx=5, pady=5)
 
-gom_checkbox = tk.Checkbutton(input_frame, text="TK gom vạn", variable=varGomCheckBox, command=lambda: check_checkbox(varGomCheckBox))
-gom_checkbox.grid(row=2, column=4, padx=5, pady=5)
+update_button = ttk.Button(input_frame, text="Update path", command=update_path)
+update_button.grid(row=2, column=5, padx=5, pady=5)
+
+gom_checkbox = tk.Checkbutton(input_frame, text="TK gom", variable=varGomCheckBox, command=lambda: check_checkbox(varGomCheckBox))
+gom_checkbox.grid(row=3, column=3, columnspan=1)
 
 xe_2_checkbox = tk.Checkbutton(input_frame, text="Xe 2", variable=varXe2CheckBox, command=lambda: check_checkbox(varXe2CheckBox))
-xe_2_checkbox.grid(row=2, column=5, padx=5, pady=5)
+xe_2_checkbox.grid(row=3, column=4,columnspan=1)
 
 entry_solanxuong = ttk.Entry(input_frame)
-entry_solanxuong.grid(row=2, column=6, padx=5, pady=5, sticky="ew")
+entry_solanxuong.grid(row=3, column=5, columnspan=1)
 
 # Nút tải dữ liệu
 # load_button = ttk.Button(input_frame, text="Refresh", command=load_to_gui)
@@ -833,10 +974,10 @@ entry_ingame.grid(row=0, column=5, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Frame chứa các nút chức năng
 button_frame = ttk.Frame(input_frame)
-button_frame.grid(row=3, column=0, columnspan=3, pady=10)
+button_frame.grid(row=4, column=0, columnspan=3, pady=10)
 
 start_frame = ttk.LabelFrame(input_frame)
-start_frame.grid(row=3, column=3, columnspan=3, pady=10)
+start_frame.grid(row=4, column=3, columnspan=3, pady=10)
 
 add_button = ttk.Button(button_frame, text="Thêm", command=add_account)
 add_button.grid(row=0, column=0, padx=5, pady=10)
@@ -888,21 +1029,21 @@ tree_frame.pack(padx=5, pady=10, fill="x")
 columns = ("stt", "is_select", "username", "ingame", "game_path", "is_logged_in", "is_gom_tien", "is_xe_2", "so_lan_xuong")
 tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=10)
 tree_accounts.heading("stt", text="Stt")  # Cột stt
-tree_accounts.heading("is_select", text="Chọn tất cả")  # Cột checkbox
+tree_accounts.heading("is_select", text="Bỏ qua")  # Cột checkbox
 tree_accounts.heading("username", text="Username")
 tree_accounts.heading("ingame", text="Ingame")
-tree_accounts.heading("game_path", text="Đường dẫn Game")
+tree_accounts.heading("game_path", text="PathGame")
 tree_accounts.heading("is_logged_in", text="Trạng thái")
 tree_accounts.heading("is_gom_tien", text="Tk gom tiền")
 tree_accounts.heading("is_xe_2", text="Xe 2")
-tree_accounts.heading("so_lan_xuong", text="So lan xuong server")
+tree_accounts.heading("so_lan_xuong", text="Số lần xuống server")
 
 tree_accounts.column("stt", width=30)
 tree_accounts.column("is_select", width=50)
 tree_accounts.column("username", width=100)
 tree_accounts.column("ingame", width=100)
-tree_accounts.column("game_path", width=380)
-tree_accounts.column("is_logged_in", width=40)
+tree_accounts.column("game_path", width=200)
+tree_accounts.column("is_logged_in", width=60)
 tree_accounts.column("is_gom_tien", width=40)
 tree_accounts.column("is_xe_2", width=40)
 tree_accounts.column("so_lan_xuong", width=40)
@@ -1252,6 +1393,6 @@ if currentAutoName != None:
 load_to_gui()
 # except Exception as e:
 #     messagebox.showerror("Error", f"Có lỗi xảy ra dòng 497 autoLogin!")
-
+create_server_buttons()
 # Bắt đầu vòng lặp giao diện
 root.mainloop()

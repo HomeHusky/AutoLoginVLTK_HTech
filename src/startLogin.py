@@ -101,7 +101,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         time.sleep(global_time_sleep)
         return 3
     else:
-        GF.activate_window('Vo Lam Truyen Ky')
+        # GF.activate_window('Vo Lam Truyen Ky')
         print("Đã mở game.exe")
         time.sleep(global_time_sleep)
 
@@ -161,18 +161,20 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         GF.close_application('Vo Lam Truyen Ky')
         return 2
 
-    autoClickVLBS.start_click(currentAutoName, isAutoClickVLBS)
+    if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS):
+        print(f"Account tự tắt sau khi chạy auto")
+        return 4
     print(f"Đã đăng nhập vào tài khoản: {account['username']}")
     return 1
     
-def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
+def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, callback_login):
     global stop_login
     stop_login = False  # Reset cờ dừng khi bắt đầu
     auto_tool_path = load_auto_tool_path()
     sleepTime = load_sleepTime()
     accounts = load_accounts()
     for account in accounts:
-        if account['is_select'] == True:
+        if account['username'] in pass_accounts:
             continue
         tryLoginNumber = sleepTime[0]['try_number']
         login_success = 0
@@ -187,11 +189,18 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName):
                     if not isChangedServer:
                         isChangedServer = True
                         print(f"Login lần {i+1} và thử lại!")
+                        callback_login(account['username'])
                         login_success = auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, True)
                 elif login_success == 3:
                     print(f"Login lần {i+1} vì trước đó không hiện gamme!")
+                    callback_login(account['username'])
+                    login_success = auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, False)
+                elif login_success == 4:
+                    print(f"Login lần {i+1} vì trước đó game tự tắt sau khi chạy auto!")
+                    callback_login(account['username'])
                     login_success = auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, False)
                 else:
+                    callback_login(account['username'])
                     print(f"Login lần {i+1}")
                     login_success = auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, False)
             if i == (tryLoginNumber-1):

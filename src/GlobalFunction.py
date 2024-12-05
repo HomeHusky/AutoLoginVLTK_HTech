@@ -250,6 +250,22 @@ def join_directory_data():
     data_directory = os.path.join(os.path.dirname(__file__), '..\data')
     return data_directory
 
+def read_config_file(file_path):
+    data = None
+    try:
+        with open(os.path.join(join_directory_config(), file_path), 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data
+    except UnicodeDecodeError:
+        with open(os.path.join(join_directory_config(), file_path), 'r', encoding='latin-1') as f:
+            data = json.load(f)
+    
+    return data
+
+def join_directory_config():
+    data_directory = os.path.join(os.path.dirname(__file__), '..\config')
+    return data_directory
+
 # Gọi hàm
 # accounts_file = 'accounts.json'
 # output_file = 'autoUpdate_path.json'

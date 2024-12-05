@@ -7,57 +7,59 @@ import os
 global_time_sleep = GF.load_global_time_sleep()
 
 def getIngame(autoName):
+    try:
+        useAutoVlbs = False
+        inGame = None
+        app = None
+        dlg = None
+        list_control = None
+        # Thử kết nối với từng ứng dụng trong mảng
+        GF.checkBothAutoVlbsAndQuanLyRunning(autoName)
+        if GF.checkWindowRunning(autoName) == 1:
+            useAutoVlbs = True
+            try:
+                # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+                app = Application(backend="uia").connect(title_re=autoName)
 
-    useAutoVlbs = False
-    inGame = None
-    app = None
-    dlg = None
-    list_control = None
-    # Thử kết nối với từng ứng dụng trong mảng
-    GF.checkBothAutoVlbsAndQuanLyRunning(autoName)
-    if GF.checkWindowRunning(autoName) == 1:
-        useAutoVlbs = True
-        try:
+                # Lấy cửa sổ chính của ứng dụng
+                dlg = app.window(title_re=autoName)
+
+            except Exception as e:
+                print("next----------> 1")
+
+        else:
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            app = Application(backend="uia").connect(title_re=autoName)
+            app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
 
             # Lấy cửa sổ chính của ứng dụng
-            dlg = app.window(title_re=autoName)
-
-        except Exception as e:
-            print("next----------> 1")
-
-    else:
-        # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-        app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
-
-        # Lấy cửa sổ chính của ứng dụng
-        dlg = app.window(title_re='^Quan ly nhan vat.*')
-    
-    try:
-        # Tìm danh sách điều khiển
-        list_control = dlg.child_window(control_type="List")
-        inGame = None
-        if not list_control.exists():
-            print("Không tìm thấy bảng!")
-        else:
-            items = list_control.children(control_type="ListItem")
-            print("IngameList: " + items[0].window_text())
-
-            if useAutoVlbs:
-                print("Truong hop 1")
-                inGame = items[0].window_text()  # Lấy văn bản của mục
+            dlg = app.window(title_re='^Quan ly nhan vat.*')
+        
+        try:
+            # Tìm danh sách điều khiển
+            list_control = dlg.child_window(control_type="List")
+            inGame = None
+            if not list_control.exists():
+                print("Không tìm thấy bảng!")
             else:
-                print("Truong hop 2")
-                count = 0
-                for child in items[0].children():
-                    if count == 1: 
-                        inGame = child.window_text()
-                    count += 1
-        time.sleep(global_time_sleep)
-        return inGame
+                items = list_control.children(control_type="ListItem")
+                print("IngameList: " + items[0].window_text())
+
+                if useAutoVlbs:
+                    print("Truong hop 1")
+                    inGame = items[0].window_text()  # Lấy văn bản của mục
+                else:
+                    print("Truong hop 2")
+                    count = 0
+                    for child in items[0].children():
+                        if count == 1: 
+                            inGame = child.window_text()
+                        count += 1
+            time.sleep(global_time_sleep)
+            return inGame
+        except Exception as e:
+            print("Chưa hiển thị autoVLBS")
     except Exception as e:
-        print("Chưa hiển thị autoVLBS")
+        print(f"Lỗi dòng 62 file updateIngame.py: ", e)
         
 def update_ingame(username, ingame_value, json_data):
     # Duyệt qua danh sách tài khoản trong dữ liệu JSON
