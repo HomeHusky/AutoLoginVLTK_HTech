@@ -7,7 +7,7 @@
             "wait_time_server": 8,
             "wait_time_open_trainjx": 3,
             "wait_time_load_autovlbs": 5,
-            "try_number": 2,
+            "try_number": 3,
             "global_time_sleep": 1
         }
     ]
