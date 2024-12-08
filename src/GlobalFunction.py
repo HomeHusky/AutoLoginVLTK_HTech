@@ -266,6 +266,57 @@ def join_directory_config():
     data_directory = os.path.join(os.path.dirname(__file__), '..\config')
     return data_directory
 
+def hideWindow(partial_title):
+    """
+    Hides a window based on a partial title match.
+    
+    Args:
+        partial_title (str): The partial title of the window to hide.
+    """
+    def enum_window_callback(hwnd, titles):
+        window_text = win32gui.GetWindowText(hwnd)
+        if partial_title.lower() in window_text.lower():
+            titles.append(hwnd)
+    
+    try:
+        # Find all windows that match the partial title
+        matching_windows = []
+        win32gui.EnumWindows(enum_window_callback, matching_windows)
+        
+        if matching_windows:
+            for hwnd in matching_windows:
+                win32gui.ShowWindow(hwnd, 0)  # 0 = SW_HIDE (hide the window)
+                print(f"Window '{win32gui.GetWindowText(hwnd)}' has been hidden.")
+        else:
+            print(f"Error: No window with title containing '{partial_title}' found.")
+    except Exception as e:
+        print(f"Error: Could not hide the window with title containing '{partial_title}'. Reason: {e}")
+
+def minimizeWindow(partial_title):
+    """
+    Minimizes a window based on a partial title match.
+    
+    Args:
+        partial_title (str): A part of the title of the window to minimize.
+    """
+    def enum_window_callback(hwnd, titles):
+        window_text = win32gui.GetWindowText(hwnd)
+        if partial_title.lower() in window_text.lower():
+            titles.append(hwnd)
+    
+    try:
+        # Find all windows that match the partial title
+        matching_windows = []
+        win32gui.EnumWindows(enum_window_callback, matching_windows)
+        
+        if matching_windows:
+            for hwnd in matching_windows:
+                win32gui.ShowWindow(hwnd, 6)  # 6 = SW_MINIMIZE (minimize the window)
+                print(f"Window '{win32gui.GetWindowText(hwnd)}' has been minimized.")
+        else:
+            print(f"Error: No window with title containing '{partial_title}' found.")
+    except Exception as e:
+        print(f"Error: Could not minimize the window with title containing '{partial_title}'. Reason: {e}")
 # Gọi hàm
 # accounts_file = 'accounts.json'
 # output_file = 'autoUpdate_path.json'

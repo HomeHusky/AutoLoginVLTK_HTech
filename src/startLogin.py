@@ -181,6 +181,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     return 1
     
 def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, callback_login):
+    GF.minimizeWindow("Auto Login Htech")
     global stop_login
     stop_login = False  # Reset cờ dừng khi bắt đầu
     auto_tool_path = load_auto_tool_path()

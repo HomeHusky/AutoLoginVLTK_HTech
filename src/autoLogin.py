@@ -696,6 +696,7 @@ def start_login(isAutoClickVLBS):
 # Hàm callback
 
 def on_login_complete():
+    # GF.activate_window("Auto Login Htech")
     pass_accounts.clear()
     print(pass_accounts)
     run_check_status(1)
@@ -933,7 +934,11 @@ servers_dropdown = ttk.Combobox(input_frame, textvariable=selected_server, value
 servers_dropdown.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
 
 mo_game_lau_checkbox = tk.Checkbutton(input_frame, text="Server mở game lâu", variable=varMoGameLau, command=lambda: check_checkbox(varMoGameLau))
-mo_game_lau_checkbox.grid(row=1, column=5, columnspan=1)
+mo_game_lau_checkbox.grid(row=1, column=4, columnspan=1)
+
+# Nút chọn đường dẫn game
+hide_game_button = ttk.Button(input_frame, text="Ẩn All game", command=lambda: GF.hideWindow("Vo Lam Truyen Ky"))
+hide_game_button.grid(row=1, column=5, padx=5, pady=5)
 
 # Nhập Game Path
 ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=2, column=0, padx=5, pady=5)
