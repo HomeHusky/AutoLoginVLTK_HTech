@@ -7,8 +7,8 @@ import pyautogui
 
 pyautogui.FAILSAFE = False
 
-def load_global_time_sleep(file_path='accounts.json'):
-    with open(os.path.join(join_directory_data(), file_path), 'r') as file:
+def load_global_time_sleep(file_path='global_time.json'):
+    with open(os.path.join(join_directory_config(), file_path), 'r') as file:
         data = json.load(file)
         return data["sleepTime"][0]["global_time_sleep"]
 

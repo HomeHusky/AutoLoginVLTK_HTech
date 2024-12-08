@@ -32,8 +32,8 @@ def load_auto_tool_path(file_path='accounts.json'):
         data = json.load(file)
         return data['auto_tool_path']
 
-def load_sleepTime(file_path='accounts.json'):
-    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+def load_sleepTime(file_path='global_time.json'):
+    with open(os.path.join(GF.join_directory_config(), file_path), 'r') as file:
         data = json.load(file)
         return data['sleepTime']
 
@@ -89,7 +89,17 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     # path = account['game_path']
     # ctypes.windll.shell32.ShellExecuteW(None, "runas", path, None, None, 1)
 
-    time.sleep(sleepTime[0]['wait_time_open'])
+    # time.sleep(sleepTime[0]['wait_time_open'])
+    try:
+        mo_game_lau = account['mo_game_lau']
+        if mo_game_lau:
+            print(f"Chờ thêm {sleepTime[0]['wait_time_open2']}s vì server này mở game lâu")
+            time.sleep(sleepTime[0]['wait_time_open2'])
+        else:
+            time.sleep(sleepTime[0]['wait_time_open'])
+    except Exception as e:
+        time.sleep(sleepTime[0]['wait_time_open'])
+
 
     isOpenExe = GF.checkWindowRunning('Vo Lam Truyen Ky')
     print('isOpenExe:', isOpenExe)
@@ -108,7 +118,9 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     if stop_login:
         return  # Kiểm tra cờ dừng
 
-    pyautogui.press('enter')
+    pyautogui.click()
+    # pyautogui.press('enter')
+    print("Đã nhấn bắt đầu")
     time.sleep(global_time_sleep)
     
 
@@ -116,6 +128,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         return  # Kiểm tra cờ dừng
 
     pyautogui.press('enter')
+    print("Đã nhấn đồng ý ở lần enter 2")
     time.sleep(global_time_sleep)
     
 

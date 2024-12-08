@@ -179,21 +179,33 @@ def load_data():
         # Nếu file không tồn tại, tạo cấu trúc dữ liệu mặc định
         return {"accounts": [], 
         "autoNames": [ "vocongtruyenky", "congthanhchienxua", "AutoVLBS"],
+        "auto_tool_path": "D:/VoLamTruyenKy/AutoVLBS19/TrainJX.exe"}
+
+def load_global_time():
+    try:
+        return GF.read_config_file('global_time.json')
+    except FileNotFoundError:
+        # Nếu file không tồn tại, tạo cấu trúc dữ liệu mặc định
+        return {
         "sleepTime": [
             {
-                "wait_time_open": 10,
-                "wait_time_load": 8,
-                "wait_time_server": 5,
+                "wait_time_open": 15,
+                "wait_time_open2": 45,
+                "wait_time_load": 2,
+                "wait_time_server": 8,
                 "wait_time_open_trainjx": 3,
-                "wait_time_load_autovlbs": 3,
+                "wait_time_load_autovlbs": 5,
                 "try_number": 3,
-                "global_time_sleep": 2
+                "global_time_sleep": 1
             }
-        ], 
-        "auto_tool_path": "D:/VoLamTruyenKy/AutoVLBS19/TrainJX.exe"}
+        ]}
 
 def save_data(data):
     with open(os.path.join(GF.join_directory_data(), accounts_file_path), 'w') as file:
+        json.dump(data, file, ensure_ascii=True, indent=4)
+
+def save_global_time_data(data):
+    with open(os.path.join(GF.join_directory_config(), 'global_time.json'), 'w') as file:
         json.dump(data, file, ensure_ascii=True, indent=4)
 
 def LoginSuccess():
@@ -352,7 +364,8 @@ def add_account():
         'is_logged_in': False,
         'is_gom_tien': check_checkbox(varGomCheckBox),
         'is_xe_2': check_checkbox(varXe2CheckBox),
-        'so_lan_xuong': solanxuong if solanxuong else 1
+        'so_lan_xuong': solanxuong if solanxuong else 1,
+        'mo_game_lau': check_checkbox(varMoGameLau)
     }
 
     data['accounts'].append(new_account)
@@ -401,6 +414,14 @@ def edit_account():
             xe_2_checkbox.select()  # Tự động tick
         else:
             xe_2_checkbox.deselect()
+        
+        try:
+            if data['accounts'][index]['mo_game_lau'] == 1:
+                mo_game_lau_checkbox.select()  # Tự động tick
+            else:
+                mo_game_lau_checkbox.deselect()
+        except Exception as e:
+                mo_game_lau_checkbox.deselect()
 
         entry_solanxuong.insert(0, values[8])
         
@@ -437,6 +458,7 @@ def update_account():
             'is_gom_tien': check_checkbox(varGomCheckBox),
             'is_xe_2': check_checkbox(varXe2CheckBox),
             'so_lan_xuong': entry_solanxuong.get(),
+            'mo_game_lau': check_checkbox(varMoGameLau)
         }
 
         save_data(data)
@@ -507,6 +529,7 @@ def browse_auto_path():
 
 def load_auto_data():
     data = load_data()
+    global_time_data = load_global_time()
     entry_auto_path.delete(0, tk.END)
     entry_auto_path.insert(0, data.get('auto_tool_path', ''))
     ttk.Label(auto_frame, text="Tên auto:").grid(row=1, column=0, padx=5, pady=5)
@@ -517,9 +540,10 @@ def load_auto_data():
         entry_game_name.insert(0, auto)
     
     # Hiển thị thời gian sleepTime
-    sleep_times = data.get('sleepTime', [])
+    sleep_times = global_time_data.get('sleepTime', [])
     if sleep_times:
         entry_wait_game_open.delete(0, tk.END)
+        entry_wait_game_open2.delete(0, tk.END)
         entry_wait_character_open.delete(0, tk.END)
         entry_wait_server_open.delete(0, tk.END)
         entry_wait_time_trainjx_open.delete(0, tk.END)
@@ -528,6 +552,7 @@ def load_auto_data():
         entry_global_time_sleep.delete(0, tk.END)
 
         entry_wait_game_open.insert(0, sleep_times[0]['wait_time_open'])
+        entry_wait_game_open2.insert(0, sleep_times[0]['wait_time_open2'])
         entry_wait_character_open.insert(0, sleep_times[0]['wait_time_load'])
         entry_wait_server_open.insert(0, sleep_times[0]['wait_time_server'])
         entry_wait_time_trainjx_open.insert(0, sleep_times[0]['wait_time_open_trainjx'])
@@ -541,7 +566,7 @@ def reload_auto_data_to_global_variable():
 
 def save_auto_data():
     data = load_data()
-
+    global_time_data = load_global_time()
     # Lưu đường dẫn tool auto
     data['auto_tool_path'] = entry_auto_path.get().strip()
 
@@ -554,6 +579,7 @@ def save_auto_data():
 
     # Lưu thời gian auto
     wait_time_open = entry_wait_game_open.get().strip()
+    wait_time_open2 = entry_wait_game_open2.get().strip()    
     wait_time_load = entry_wait_character_open.get().strip()
     wait_time_server = entry_wait_server_open.get().strip()
     wait_time_open_trainjx = entry_wait_time_trainjx_open.get().strip()
@@ -561,10 +587,11 @@ def save_auto_data():
     try_number = entry_try_number.get().strip()
     edit_global_time_sleep = entry_global_time_sleep.get().strip()
 
-    data['sleepTime'] = [{
-        'wait_time_open': int(wait_time_open) if wait_time_open.isdigit() else 10,
-        'wait_time_load': int(wait_time_load) if wait_time_load.isdigit() else 5,
-        'wait_time_server': int(wait_time_server) if wait_time_server.isdigit() else 2,
+    global_time_data['sleepTime'] = [{
+        'wait_time_open': int(wait_time_open) if wait_time_open.isdigit() else 12,
+        'wait_time_open2': int(wait_time_open2) if wait_time_open2.isdigit() else 45,
+        'wait_time_load': int(wait_time_load) if wait_time_load.isdigit() else 2,
+        'wait_time_server': int(wait_time_server) if wait_time_server.isdigit() else 8,
         'wait_time_open_trainjx': int(wait_time_open_trainjx) if wait_time_open_trainjx.isdigit() else 2,
         'wait_time_load_autovlbs': int(wait_time_load_autovlbs) if wait_time_load_autovlbs.isdigit() else 3,
         'try_number': int(try_number) if try_number.isdigit() else 3,
@@ -573,6 +600,7 @@ def save_auto_data():
 
     # Lưu dữ liệu vào file JSON
     save_data(data)
+    save_global_time_data(global_time_data)
     reload_auto_data_to_global_variable()
     messagebox.showinfo("Success", "Đã lưu thành công dữ liệu Auto Tool!")
 
@@ -819,6 +847,7 @@ def create_server_buttons():
 varCheckBox = tk.IntVar()
 varGomCheckBox = tk.IntVar()
 varXe2CheckBox = tk.IntVar()
+varMoGameLau = tk.IntVar()
 
 def check_checkbox(var):
     # So sánh giá trị của var (IntVar) với 1 và trả về 0 hoặc 1
@@ -897,15 +926,21 @@ ttk.Label(input_frame, text="Password:").grid(row=0, column=2, padx=5, pady=5)
 entry_password = ttk.Entry(input_frame)
 entry_password.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
 
-# Nhập Game Path
+# Nhập Server
 ttk.Label(input_frame, text="Server:").grid(row=1, column=0, padx=5, pady=5)
+# Tạo Combobox servers
+servers_dropdown = ttk.Combobox(input_frame, textvariable=selected_server, values=server_names, state="readonly")
+servers_dropdown.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
+
+mo_game_lau_checkbox = tk.Checkbutton(input_frame, text="Server mở game lâu", variable=varMoGameLau, command=lambda: check_checkbox(varMoGameLau))
+mo_game_lau_checkbox.grid(row=1, column=5, columnspan=1)
+
+# Nhập Game Path
+ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=2, column=0, padx=5, pady=5)
 entry_game_path = ttk.Entry(input_frame)
 entry_game_path.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky="ew")
 
-# Tạo Combobox servers
-ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=2, column=0, padx=5, pady=5)
-servers_dropdown = ttk.Combobox(input_frame, textvariable=selected_server, values=server_names, state="readonly")
-servers_dropdown.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
+
 
 # Hàm cập nhật path
 def update_path():
@@ -1080,33 +1115,37 @@ ttk.Label(auto_frame, text="Thời gian load game (s):").grid(row=4, column=0, p
 entry_wait_game_open = ttk.Entry(auto_frame)
 entry_wait_game_open.grid(row=4, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
-ttk.Label(auto_frame, text="Thời gian load nhân vật (s):").grid(row=5, column=0, padx=5, pady=5)
+ttk.Label(auto_frame, text="Thời gian load game nếu game mở lâu (s):").grid(row=5, column=0, padx=5, pady=5)
+entry_wait_game_open2 = ttk.Entry(auto_frame)
+entry_wait_game_open2.grid(row=5, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+
+ttk.Label(auto_frame, text="Thời gian load nhân vật (s):").grid(row=6, column=0, padx=5, pady=5)
 entry_wait_character_open = ttk.Entry(auto_frame)
-entry_wait_character_open.grid(row=5, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_wait_character_open.grid(row=6, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
-ttk.Label(auto_frame, text="Thời gian load server (s):").grid(row=6, column=0, padx=5, pady=5)
+ttk.Label(auto_frame, text="Thời gian load server (s):").grid(row=7, column=0, padx=5, pady=5)
 entry_wait_server_open = ttk.Entry(auto_frame)
-entry_wait_server_open.grid(row=6, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_wait_server_open.grid(row=7, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
-ttk.Label(auto_frame, text="Thời gian load TrainJX (s):").grid(row=7, column=0, padx=5, pady=5)
+ttk.Label(auto_frame, text="Thời gian load TrainJX (s):").grid(row=8, column=0, padx=5, pady=5)
 entry_wait_time_trainjx_open = ttk.Entry(auto_frame)
-entry_wait_time_trainjx_open.grid(row=7, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_wait_time_trainjx_open.grid(row=8, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
-ttk.Label(auto_frame, text="Thời gian load AutoVLBS (s):").grid(row=8, column=0, padx=5, pady=5)
+ttk.Label(auto_frame, text="Thời gian load AutoVLBS (s):").grid(row=9, column=0, padx=5, pady=5)
 entry_wait_time_autovlbs_open = ttk.Entry(auto_frame)
-entry_wait_time_autovlbs_open.grid(row=8, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_wait_time_autovlbs_open.grid(row=9, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
-ttk.Label(auto_frame, text="Số lần thử lại:").grid(row=9, column=0, padx=5, pady=5)
+ttk.Label(auto_frame, text="Số lần thử lại:").grid(row=10, column=0, padx=5, pady=5)
 entry_try_number = ttk.Entry(auto_frame)
-entry_try_number.grid(row=9, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_try_number.grid(row=10, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
-ttk.Label(auto_frame, text="Chờ cục bộ (0.5 hoặc 1 nếu máy nhanh):").grid(row=10, column=0, padx=5, pady=5)
+ttk.Label(auto_frame, text="Chờ cục bộ (0.5 hoặc 1 nếu máy nhanh):").grid(row=11, column=0, padx=5, pady=5)
 entry_global_time_sleep = ttk.Entry(auto_frame)
-entry_global_time_sleep.grid(row=10, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_global_time_sleep.grid(row=11, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
      
 # Lưu dữ liệu đường dẫn auto
 save_button = ttk.Button(auto_frame, text="Lưu Cài đặt", command=save_auto_data)
-save_button.grid(row=11, column=5, padx=5, pady=5)
+save_button.grid(row=12, column=5, padx=5, pady=5)
 
 # Cấu hình lưới để mở rộng đúng cách
 root.grid_rowconfigure(2, weight=1)
