@@ -189,7 +189,7 @@ def close_visible_vltk_app():
         try:
             backend = get_backend()
             print(f"Đang kết nối với hwnd: {popup_hwnd} bằng backend: {backend}")
-            app = Application(backend=backend).connect(handle=popup_hwnd)
+            app = Application(backend="uia").connect(handle=popup_hwnd)
             popup = app.window(handle=popup_hwnd)
             
             # Kiểm tra nếu message là 'Ban muon thoat khoi Vo Lam Truyen Ky?'

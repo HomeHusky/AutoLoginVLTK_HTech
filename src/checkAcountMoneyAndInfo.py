@@ -154,7 +154,7 @@ def load_xe_2_accounts(filepath = 'accounts.json'):
 
 def run_right_click(name):
     backend = GF.get_backend()
-    list_control = Application(backend=backend).connect(title_re=name).window(title_re=name).child_window(control_type="List")
+    list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
     if not list_control.exists():
         print("Không tìm thấy bảng!")
     else:
@@ -172,7 +172,7 @@ def run_update_accounts_money(name, gom_accounts):
         try:
             print(f"Thử kết nối lần {attempt + 1}...")
             backend = GF.get_backend()
-            list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
+            list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
             print("Kết nối thành công!")
             break  # Nếu kết nối thành công, thoát vòng lặp
         except Exception as e:
