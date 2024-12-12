@@ -12,47 +12,56 @@ pyautogui.FAILSAFE = False
 
 global_time_sleep = GF.load_global_time_sleep()
 
+def get_dlg(currentAutoName, backend):
+    if GF.checkQuanlynhanvat():
+        # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+        list_control = None
+        for attempt in range(3):
+            try:
+                print(f"Thử kết nối lần {attempt + 1}...")
+                
+                list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
+                print("Kết nối thành công!")
+                break  # Nếu kết nối thành công, thoát vòng lặp
+            except Exception as e:
+                print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
+                time.sleep(1)  # Đợi 1 giây trước khi thử lại
+        # Lấy cửa sổ chính của ứng dụng
+        dlg = list_control.window(title_re='^Quan ly nhan vat.*')
+    elif GF.checkWindowRunning(currentAutoName) == 1:
+        useAutoVLBS = True
+        # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+        app = Application(backend=backend).connect(title_re=currentAutoName)
+
+        # Lấy cửa sổ chính của ứng dụng
+        dlg = app.window(title_re=currentAutoName)
+    elif GF.checkWindowRunning(currentAutoName) == 2:
+        GF.show_application(currentAutoName)
+        useAutoVLBS = True
+        # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+        app = Application(backend=backend).connect(title_re=currentAutoName)
+
+        # Lấy cửa sổ chính của ứng dụng
+        dlg = app.window(title_re=currentAutoName)
+    return dlg
+
 def getCheckData(currentAutoName):
     backend = None
     backend = GF.get_backend()
     useAutoVLBS = None
+    list_control = None
     GF.checkBothAutoVlbsAndQuanLyRunning(currentAutoName)
     print("18_checkStatusAcounts.py: ", currentAutoName)
     try:
-        if GF.checkQuanlynhanvat():
-            # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            list_control = None
-            for attempt in range(3):
-                try:
-                    print(f"Thử kết nối lần {attempt + 1}...")
-                    
-                    list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
-                    print("Kết nối thành công!")
-                    break  # Nếu kết nối thành công, thoát vòng lặp
-                except Exception as e:
-                    print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
-                    time.sleep(1)  # Đợi 1 giây trước khi thử lại
-            # Lấy cửa sổ chính của ứng dụng
-            dlg = list_control.window(title_re='^Quan ly nhan vat.*')
-        elif GF.checkWindowRunning(currentAutoName) == 1:
-            useAutoVLBS = True
-            # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            app = Application(backend=backend).connect(title_re=currentAutoName)
-
-            # Lấy cửa sổ chính của ứng dụng
-            dlg = app.window(title_re=currentAutoName)
-        elif GF.checkWindowRunning(currentAutoName) == 2:
-            GF.show_application(currentAutoName)
-            useAutoVLBS = True
-            # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            app = Application(backend=backend).connect(title_re=currentAutoName)
-
-            # Lấy cửa sổ chính của ứng dụng
-            dlg = app.window(title_re=currentAutoName)
-
         # Tìm danh sách điều khiển
+        dlg = get_dlg(currentAutoName, backend)
         list_control = dlg.child_window(control_type="List")
-
+        if not list_control.exists():
+            try: 
+                dlg = get_dlg(currentAutoName, "uia")
+                list_control = dlg.child_window(control_type="List")
+            except Exception as e:
+                print("Error as line 64:", e)
         if not list_control.exists():
             print("Không tìm thấy bảng!")
             return []
