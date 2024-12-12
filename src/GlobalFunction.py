@@ -292,13 +292,18 @@ def copy_auto_update_path_to_auto_update_path(json_path_accounts = 'accounts.jso
     
     # Lấy danh sách server_fail hiện tại
     server_fail_list = fail_data.get("auto_update_paths", [])
+    server_online = []
     
     # Duyệt qua từng account và thêm auto_update_path nếu chưa có
     for account in data["accounts"]:
         auto_update_path = account.get("auto_update_path")
-        if auto_update_path and auto_update_path not in server_fail_list:
-            server_fail_list.append(auto_update_path)
-    
+        isOnline = account.get("is_logged_in")
+        if isOnline == False:
+            if auto_update_path not in server_online:
+                if auto_update_path and auto_update_path not in server_fail_list:
+                    server_fail_list.append(auto_update_path)
+        else:
+            server_online.append(auto_update_path)
     # Cập nhật lại fail_server.json
     fail_data["auto_update_paths"] = server_fail_list
     with open(os.path.join(join_directory_data(), json_path_fail), 'w', encoding='utf-8') as fail_file:
