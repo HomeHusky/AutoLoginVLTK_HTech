@@ -13,8 +13,6 @@ pyautogui.FAILSAFE = False
 global_time_sleep = GF.load_global_time_sleep()
 
 def getCheckData(currentAutoName):
-    backend = GF.get_backend()
-    print("backend: ", backend)
     useAutoVLBS = None
     GF.checkBothAutoVlbsAndQuanLyRunning(currentAutoName)
     try:
@@ -24,7 +22,7 @@ def getCheckData(currentAutoName):
             for attempt in range(3):
                 try:
                     print(f"Thử kết nối lần {attempt + 1}...")
-                    
+                    backend = GF.get_backend()
                     list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
                     print("Kết nối thành công!")
                     break  # Nếu kết nối thành công, thoát vòng lặp
@@ -36,6 +34,7 @@ def getCheckData(currentAutoName):
         elif GF.checkWindowRunning(currentAutoName) == 1:
             useAutoVLBS = True
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+            backend = GF.get_backend()
             app = Application(backend=backend).connect(title_re=currentAutoName)
 
             # Lấy cửa sổ chính của ứng dụng
@@ -44,6 +43,7 @@ def getCheckData(currentAutoName):
             GF.show_application(currentAutoName)
             useAutoVLBS = True
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
+            backend = GF.get_backend()
             app = Application(backend=backend).connect(title_re=currentAutoName)
 
             # Lấy cửa sổ chính của ứng dụng
