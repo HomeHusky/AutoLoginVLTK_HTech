@@ -55,7 +55,7 @@ def getCheckData(currentAutoName):
 
         if not list_control.exists():
             print("Không tìm thấy bảng!")
-            return None
+            return []
         else:
             items = list_control.children(control_type="ListItem")
             data = []
