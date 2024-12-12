@@ -81,14 +81,14 @@ def getCheckData(currentAutoName):
 
 def update_login_status(json_data, checkData):
     for account in json_data['accounts']:
-        try:
+        # try:
             print("Account:", account)
             if account['ingame'] in checkData:
                 account['is_logged_in'] = True
             else:
                 account['is_logged_in'] = False
-        except Exception as e:
-            print("Error line 91 checkStatusAccounts.py:", e)
+        # except Exception as e:
+        #     print("Error line 91 checkStatusAccounts.py:", e)
     return json_data
 
 def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
