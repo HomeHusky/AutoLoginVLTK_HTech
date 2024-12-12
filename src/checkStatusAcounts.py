@@ -58,6 +58,7 @@ def getCheckData(currentAutoName):
         list_control = dlg.child_window(control_type="List")
         if not list_control.exists():
             try: 
+                print("Retry with backend uia!")
                 dlg = get_dlg(currentAutoName, "uia")
                 list_control = dlg.child_window(control_type="List")
             except Exception as e:
