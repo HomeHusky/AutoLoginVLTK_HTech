@@ -14,6 +14,7 @@ global_time_sleep = GF.load_global_time_sleep()
 
 def getCheckData(currentAutoName):
     backend = GF.get_backend()
+    print("backend: ", backend)
     useAutoVLBS = None
     GF.checkBothAutoVlbsAndQuanLyRunning(currentAutoName)
     try:
