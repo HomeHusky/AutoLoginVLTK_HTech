@@ -15,6 +15,7 @@ global_time_sleep = GF.load_global_time_sleep()
 def getCheckData(currentAutoName):
     useAutoVLBS = None
     GF.checkBothAutoVlbsAndQuanLyRunning(currentAutoName)
+    print("18_checkStatusAcounts.py: ", currentAutoName)
     try:
         if GF.checkQuanlynhanvat():
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
