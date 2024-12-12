@@ -174,7 +174,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         print(f"Có lỗi khi đăng nhập 2: {account['username']}")
         # GF.close_application('Vo Lam Truyen Ky')
         GF.close_visible_vltk_app()
-        pyautogui.press('enter')
+        # pyautogui.press('enter')
         return 2
 
     if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS):

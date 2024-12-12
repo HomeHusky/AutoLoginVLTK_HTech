@@ -2,6 +2,12 @@ import win32gui
 import win32con
 import re
 import ctypes
+import time
+import platform
+from pywinauto import Application
+import pyautogui
+
+pyautogui.FAILSAFE = False
 
 # Hằng số cho ListView Messages
 LVM_GETITEMCOUNT = 0x1004
@@ -85,30 +91,119 @@ def get_listbox_data_from_window(window_title):
     items = get_list_items(list_control_hwnd)
     return items
 
-def close_visible_vltk_app():
-    """
-    Đóng các cửa sổ Võ Lâm Truyền Kỳ đang hiển thị, giữ nguyên các cửa sổ ẩn.
-    """
-    try:
-        def enum_window_callback(hwnd, window_list):
-            """Hàm callback để liệt kê các cửa sổ đang chạy."""
-            title = win32gui.GetWindowText(hwnd)
-            if re.search(r'Vo Lam Truyen Ky', title, re.IGNORECASE):
-                window_list.append((hwnd, title))
-        
-        # Danh sách các cửa sổ khớp với "Vo Lam Truyen Ky"
-        windows = []
-        win32gui.EnumWindows(enum_window_callback, windows)
-        
-        for hwnd, title in windows:
-            # Kiểm tra nếu cửa sổ đang hiển thị (visible)
-            if win32gui.IsWindowVisible(hwnd):
-                print(f"Đóng cửa sổ: {title}")
-                win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
-    
-    except Exception as e:
-        print(f"Lỗi: {e}")
+def is_window_visible(hwnd):
+    """Kiểm tra xem cửa sổ có hiển thị hay không."""
+    return win32gui.IsWindowVisible(hwnd)
 
+def get_backend():
+    """Xác định backend dựa trên kiến trúc hệ thống (32-bit hoặc 64-bit)."""
+    architecture = platform.architecture()[0]
+    print(f"Hệ thống đang chạy trên kiến trúc: {architecture}")
+    return "win32" if architecture == "32bit" else "uia"
+
+def get_visible_vo_lam_windows():
+    """Lấy danh sách hwnd của tất cả các cửa sổ 'Vo Lam Truyen Ky' đang hiển thị."""
+    hwnds = []
+
+    def enum_windows_callback(hwnd, extra):
+        if "Vo Lam Truyen Ky" in win32gui.GetWindowText(hwnd) and is_window_visible(hwnd):
+            hwnds.append(hwnd)
+
+    win32gui.EnumWindows(enum_windows_callback, None)
+    return hwnds
+
+def get_child_window_text(hwnd):
+    """Lấy nội dung của các cửa sổ con (child controls) của cửa sổ popup."""
+    texts = []
+
+    def enum_child_windows_callback(child_hwnd, extra):
+        text = win32gui.GetWindowText(child_hwnd)
+        if text:  # Nếu text không rỗng
+            texts.append(text)
+
+    win32gui.EnumChildWindows(hwnd, enum_child_windows_callback, None)
+    return texts
+
+# Ban muon thoat khoi Vo Lam Truyen Ky?
+# def close_visible_vltk_app():
+#     """
+#     Đóng các cửa sổ Võ Lâm Truyền Kỳ đang hiển thị, giữ nguyên các cửa sổ ẩn.
+#     """
+#     try:
+#         def enum_window_callback(hwnd, window_list):
+#             """Hàm callback để liệt kê các cửa sổ đang chạy."""
+#             title = win32gui.GetWindowText(hwnd)
+#             if re.search(r'Vo Lam Truyen Ky', title, re.IGNORECASE):
+#                 window_list.append((hwnd, title))
+        
+#         # Danh sách các cửa sổ khớp với "Vo Lam Truyen Ky"
+#         windows = []
+#         win32gui.EnumWindows(enum_window_callback, windows)
+        
+#         for hwnd, title in windows:
+#             # Kiểm tra nếu cửa sổ đang hiển thị (visible)
+#             if win32gui.IsWindowVisible(hwnd):
+#                 print(f"Đóng cửa sổ: {title}")
+#                 win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+
+#                 # time.sleep(2)
+
+#                 # pyautogui.press('enter')
+    
+#     except Exception as e:
+#         print(f"Lỗi: {e}")
+
+def close_visible_vltk_app():
+    """Đóng cửa sổ 'Vo Lam Truyen Ky' đang hiển thị và xử lý popup xác nhận."""
+    # Bước 1: Lấy danh sách hwnd của cửa sổ chính 'Vo Lam Truyen Ky' đang hiển thị
+    initial_hwnds = get_visible_vo_lam_windows()
+    if not initial_hwnds:
+        print("Không tìm thấy cửa sổ hiển thị nào có tiêu đề 'Vo Lam Truyen Ky'.")
+        return
+    
+    print(f"Danh sách hwnd của cửa sổ chính trước khi đóng: {initial_hwnds}")
+
+    # Bước 2: Đóng tất cả các cửa sổ chính 'Vo Lam Truyen Ky'
+    for hwnd in initial_hwnds:
+        print(f"Đang đóng cửa sổ chính với hwnd: {hwnd}")
+        win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+        print("Parents: ", get_child_window_text(hwnd))
+    
+    # Đợi để cửa sổ chính đóng và popup xuất hiện
+    time.sleep(2)  # Chờ 2 giây để popup xuất hiện
+
+    # Bước 3: Lấy lại danh sách hwnd của tất cả các cửa sổ 'Vo Lam Truyen Ky' hiện tại
+    current_hwnds = get_visible_vo_lam_windows()
+    print(f"Danh sách hwnd của tất cả các cửa sổ sau khi đóng: {current_hwnds}")
+
+    # Bước 4: Lọc các hwnd của popup (cửa sổ mới, không có trong danh sách ban đầu)
+    popup_hwnds = [hwnd for hwnd in current_hwnds if hwnd not in initial_hwnds]
+    if not popup_hwnds:
+        print("Không tìm thấy popup xác nhận nào.")
+        return
+    
+    print(f"Danh sách hwnd của popup mới xuất hiện: {popup_hwnds}")
+
+    # Bước 5: Xử lý popup xác nhận, tự động nhấn Yes nếu tìm thấy
+    for popup_hwnd in popup_hwnds:
+        try:
+            backend = get_backend()
+            print(f"Đang kết nối với hwnd: {popup_hwnd} bằng backend: {backend}")
+            app = Application(backend=backend).connect(handle=popup_hwnd)
+            popup = app.window(handle=popup_hwnd)
+            
+            # Kiểm tra nếu message là 'Ban muon thoat khoi Vo Lam Truyen Ky?'
+            texts = get_child_window_text(popup_hwnd)
+            print("Texts: ", texts==['&Yes', '&No', 'Ban muon thoat  khoi Vo Lam Truyen Ky?'])
+
+            if texts==['&Yes', '&No', 'Ban muon thoat  khoi Vo Lam Truyen Ky?']:
+                print(f"Tìm thấy popup xác nhận. Chọn 'Yes' cho hwnd: {popup_hwnd}")
+                yes_button = popup.child_window(title="Yes", control_type="Button")
+                yes_button.click()
+            else:
+                print(f"Nội dung của popup không khớp.")
+        except Exception as e:
+            print(f"Không thể xử lý popup với hwnd {popup_hwnd}: {e}")
 # Ví dụ sử dụng
 window_title = "vocongtruyenky.net"
 # items = get_listbox_data_from_window(window_title)

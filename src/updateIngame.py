@@ -15,11 +15,12 @@ def getIngame(autoName):
         list_control = None
         # Thử kết nối với từng ứng dụng trong mảng
         GF.checkBothAutoVlbsAndQuanLyRunning(autoName)
+        backend = GF.get_backend()
         if GF.checkWindowRunning(autoName) == 1:
             useAutoVlbs = True
             try:
                 # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-                app = Application(backend="uia").connect(title_re=autoName)
+                app = Application(backend=backend).connect(title_re=autoName)
 
                 # Lấy cửa sổ chính của ứng dụng
                 dlg = app.window(title_re=autoName)
@@ -31,7 +32,7 @@ def getIngame(autoName):
             for attempt in range(3):
                 try:
                     print(f"Thử kết nối lần {attempt + 1}...")
-                    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+                    list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
                     print("Kết nối thành công!")
                     break  # Nếu kết nối thành công, thoát vòng lặp
                 except Exception as e:
