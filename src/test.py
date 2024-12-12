@@ -1,4 +1,6 @@
 import win32gui
+import win32con
+import re
 import ctypes
 
 # Hằng số cho ListView Messages
@@ -83,7 +85,33 @@ def get_listbox_data_from_window(window_title):
     items = get_list_items(list_control_hwnd)
     return items
 
+def close_visible_vltk_app():
+    """
+    Đóng các cửa sổ Võ Lâm Truyền Kỳ đang hiển thị, giữ nguyên các cửa sổ ẩn.
+    """
+    try:
+        def enum_window_callback(hwnd, window_list):
+            """Hàm callback để liệt kê các cửa sổ đang chạy."""
+            title = win32gui.GetWindowText(hwnd)
+            if re.search(r'Vo Lam Truyen Ky', title, re.IGNORECASE):
+                window_list.append((hwnd, title))
+        
+        # Danh sách các cửa sổ khớp với "Vo Lam Truyen Ky"
+        windows = []
+        win32gui.EnumWindows(enum_window_callback, windows)
+        
+        for hwnd, title in windows:
+            # Kiểm tra nếu cửa sổ đang hiển thị (visible)
+            if win32gui.IsWindowVisible(hwnd):
+                print(f"Đóng cửa sổ: {title}")
+                win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+    
+    except Exception as e:
+        print(f"Lỗi: {e}")
+
 # Ví dụ sử dụng
 window_title = "vocongtruyenky.net"
-items = get_listbox_data_from_window(window_title)
-print("Các mục trong List:", items)
+# items = get_listbox_data_from_window(window_title)
+# print("Các mục trong List:", items)
+if __name__ == "__main__":
+    close_visible_vltk_app()

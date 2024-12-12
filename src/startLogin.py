@@ -106,7 +106,8 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     time.sleep(global_time_sleep)
 
     if isOpenExe == 0:
-        GF.close_application('Vo Lam Truyen Ky')
+        # GF.close_application('Vo Lam Truyen Ky')
+        GF.close_visible_vltk_app()
         pyautogui.press('enter')
         time.sleep(global_time_sleep)
         return 3
@@ -171,7 +172,9 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     InGameName = updateIngame.check_valid_ingame_value(account['username'], currentAutoName)
     if InGameName == False:
         print(f"Có lỗi khi đăng nhập 2: {account['username']}")
-        GF.close_application('Vo Lam Truyen Ky')
+        # GF.close_application('Vo Lam Truyen Ky')
+        GF.close_visible_vltk_app()
+        pyautogui.press('enter')
         return 2
 
     if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS):

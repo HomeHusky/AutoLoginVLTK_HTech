@@ -166,7 +166,16 @@ def run_right_click(name):
     time.sleep(1)
 
 def run_update_accounts_money(name, gom_accounts):
-    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
+    list_control = None
+    for attempt in range(3):
+        try:
+            print(f"Thử kết nối lần {attempt + 1}...")
+            list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
+            print("Kết nối thành công!")
+            break  # Nếu kết nối thành công, thoát vòng lặp
+        except Exception as e:
+            print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
+            time.sleep(1)  # Đợi 1 giây trước khi thử lại
 
     items = list_control.children(control_type="ListItem")
 

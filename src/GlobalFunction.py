@@ -2,8 +2,10 @@ import os
 import json
 import win32api
 import win32con
+import re
 import win32gui
 import pyautogui
+from pywinauto import Application
 
 pyautogui.FAILSAFE = False
 
@@ -157,6 +159,30 @@ def close_application(app_name):
             print(f"Không thể đóng cửa sổ: {win32gui.GetWindowText(hwnd)} - Lỗi: {e}")
     
     return False
+
+def close_visible_vltk_app():
+    """
+    Đóng các cửa sổ Võ Lâm Truyền Kỳ đang hiển thị, giữ nguyên các cửa sổ ẩn.
+    """
+    try:
+        def enum_window_callback(hwnd, window_list):
+            """Hàm callback để liệt kê các cửa sổ đang chạy."""
+            title = win32gui.GetWindowText(hwnd)
+            if re.search(r'Vo Lam Truyen Ky', title, re.IGNORECASE):
+                window_list.append((hwnd, title))
+        
+        # Danh sách các cửa sổ khớp với "Vo Lam Truyen Ky"
+        windows = []
+        win32gui.EnumWindows(enum_window_callback, windows)
+        
+        for hwnd, title in windows:
+            # Kiểm tra nếu cửa sổ đang hiển thị (visible)
+            if win32gui.IsWindowVisible(hwnd):
+                print(f"Đóng cửa sổ: {title}")
+                win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+    
+    except Exception as e:
+        print(f"Lỗi: {e}")
 
 def show_application(window_name):
     try:

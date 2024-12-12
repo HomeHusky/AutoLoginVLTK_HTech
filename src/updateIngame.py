@@ -28,11 +28,19 @@ def getIngame(autoName):
                 print("next----------> 1")
 
         else:
+            for attempt in range(3):
+                try:
+                    print(f"Thử kết nối lần {attempt + 1}...")
+                    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+                    print("Kết nối thành công!")
+                    break  # Nếu kết nối thành công, thoát vòng lặp
+                except Exception as e:
+                    print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
+                    time.sleep(1)  # Đợi 1 giây trước khi thử lại
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
 
             # Lấy cửa sổ chính của ứng dụng
-            dlg = app.window(title_re='^Quan ly nhan vat.*')
+            dlg = list_control.window(title_re='^Quan ly nhan vat.*')
         
         try:
             # Tìm danh sách điều khiển
