@@ -88,7 +88,7 @@ def update_login_status(json_data, checkData):
             else:
                 account['is_logged_in'] = False
         except Exception as e:
-            print("Error:", e)
+            print("Error line 91 checkStatusAccounts.py:", e)
     return json_data
 
 def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
