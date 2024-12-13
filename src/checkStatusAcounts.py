@@ -22,7 +22,7 @@ def get_dlg(currentAutoName, backend):
             try:
                 print(f"Thử kết nối lần {attempt + 1}...")
                 
-                list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
+                list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                 print("Kết nối thành công!")
                 break  # Nếu kết nối thành công, thoát vòng lặp
             except Exception as e:
@@ -33,7 +33,7 @@ def get_dlg(currentAutoName, backend):
     elif GF.checkWindowRunning(currentAutoName) == 1:
         useAutoVLBS = True
         # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-        app = Application(backend=backend).connect(title_re=currentAutoName)
+        app = Application(backend="uia").connect(title_re=currentAutoName)
 
         # Lấy cửa sổ chính của ứng dụng
         dlg = app.window(title_re=currentAutoName)
@@ -41,7 +41,7 @@ def get_dlg(currentAutoName, backend):
         GF.show_application(currentAutoName)
         useAutoVLBS = True
         # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-        app = Application(backend=backend).connect(title_re=currentAutoName)
+        app = Application(backend="uia").connect(title_re=currentAutoName)
 
         # Lấy cửa sổ chính của ứng dụng
         dlg = app.window(title_re=currentAutoName)
@@ -64,7 +64,7 @@ def getCheckData(currentAutoName):
                 try:
                     print(f"Thử kết nối lần {attempt + 1}...")
                     
-                    list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
+                    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                     print("Kết nối thành công!")
                     break  # Nếu kết nối thành công, thoát vòng lặp
                 except Exception as e:
@@ -75,7 +75,7 @@ def getCheckData(currentAutoName):
         elif GF.checkWindowRunning(currentAutoName) == 1:
             useAutoVLBS = True
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            app = Application(backend=backend).connect(title_re=currentAutoName)
+            app = Application(backend="uia").connect(title_re=currentAutoName)
 
             # Lấy cửa sổ chính của ứng dụng
             dlg = app.window(title_re=currentAutoName)
@@ -83,7 +83,7 @@ def getCheckData(currentAutoName):
             GF.show_application(currentAutoName)
             useAutoVLBS = True
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-            app = Application(backend=backend).connect(title_re=currentAutoName)
+            app = Application(backend="uia").connect(title_re=currentAutoName)
 
             # Lấy cửa sổ chính của ứng dụng
             dlg = app.window(title_re=currentAutoName)
@@ -100,7 +100,7 @@ def getCheckData(currentAutoName):
                         try:
                             print(f"Thử kết nối lần {attempt + 1}...")
                             
-                            list_control = Application(backend=backend).connect(title_re='^Quan ly nhan vat.*')
+                            list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                             print("Kết nối thành công!")
                             break  # Nếu kết nối thành công, thoát vòng lặp
                         except Exception as e:
@@ -111,7 +111,7 @@ def getCheckData(currentAutoName):
                 elif GF.checkWindowRunning(currentAutoName) == 1:
                     useAutoVLBS = True
                     # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-                    app = Application(backend=backend).connect(title_re=currentAutoName)
+                    app = Application(backend="uia").connect(title_re=currentAutoName)
 
                     # Lấy cửa sổ chính của ứng dụng
                     dlg = app.window(title_re=currentAutoName)
@@ -119,7 +119,7 @@ def getCheckData(currentAutoName):
                     GF.show_application(currentAutoName)
                     useAutoVLBS = True
                     # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-                    app = Application(backend=backend).connect(title_re=currentAutoName)
+                    app = Application(backend="uia").connect(title_re=currentAutoName)
 
                     # Lấy cửa sổ chính của ứng dụng
                     dlg = app.window(title_re=currentAutoName)
