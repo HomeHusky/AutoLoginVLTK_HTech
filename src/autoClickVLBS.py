@@ -90,16 +90,37 @@ def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS):
                 time.sleep(5)
                 if not check_after_click_auto(ingameByUsername, currentAutoName):
                     return False
+            
             time.sleep(global_time_sleep)
         return True
     except Exception as e:
         print(f"Lỗi dòng 64 file autoClickVLBS.py: ", e)
 
 def check_after_click_auto(ingameByUsername, currentAutoName):
-    ingame = updateIngame.getIngame(currentAutoName)
-    if ingame != ingameByUsername:
-        return False
-    return True
+    """
+    Kiểm tra tối đa 3 lần xem ingame có khớp với ingameByUsername hay không.
+    Nếu không khớp sau 3 lần, trả về False.
+    
+    Args:
+        ingameByUsername (str): Tên ingame cần so sánh.
+        currentAutoName (str): Tên của auto hiện tại.
+    
+    Returns:
+        bool: True nếu khớp, False nếu không khớp sau 3 lần.
+    """
+    MAX_ATTEMPTS = 3  # Số lần kiểm tra tối đa
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        ingame = updateIngame.getIngame(currentAutoName)
+        if ingame == ingameByUsername:
+            return True
+        
+        print(f"Lần thử {attempt}: ingame = {ingame}, yêu cầu = {ingameByUsername}")
+        
+        # Chờ 1 giây giữa các lần thử (có thể điều chỉnh tùy theo yêu cầu)
+        time.sleep(1)
+    
+    return False
+
 
 if __name__ == "__main__":
     start_click('vocongtruyenky', 0)
