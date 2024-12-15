@@ -78,8 +78,8 @@ def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS):
             print("Không tìm thấy bảng!")
         else:
             items = list_control.children(control_type="ListItem")
-            if not check_after_click_auto(ingameByUsername, currentAutoName):
-                return False
+            # if not check_after_click_auto(ingameByUsername, currentAutoName):
+            #     return False
             items[0].double_click_input()
             if isAutoClickVLBS:
                 items[0].right_click_input()
