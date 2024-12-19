@@ -12,7 +12,7 @@ def send_data():
     workstation_id = load_workstation_id()
 
     # URL của server
-    url = 'http://192.168.2.11:5000/receive-data'
+    url = 'http://203.113.148.99:5000/receive-data'
 
     # Dữ liệu mẫu cần gửi (gửi nhiều tài khoản trong 1 lần)
     data = {
