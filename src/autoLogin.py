@@ -15,6 +15,7 @@ import requests
 import zipfile
 import sys
 import shutil
+import client
 
 pyautogui.FAILSAFE = False
 
@@ -1222,6 +1223,11 @@ def monitor_money_manager():
         stop_monitor_event.set()  # Kích hoạt trạng thái dừng
         monitor_money_button.config(text="Theo dõi")  # Đổi nhãn nút thành "Bắt đầu"
 
+def send_data():
+    client.send_data()
+    now = datetime.datetime.now()
+    print(f"Đã gửi dữ liệu lúc {now}!")
+
 def stop_monitor_success():
     messagebox.showinfo("Success", "Dừng theo dõi thành công.")
     update_status_square(status_canvas, "không theo dõi")
@@ -1377,6 +1383,9 @@ update_money_button.grid(row=1, column=3, padx=10, pady=5)
 
 monitor_money_button = ttk.Button(button_money_frame, text="Theo dõi", command=monitor_money_manager)
 monitor_money_button.grid(row=1, column=4, padx=10, pady=5)
+
+send_data_button = ttk.Button(button_money_frame, text="Send data", command=send_data)
+send_data_button.grid(row=1, column=5, padx=10, pady=5)
 
 def load_monitor_time(filepath='monitor_time.json'):
     with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
