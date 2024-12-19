@@ -12,7 +12,7 @@ def send_data():
     workstation_id = load_workstation_id()
 
     # URL của server
-    url = 'http://27.69.250.4:5000/receive-data'
+    url = 'https://2524-27-69-250-4.ngrok-free.app/receive-data'
 
     # Dữ liệu mẫu cần gửi (gửi nhiều tài khoản trong 1 lần)
     data = {
