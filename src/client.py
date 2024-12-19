@@ -12,7 +12,7 @@ def send_data():
     workstation_id = load_workstation_id()
 
     # URL của server
-    url = 'http://203.113.148.99:5000/receive-data'
+    url = 'http://27.69.250.4:5000/receive-data'
 
     # Dữ liệu mẫu cần gửi (gửi nhiều tài khoản trong 1 lần)
     data = {
@@ -33,3 +33,6 @@ def send_data():
             print(f"Lỗi: {response.status_code} - {response.text}")
     except Exception as e:
         print("Lỗi khi gửi dữ liệu:", e)
+
+if __name__ == "__main__":
+    send_data()
