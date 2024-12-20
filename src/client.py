@@ -32,6 +32,8 @@ def send_data(total_income, low_income_accounts, check_time, kpi_value, car_list
         # ]
     }
 
+    print("data: ", data)
+
     try:
         # Gửi yêu cầu POST đến server
         response = requests.post(url, json=data, allow_redirects=False)
