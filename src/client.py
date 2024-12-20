@@ -14,7 +14,7 @@ def send_data():
     workstation_id = load_workstation_id()
 
     # URL mới với cổng 3000
-    url = 'http://27.69.250.4:3000/receive-data'
+    url = 'http://27.69.250.4:3030/receive-data'
 
     # Dữ liệu cần gửi
     data = {
