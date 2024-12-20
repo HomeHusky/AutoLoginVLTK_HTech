@@ -4,17 +4,19 @@ import os
 import json
 
 def load_workstation_id(filepath='monitor_time.json'):
+    # Tải thông tin workstation ID từ file JSON
     with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
         data = json.load(f)
         return data['title_mail']
 
 def send_data():
+    # Lấy Workstation ID
     workstation_id = load_workstation_id()
 
-    # URL của server (HTTP)
-    url = 'http://27.69.250.4'
+    # URL mới với cổng 3000
+    url = 'http://27.69.250.4:3000/receive-data'
 
-    # Dữ liệu mẫu cần gửi (gửi nhiều tài khoản trong 1 lần)
+    # Dữ liệu cần gửi
     data = {
         "workstation_id": workstation_id,
         "accounts": [
@@ -25,6 +27,7 @@ def send_data():
     }
 
     try:
+        # Gửi yêu cầu POST đến server
         response = requests.post(url, json=data, allow_redirects=False)
         if response.status_code == 200:
             print("Gửi dữ liệu thành công.")
