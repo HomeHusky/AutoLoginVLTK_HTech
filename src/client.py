@@ -11,7 +11,7 @@ def load_workstation_id(filepath='monitor_time.json'):
 def send_data():
     workstation_id = load_workstation_id()
 
-    # URL của server
+    # URL của server (HTTP)
     url = 'http://27.69.250.4'
 
     # Dữ liệu mẫu cần gửi (gửi nhiều tài khoản trong 1 lần)
@@ -25,7 +25,7 @@ def send_data():
     }
 
     try:
-        response = requests.post(url, json=data)
+        response = requests.post(url, json=data, allow_redirects=False)
         if response.status_code == 200:
             print("Gửi dữ liệu thành công.")
             print("Phản hồi từ server:", response.json())
