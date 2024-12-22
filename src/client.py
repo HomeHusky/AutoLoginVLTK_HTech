@@ -35,17 +35,15 @@ def send_data(total_income, low_income_accounts, check_time, kpi_value, car_list
     print("data: ", data)
 
     try:
-        response = requests.post(url, json=data)
-        response.raise_for_status()  # Tự động tạo ngoại lệ nếu lỗi xảy ra
-        print("Gửi thành công, phản hồi:", response.json())
-    except requests.exceptions.HTTPError as errh:
-        print("Lỗi HTTP:", errh)
-    except requests.exceptions.ConnectionError as errc:
-        print("Lỗi Kết Nối:", errc)
-    except requests.exceptions.Timeout as errt:
-        print("Lỗi Timeout:", errt)
-    except requests.exceptions.RequestException as err:
-        print("Lỗi khác:", err)
+        # Gửi yêu cầu POST đến server
+        response = requests.post(url, json=data, allow_redirects=False)
+        if response.status_code == 200:
+            print("Gửi dữ liệu thành công.")
+            print("Phản hồi từ server:", response.json())
+        else:
+            print(f"Lỗi: {response.status_code} - {response.text}")
+    except Exception as e:
+        print("Lỗi khi gửi dữ liệu:", e)
 
 if __name__ == "__main__":
     send_data()
