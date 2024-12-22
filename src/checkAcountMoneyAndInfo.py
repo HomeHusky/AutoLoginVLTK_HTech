@@ -315,6 +315,8 @@ def readAcountMoneyAndInfo():
 
 def check_income_increase(name, callback, stop_monitor_event, stop_monitor_success):
     accounts_xe_2 = load_xe_2_accounts()
+    if accounts_xe_2 == []:
+        accounts_xe_2 = None
     print("Xe 2: ", accounts_xe_2)
     monitor_time_loop = load_monitor_time_and_convert_to_second()
     kpi = None
