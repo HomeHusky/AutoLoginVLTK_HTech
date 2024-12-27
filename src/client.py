@@ -14,7 +14,7 @@ def send_data(total_income, low_income_accounts, check_time, kpi_value, car_list
     workstation_id = load_workstation_id()
 
     # URL mới với cổng 3000
-    url = 'http://27.69.250.4:3030/receive-data'
+    url = 'http://171.251.6.89:3030/receive-data'
 
     # Dữ liệu cần gửi
     data = {
