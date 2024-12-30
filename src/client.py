@@ -13,8 +13,8 @@ def send_data(total_income, low_income_accounts, check_time, kpi_value, car_list
     # Lấy Workstation ID
     workstation_id = load_workstation_id()
 
-    # URL mới với cổng 3000
-    url = 'http://171.251.6.89:3030/receive-data'
+    # URL với hai cổng
+    urls = ['http://171.251.6.89:3030/receive-data', 'http://171.251.6.89:3000/receive-data']
 
     # Dữ liệu cần gửi
     data = {
@@ -25,25 +25,26 @@ def send_data(total_income, low_income_accounts, check_time, kpi_value, car_list
         "kpi_value": kpi_value,
         "car_list": car_list,
         "time_loop_send": time_loop_send,
-        # "accounts": [
-        #     {"account": "Account1", "quantity": 100},
-        #     {"account": "Account2", "quantity": 200},
-        #     {"account": "Account3", "quantity": 150},
-        # ]
     }
 
     print("data: ", data)
 
-    try:
-        # Gửi yêu cầu POST đến server
-        response = requests.post(url, json=data, allow_redirects=False)
-        if response.status_code == 200:
-            print("Gửi dữ liệu thành công.")
-            print("Phản hồi từ server:", response.json())
-        else:
-            print(f"Lỗi: {response.status_code} - {response.text}")
-    except Exception as e:
-        print("Lỗi khi gửi dữ liệu:", e)
+    for url in urls:
+        try:
+            # Gửi yêu cầu POST đến server
+            response = requests.post(url, json=data, allow_redirects=False)
+            if response.status_code == 200:
+                print("Gửi dữ liệu thành công đến:", url)
+                print("Phản hồi từ server:", response.json())
+                return  # Thoát nếu gửi thành công
+            else:
+                print(f"Lỗi: {response.status_code} - {response.text} khi gửi đến {url}")
+        except Exception as e:
+            print(f"Lỗi khi gửi dữ liệu đến {url}:", e)
+
+    print("Không thể gửi dữ liệu đến bất kỳ server nào.")
 
 if __name__ == "__main__":
-    send_data()
+    # Cung cấp các tham số giả để kiểm tra
+    send_data(total_income=[], low_income_accounts=[], check_time="2024-12-30 12:00:00", 
+              kpi_value=100, car_list=[], time_loop_send=60)
