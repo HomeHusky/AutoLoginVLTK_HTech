@@ -116,18 +116,28 @@ def checkExistIngame(ingame, data):
             return True
 
 def check_valid_ingame_value(username_to_update, autoName):
-    ingame_value_to_update = getIngame(autoName)
+    max_retries = 3  # Số lần thử lại
+    retry_count = 0  # Đếm số lần đã thử
     data = None
+
     # Đọc file JSON với encoding 'utf-8'
     with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'r', encoding='utf-8') as file:
         data = json.load(file)
 
-    ingame_in_jsonfile_with_username = getIngameValueByUserName(username_to_update, data)
+    while retry_count < max_retries:
+        ingame_value_to_update = getIngame(autoName)
+        ingame_in_jsonfile_with_username = getIngameValueByUserName(username_to_update, data)
 
-    print(f"VLBS: {ingame_value_to_update}, JSON: {ingame_in_jsonfile_with_username}")
-    if ingame_value_to_update == "" or ingame_value_to_update == "Vo Lam Truyen Ky":
-        return False
-    else:
-        if not checkExistIngame(ingame_value_to_update, data):
-            run_update_ingame(username_to_update, ingame_value_to_update)
-    return True
+        print(f"VLBS: {ingame_value_to_update}, JSON: {ingame_in_jsonfile_with_username}")
+
+        if ingame_value_to_update == "" or ingame_value_to_update == "Vo Lam Truyen Ky":
+            retry_count += 1
+            print(f"Retry {retry_count}: Invalid ingame value, trying again...")
+            continue
+        else:
+            if not checkExistIngame(ingame_value_to_update, data):
+                run_update_ingame(username_to_update, ingame_value_to_update)
+            return True
+
+    # Sau 3 lần thử mà vẫn không hợp lệ
+    return False
