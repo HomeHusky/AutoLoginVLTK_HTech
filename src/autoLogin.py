@@ -708,8 +708,24 @@ def on_login_complete():
 def on_login_username(username):
     update_status_to_logged_in(username)
     
-def thread_auto_update(auto_update_data, callback):
+def thread_auto_update(auto_update_data, fix_web_ctcx_data, callback):
     global stop_AutoUpdate_event
+    for path in fix_web_ctcx_data['fix_web_ctcx_paths']:
+        if stop_AutoUpdate_event:
+            messagebox.showinfo("Thông báo", "Dừng AutoUpdate thành công!")
+            return
+        try:
+            print(path)
+            # Mở từng file .exe
+            pyautogui.hotkey('win', 'r')
+            time.sleep(global_time_sleep)
+            pyautogui.write(path)
+            time.sleep(global_time_sleep)
+            pyautogui.press('enter')
+            time.sleep(2)  # Chờ 2 giây để đảm bảo file được mở
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể mở file {path}: {str(e)}")
+    
     for path in auto_update_data['auto_update_paths']:
         if stop_AutoUpdate_event:
             messagebox.showinfo("Thông báo", "Dừng AutoUpdate thành công!")
@@ -745,12 +761,17 @@ def run_all_auto_update():
             is_running_AutoUpdate = True
             run_auto_update_button.config(text="Dừng")
             GF.copy_auto_update_path_to_auto_update_path()
+            GF.copy_auto_update_path_to_fix_web_ctcx_path()
+            GF.replace_AutoUpdate_to_fix_web_ctcx()
+
+            fix_web_ctcx_file = 'fix_web_ctcx.json'
             auto_update_file = 'autoUpdate_path.json'
             # Đọc dữ liệu từ file accounts.json
+            fix_web_ctcx_data = GF.read_json_file(fix_web_ctcx_file)
             auto_update_data = GF.read_json_file(auto_update_file)
 
             print("Đã chạy AutoUpdate của các server!")
-            auto_update_thread = threading.Thread(target=thread_auto_update, args=(auto_update_data, on_auto_update_success))
+            auto_update_thread = threading.Thread(target=thread_auto_update, args=(auto_update_data, fix_web_ctcx_data, on_auto_update_success))
             auto_update_thread.daemon = True
             auto_update_thread.start()  # Bắt đầu luồng login
             
