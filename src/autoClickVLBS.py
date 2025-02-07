@@ -77,7 +77,10 @@ def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
             items = list_control.children(control_type="ListItem")
             if items:
                 first_item = items[0]
+                first_item_text = first_item.window_text()
                 if isAutoClickVLBS:
+                    if first_item_text != ingameByUsername:
+                        return False
                     # Nhấn chuột trái vào mục đầu tiên
                     first_item.click_input(button='left')
                     # Nhấn phím space
