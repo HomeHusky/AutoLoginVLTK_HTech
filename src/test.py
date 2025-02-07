@@ -205,30 +205,52 @@ def close_visible_vltk_app():
         except Exception as e:
             print(f"Không thể xử lý popup với hwnd {popup_hwnd}: {e}")
 
-def run_press_space_VLBS(name):
+def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
     try:
         list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
         if not list_control.exists():
             print("Không tìm thấy bảng!")
         else:
+            # Scroll lên đầu danh sách
+            try:
+                # Cách 1: Dùng phím Home
+                list_control.set_focus()
+                list_control.type_keys("{HOME}")
+                
+                # Hoặc cách 2: Dùng scroll pattern (nếu ứng dụng hỗ trợ)
+                # list_control.iface_scroll.SetScrollPercent(horizontalPercent=None, verticalPercent=0)
+                
+                time.sleep(0.5)  # Đợi scroll hoàn thành
+            except Exception as e:
+                print(f"Lỗi khi scroll: {str(e)}")
+
             # Tìm các mục trong danh sách và thao tác
             items = list_control.children(control_type="ListItem")
             if items:
                 first_item = items[0]
-                # Nhấn chuột trái vào mục đầu tiên
-                first_item.click_input(button='left')
-                # Nhấn phím space
-                first_item.type_keys("{SPACE}")
+                first_item_text = first_item.window_text()
+                if isAutoClickVLBS:
+                    if first_item_text != ingameByUsername:
+                        return False
+                    # Nhấn chuột trái vào mục đầu tiên
+                    first_item.click_input(button='left')
+                    # Nhấn phím space
+                    first_item.type_keys("{SPACE}")
+                    if not check_after_click_auto(ingameByUsername, name):
+                        return False
+                first_item.double_click_input()
+                time.sleep(global_time_sleep)
             else:
                 print("Không có mục nào trong danh sách!")
+            return True
     except Exception as e:
         print(f"Lỗi dòng 64 file autoClickVLBS.py: ", e)
 
 # Ví dụ sử dụng
 # window_title = "vocongtruyenky.net"
 window_title = "congthanhchienxua.net"
-
+ingame = THTPÙTESTÙAUTO
 # items = get_listbox_data_from_window(window_title)
 # print("Các mục trong List:", items)
 if __name__ == "__main__":
-    run_press_space_VLBS(window_title)
+    run_press_space_VLBS(ingame, window_title, True)
