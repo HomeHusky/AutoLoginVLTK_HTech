@@ -18,19 +18,25 @@ def start_click(username, name, isAutoClickVLBS):
         if name == None:
             name = GF.getNameAutoVLBS()
 
+        ingameByUsername = getIngameValueByUserName(username)
+
         if GF.checkQuanlynhanvat():
-            pass
+            if not run_down_enter(ingameByUsername, name, isAutoClickVLBS):
+                return False
+            return True
         elif GF.checkWindowRunning(name) == 1:
-            run_right_click(name)
-            time.sleep(global_time_sleep)
+            # run_right_click(name)
+            if not run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
+                return False
+            return True
         elif GF.checkWindowRunning(name) == 2:
             GF.show_application(name)
-            time.sleep(global_time_sleep)
 
-        ingameByUsername = getIngameValueByUserName(username)
-        if not run_down_enter(ingameByUsername, name, isAutoClickVLBS):
-            return False
-        return True
+            time.sleep(global_time_sleep)
+            if not run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
+                return False
+            return True
+        
     except Exception as e:
         print(f"Lỗi dòng 30 file autoClickVLBS.py: ", e)
 
@@ -47,7 +53,7 @@ def getIngameValueByUserName(username):
 
 def run_right_click(name):
     try:
-        backend = GF.get_backend()
+        # backend = GF.get_backend()
         list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
         if not list_control.exists():
             print("Không tìm thấy bảng!")
@@ -60,6 +66,31 @@ def run_right_click(name):
                 print("Không có mục nào trong danh sách!")
     except Exception as e:
         print(f"Lỗi dòng 45 file autoClickVLBS.py: ", e)
+
+def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
+    try:
+        list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
+        if not list_control.exists():
+            print("Không tìm thấy bảng!")
+        else:
+            # Tìm các mục trong danh sách và thao tác
+            items = list_control.children(control_type="ListItem")
+            if items:
+                first_item = items[0]
+                if isAutoClickVLBS:
+                    # Nhấn chuột trái vào mục đầu tiên
+                    first_item.click_input(button='left')
+                    # Nhấn phím space
+                    first_item.type_keys("{SPACE}")
+                    if not check_after_click_auto(ingameByUsername, name):
+                        return False
+                first_item.double_click_input()
+                time.sleep(global_time_sleep)
+            else:
+                print("Không có mục nào trong danh sách!")
+            return True
+    except Exception as e:
+        print(f"Lỗi dòng 64 file autoClickVLBS.py: ", e)
 
 def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS):
     list_control = None

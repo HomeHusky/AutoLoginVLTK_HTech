@@ -204,9 +204,31 @@ def close_visible_vltk_app():
                 print(f"Nội dung của popup không khớp.")
         except Exception as e:
             print(f"Không thể xử lý popup với hwnd {popup_hwnd}: {e}")
+
+def run_press_space_VLBS(name):
+    try:
+        list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
+        if not list_control.exists():
+            print("Không tìm thấy bảng!")
+        else:
+            # Tìm các mục trong danh sách và thao tác
+            items = list_control.children(control_type="ListItem")
+            if items:
+                first_item = items[0]
+                # Nhấn chuột trái vào mục đầu tiên
+                first_item.click_input(button='left')
+                # Nhấn phím space
+                first_item.type_keys("{SPACE}")
+            else:
+                print("Không có mục nào trong danh sách!")
+    except Exception as e:
+        print(f"Lỗi dòng 64 file autoClickVLBS.py: ", e)
+
 # Ví dụ sử dụng
-window_title = "vocongtruyenky.net"
+# window_title = "vocongtruyenky.net"
+window_title = "congthanhchienxua.net"
+
 # items = get_listbox_data_from_window(window_title)
 # print("Các mục trong List:", items)
 if __name__ == "__main__":
-    close_visible_vltk_app()
+    run_press_space_VLBS(window_title)
