@@ -79,11 +79,17 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         return  # Kiểm tra cờ dừng
 
     # Mở game bằng pyautogui
-    pyautogui.hotkey('win', 'r')
-    time.sleep(global_time_sleep)
-    pyautogui.write(account['game_path'])
-    time.sleep(global_time_sleep)
-    pyautogui.press('enter')
+    # pyautogui.hotkey('win', 'r')
+    # time.sleep(global_time_sleep)
+    # pyautogui.write(account['game_path'])
+    # time.sleep(global_time_sleep)
+    # pyautogui.press('enter')
+
+    working_dir = os.path.dirname(account['game_path'])
+    try:
+        subprocess.Popen(account['game_path'], cwd=working_dir)
+    except Exception as e:
+        print("Lỗi khi mở game:", e)
 
     # # Mở game bằng ctypes và os
     # path = account['game_path']
@@ -150,7 +156,15 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
             send_keys("{DOWN}")
     except Exception as e:
         send_keys("{DOWN}")
-    
+
+    send_keys("{RIGHT}")
+
+    try:
+        solanxuong2 = int(account['so_lan_xuong2'])
+        for i in range(solanxuong2):
+            send_keys("{DOWN}")
+    except Exception as e:
+        print("Acc khong co xuong lan 2")
 
     pyautogui.press('enter')
     print("Đang đợi server!")

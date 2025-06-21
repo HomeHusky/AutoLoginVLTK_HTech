@@ -231,6 +231,10 @@ def load_to_gui():
             so_lan_xuong_display = account['so_lan_xuong']
         except Exception as e:
             so_lan_xuong_display = ""
+        try:
+            so_lan_xuong2_display = account['so_lan_xuong2']
+        except Exception as e:
+            so_lan_xuong2_display = ""
         
         is_select_display = "✓" if account.get('is_select', False) else ""
         tree_accounts.insert("", "end", values=(
@@ -242,7 +246,8 @@ def load_to_gui():
             is_logged_in_display,  # Hiển thị Online nếu is_logged_in là True
             is_gom_tien_display, 
             is_xe_2_display,
-            so_lan_xuong_display
+            so_lan_xuong_display,
+            so_lan_xuong2_display
         ))
         stt += 1
 
@@ -344,6 +349,7 @@ def add_account():
     game_path = entry_game_path.get().strip()
     auto_update_path = game_path.replace("game.exe", "AutoUpdate.exe")
     solanxuong = entry_solanxuong.get().strip()
+    solanxuong2 = entry_solanxuong2.get().strip()
 
     if not username or not password or not game_path:
         messagebox.showwarning("Warning", "Vui lòng nhập đủ thông tin!")
@@ -366,6 +372,7 @@ def add_account():
         'is_gom_tien': check_checkbox(varGomCheckBox),
         'is_xe_2': check_checkbox(varXe2CheckBox),
         'so_lan_xuong': solanxuong if solanxuong else 1,
+        'so_lan_xuong2': solanxuong2 if solanxuong2 else 0,
         'mo_game_lau': check_checkbox(varMoGameLau)
     }
 
@@ -397,6 +404,7 @@ def edit_account():
         entry_game_path.delete(0, tk.END)
         entry_auto_update_path.delete(0, tk.END)
         entry_solanxuong.delete(0, tk.END)
+        entry_solanxuong2.delete(0, tk.END)
         entry_ingame.delete(0, tk.END)
         # Tìm dữ liệu gốc để lấy mật khẩu
         data = load_data()
@@ -425,6 +433,7 @@ def edit_account():
                 mo_game_lau_checkbox.deselect()
 
         entry_solanxuong.insert(0, values[8])
+        entry_solanxuong2.insert(0, values[8])
         
         
         # Lưu tài khoản đang chỉnh sửa
@@ -459,6 +468,7 @@ def update_account():
             'is_gom_tien': check_checkbox(varGomCheckBox),
             'is_xe_2': check_checkbox(varXe2CheckBox),
             'so_lan_xuong': entry_solanxuong.get(),
+            'so_lan_xuong2': entry_solanxuong2.get(),
             'mo_game_lau': check_checkbox(varMoGameLau)
         }
 
@@ -471,6 +481,7 @@ def update_account():
         entry_game_path.delete(0, tk.END)
         entry_auto_update_path.delete(0, tk.END)
         entry_solanxuong.delete(0, tk.END)
+        entry_solanxuong2.delete(0, tk.END)
 
         update_button.grid_forget()
         cancel_button.grid_forget()
@@ -612,6 +623,7 @@ def cancel_edit():
     entry_game_path.delete(0, tk.END)
     entry_auto_update_path.delete(0, tk.END)
     entry_solanxuong.delete(0, tk.END)
+    entry_solanxuong2.delete(0, tk.END)
     entry_ingame.delete(0, tk.END)
 
     update_button.grid_forget()
@@ -1025,6 +1037,9 @@ xe_2_checkbox.grid(row=3, column=4,columnspan=1)
 entry_solanxuong = ttk.Entry(input_frame)
 entry_solanxuong.grid(row=3, column=5, columnspan=1)
 
+entry_solanxuong2 = ttk.Entry(input_frame)
+entry_solanxuong2.grid(row=3, column=6, columnspan=1)
+
 # Nút tải dữ liệu
 # load_button = ttk.Button(input_frame, text="Refresh", command=load_to_gui)
 # load_button.grid(row=0, column=4, padx=10, pady=5)
@@ -1088,7 +1103,7 @@ def on_check(item):
 tree_frame = ttk.LabelFrame(account_tab, text="Danh sách tài khoản", padding=(10, 5))
 tree_frame.pack(padx=5, pady=10, fill="x")
 
-columns = ("stt", "is_select", "username", "ingame", "game_path", "is_logged_in", "is_gom_tien", "is_xe_2", "so_lan_xuong")
+columns = ("stt", "is_select", "username", "ingame", "game_path", "is_logged_in", "is_gom_tien", "is_xe_2", "so_lan_xuong", "so_lan_xuong2")
 tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=10)
 tree_accounts.heading("stt", text="Stt")  # Cột stt
 tree_accounts.heading("is_select", text="Bỏ qua")  # Cột checkbox
@@ -1098,7 +1113,8 @@ tree_accounts.heading("game_path", text="PathGame")
 tree_accounts.heading("is_logged_in", text="Trạng thái")
 tree_accounts.heading("is_gom_tien", text="Tk gom tiền")
 tree_accounts.heading("is_xe_2", text="Xe 2")
-tree_accounts.heading("so_lan_xuong", text="Số lần xuống server")
+tree_accounts.heading("so_lan_xuong", text="Số lần xuống cum server")
+tree_accounts.heading("so_lan_xuong2", text="Số lần xuống server")
 
 tree_accounts.column("stt", width=30)
 tree_accounts.column("is_select", width=50)
@@ -1109,6 +1125,7 @@ tree_accounts.column("is_logged_in", width=60)
 tree_accounts.column("is_gom_tien", width=40)
 tree_accounts.column("is_xe_2", width=40)
 tree_accounts.column("so_lan_xuong", width=40)
+tree_accounts.column("so_lan_xuong2", width=40)
 
 
 # Tạo thanh cuộn dọc (vertical scrollbar)
