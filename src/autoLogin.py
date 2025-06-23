@@ -1,4 +1,5 @@
 import json
+import subprocess
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 import startLogin as START_LOGIN
@@ -729,12 +730,18 @@ def thread_auto_update(auto_update_data, fix_web_ctcx_data, callback):
         try:
             print(path)
             # Mở từng file .exe
-            pyautogui.hotkey('win', 'r')
-            time.sleep(global_time_sleep)
-            pyautogui.write(path)
-            time.sleep(global_time_sleep)
-            pyautogui.press('enter')
-            time.sleep(2)  # Chờ 2 giây để đảm bảo file được mở
+            # pyautogui.hotkey('win', 'r')
+            # time.sleep(global_time_sleep)
+            # pyautogui.write(path)
+            # time.sleep(global_time_sleep)
+            # pyautogui.press('enter')
+            # time.sleep(2)  # Chờ 2 giây để đảm bảo file được mở
+            
+            working_dir = os.path.dirname(path)
+            try:
+                subprocess.Popen(path, cwd=working_dir)
+            except Exception as e:
+                print("Lỗi khi mở fix_web:", e)
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể mở file {path}: {str(e)}")
     
@@ -745,12 +752,18 @@ def thread_auto_update(auto_update_data, fix_web_ctcx_data, callback):
         try:
             print(path)
             # Mở từng file .exe
-            pyautogui.hotkey('win', 'r')
-            time.sleep(global_time_sleep)
-            pyautogui.write(path)
-            time.sleep(global_time_sleep)
-            pyautogui.press('enter')
-            time.sleep(2)  # Chờ 2 giây để đảm bảo file được mở
+            # pyautogui.hotkey('win', 'r')
+            # time.sleep(global_time_sleep)
+            # pyautogui.write(path)
+            # time.sleep(global_time_sleep)
+            # pyautogui.press('enter')
+            # time.sleep(2)  # Chờ 2 giây để đảm bảo file được mở
+            
+            working_dir = os.path.dirname(path)
+            try:
+                subprocess.Popen(path, cwd=working_dir)
+            except Exception as e:
+                print("Lỗi khi mở AutoUpdate:", e)
         except Exception as e:
             messagebox.showerror("Lỗi", f"Không thể mở file {path}: {str(e)}")
     callback()
