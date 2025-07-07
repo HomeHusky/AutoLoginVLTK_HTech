@@ -8,6 +8,8 @@ import updateIngame
 import GlobalFunction as GF
 import os
 from pywinauto.keyboard import send_keys
+from pywinauto import Desktop
+import win32api
 
 pyautogui.FAILSAFE = False
 
@@ -66,6 +68,25 @@ def auto_open_autoVLBS(auto_tool_path, sleepTime):
         auto_names = GF.load_autoNames()
         currentAutoName = GF.checkAutoVlbsBackGroundRunning()
                 # currentAutoName = name
+        
+        # 1. Tìm cửa sổ theo tên
+        window = Desktop(backend="win32")[currentAutoName]
+
+        # 2. Lấy kích thước cửa sổ hiện tại
+        rect = window.rectangle()
+        win_width = rect.width()
+        win_height = rect.height()
+
+        # 3. Lấy độ phân giải màn hình
+        screen_width = win32api.GetSystemMetrics(0)
+        screen_height = win32api.GetSystemMetrics(1)
+
+        # 4. Tính vị trí mới: Góc phải trên
+        new_left = screen_width - win_width
+        new_top = 0
+
+        # 5. Di chuyển cửa sổ
+        window.move_window(new_left, new_top, win_width, win_height, repaint=True)
         
         print(f"Đã mở AutoVLBS: {auto_tool_path}")
         # Tắt ứng dụng JXTrain
