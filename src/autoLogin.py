@@ -859,7 +859,7 @@ root = tk.Tk()
 version = get_current_version()
 
 root.title(f"Auto Login Htechnology - {version}")
-root.geometry("1010x700+0+0")
+root.geometry("850x700+0+0")
 root.resizable(True, True)
 
 server_names = list(servers.keys())
