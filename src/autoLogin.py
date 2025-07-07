@@ -1105,6 +1105,9 @@ alway_update_app_button.grid(row=1, column=2, columnspan=1, padx=5, pady=10, sti
 checkbox = tk.Checkbutton(start_frame, text="Tự động click AutoVLBS", variable=varCheckBox, command=lambda: check_checkbox(varCheckBox))
 checkbox.grid(row=2, columnspan=2, column=1, padx=5, pady=10, sticky="ew")
 
+start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS")
+start_check_fix_VLBS_button.grid(row=2, column=3, padx=5, pady=10)
+
 start_login_button = ttk.Button(start_frame, text="Bắt đầu", command=lambda: start_login(check_checkbox(varCheckBox)))
 start_login_button.grid(row=3, column=1, padx=5, pady=10)
 
