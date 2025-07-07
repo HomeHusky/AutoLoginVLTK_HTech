@@ -38,40 +38,45 @@ def load_sleepTime(file_path='global_time.json'):
         return data['sleepTime']
 
 def auto_open_autoVLBS(auto_tool_path, sleepTime):
-    currentAutoName = None
-    # try:
-    global stop_login
-    if stop_login:
-        return  # Kiểm tra cờ dừng
+    try:
+        currentAutoName = None
+        # try:
+        global stop_login
+        if stop_login:
+            return  # Kiểm tra cờ dừng
 
-    pyautogui.hotkey('win', 'r')
-    time.sleep(global_time_sleep)
-    pyautogui.write(auto_tool_path)
-    time.sleep(global_time_sleep)
-    pyautogui.press('enter')
-    time.sleep(sleepTime[0]['wait_time_open_trainjx'])
-    
-    if stop_login:
-        return  # Kiểm tra cờ dừng
+        # pyautogui.hotkey('win', 'r')
+        # time.sleep(global_time_sleep)
+        # pyautogui.write(auto_tool_path)
+        # time.sleep(global_time_sleep)
+        # pyautogui.press('enter')
+        
+        working_dir = os.path.dirname(auto_tool_path)
 
-    pyautogui.press('enter')
-    
-    time.sleep(sleepTime[0]['wait_time_load_autovlbs'])
+        subprocess.Popen(auto_tool_path, cwd=working_dir)
+        time.sleep(sleepTime[0]['wait_time_open_trainjx'])
+        if stop_login:
+            return  # Kiểm tra cờ dừng
+        pyautogui.press('enter')
+        time.sleep(sleepTime[0]['wait_time_load_autovlbs'])
 
-    if stop_login:
-        return  # Kiểm tra cờ dừng
+        if stop_login:
+            return  # Kiểm tra cờ dừng
 
-    auto_names = GF.load_autoNames()
-    currentAutoName = GF.checkAutoVlbsBackGroundRunning()
-            # currentAutoName = name
-    
-    print(f"Đã mở AutoVLBS: {auto_tool_path}")
-    # Tắt ứng dụng JXTrain
-    GF.close_application("JXTrain")
+        auto_names = GF.load_autoNames()
+        currentAutoName = GF.checkAutoVlbsBackGroundRunning()
+                # currentAutoName = name
+        
+        print(f"Đã mở AutoVLBS: {auto_tool_path}")
+        # Tắt ứng dụng JXTrain
+        GF.close_application("JXTrain")
 
-    # except Exception as e:
-    #     print(f"Lỗi khi bật auto!")
-    return currentAutoName
+        # except Exception as e:
+        #     print(f"Lỗi khi bật auto!")
+        return currentAutoName
+    except Exception as e:
+        print(f"Lỗi khi mở AutoVLBS: {e}")
+        return None
 
 def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeServer):
     global stop_login

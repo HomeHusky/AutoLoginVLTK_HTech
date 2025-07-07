@@ -859,7 +859,7 @@ root = tk.Tk()
 version = get_current_version()
 
 root.title(f"Auto Login Htechnology - {version}")
-root.geometry("850x700+0+0")
+root.geometry("1010x700+0+0")
 root.resizable(True, True)
 
 server_names = list(servers.keys())
@@ -1042,25 +1042,34 @@ update_button = ttk.Button(input_frame, text="Update path", command=update_path)
 update_button.grid(row=2, column=5, padx=5, pady=5)
 
 gom_checkbox = tk.Checkbutton(input_frame, text="TK gom", variable=varGomCheckBox, command=lambda: check_checkbox(varGomCheckBox))
-gom_checkbox.grid(row=3, column=3, columnspan=1)
+gom_checkbox.grid(row=3, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
 
 xe_2_checkbox = tk.Checkbutton(input_frame, text="Xe 2", variable=varXe2CheckBox, command=lambda: check_checkbox(varXe2CheckBox))
-xe_2_checkbox.grid(row=3, column=4,columnspan=1)
+xe_2_checkbox.grid(row=3, column=4,columnspan=1, padx=5, pady=5, sticky="ew")
 
-entry_solanxuong = ttk.Entry(input_frame)
-entry_solanxuong.grid(row=3, column=5, columnspan=1)
+small_frame = ttk.Frame(input_frame, width=10)
+small_frame.grid(row=3, column=5, columnspan=1, padx=0, pady=0)
 
-entry_solanxuong2 = ttk.Entry(input_frame)
-entry_solanxuong2.grid(row=3, column=6, columnspan=1)
+entry_solanxuong = ttk.Entry(small_frame, width=4)
+entry_solanxuong.pack(side="left", padx=(0, 2))
+
+entry_solanxuong2 = ttk.Entry(small_frame, width=4)
+entry_solanxuong2.pack(side="right", padx=(2, 0))
+
+# entry_solanxuong = ttk.Entry(input_frame, width=3)
+# entry_solanxuong.grid(row=3, column=5, padx=5, pady=5)
+
+# entry_solanxuong2 = ttk.Entry(input_frame, width=3)
+# entry_solanxuong2.grid(row=3, column=6, padx=5, pady=5)
 
 # Nút tải dữ liệu
 # load_button = ttk.Button(input_frame, text="Refresh", command=load_to_gui)
 # load_button.grid(row=0, column=4, padx=10, pady=5)
 
 # Nhập Ingame
-ttk.Label(input_frame, text="Ingame:").grid(row=0, column=4, padx=5, pady=5)
-entry_ingame = ttk.Entry(input_frame)
-entry_ingame.grid(row=0, column=5, columnspan=1, padx=5, pady=5, sticky="ew")
+ttk.Label(input_frame, text="Ingame:").grid(row=0, column=4, padx=0, pady=5)
+entry_ingame = ttk.Entry(input_frame, width=10)
+entry_ingame.grid(row=0, column=5, columnspan=1, padx=0, pady=5, sticky="ew")
 
 # Frame chứa các nút chức năng
 button_frame = ttk.Frame(input_frame)
@@ -1439,24 +1448,40 @@ send_data_button = ttk.Button(button_money_frame, text="Send data", command=send
 send_data_button.grid(row=1, column=5, padx=10, pady=5)
 
 def load_monitor_time(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return data['monitor_time']
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return data['monitor_time']
+    except FileNotFoundError:
+        # Nếu file không tồn tại, trả về giá trị mặc định
+        return "5"
 
 def load_kpi(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return data['kpi']
-
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return data['kpi']
+    except FileNotFoundError:
+        # Nếu file không tồn tại, trả về giá trị mặc định
+        return "1000"
+    
 def load_total_servers(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return data['total_servers']
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return data['total_servers']
+    except FileNotFoundError:
+        # Nếu file không tồn tại, trả về giá trị mặc định
+        return "10"
 
 def load_title_mail(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return data['title_mail']
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return data['title_mail']
+    except FileNotFoundError:
+        # Nếu file không tồn tại, trả về giá trị mặc định
+        return "Máy chủ AutoVLBS"
 
 def save_monitor_time(filepath='monitor_time.json'):
     data = {}

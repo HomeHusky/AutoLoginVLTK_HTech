@@ -22,24 +22,40 @@ json_file = 'accounts_money_status.json'
 gom_account_file = 'gom_accounts.json'
 
 def load_monitor_time_and_convert_to_second(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return int(float(data['monitor_time']) * 60)
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return int(float(data['monitor_time']) * 60)
+    except FileNotFoundError:
+        print(f"File {filepath} không tồn tại. Sử dụng giá trị mặc định 60 giây.")
+        return 60
 
 def load_kpi_and_convert_to_hour(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return float(data['kpi']) / 24
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return float(data['kpi']) / 24
+    except FileNotFoundError:
+        print(f"File {filepath} không tồn tại. Sử dụng giá trị mặc định 24 giờ.")
+        return 24
 
 def load_total_servers(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return float(data['total_servers'])
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return float(data['total_servers'])
+    except FileNotFoundError:
+        print(f"File {filepath} không tồn tại. Sử dụng giá trị mặc định 1.")
+        return 1
 
 def load_title_mail(filepath='monitor_time.json'):
-    with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
-        data = json.load(f)
-        return float(data['title_mail'])
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return float(data['title_mail'])
+    except FileNotFoundError:
+        print(f"File {filepath} không tồn tại. Sử dụng giá trị mặc định 1.")
+        return 1
 
 monitor_time_loop = load_monitor_time_and_convert_to_second()
 kpi = load_kpi_and_convert_to_hour()
