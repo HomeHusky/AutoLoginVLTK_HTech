@@ -3,6 +3,7 @@ import subprocess
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 import startLogin as START_LOGIN
+import realTimeCheckBugAutoVLBS as REAL_TIME_CHECK
 import GlobalFunction as GF
 import checkAcountMoneyAndInfo
 import checkStatusAcounts
@@ -18,6 +19,7 @@ import sys
 import shutil
 import client
 
+is_checking_fix_vlbs = False  # Cờ trạng thái kiểm tra
 pyautogui.FAILSAFE = False
 
 def get_current_version():
@@ -1105,8 +1107,26 @@ alway_update_app_button.grid(row=1, column=2, columnspan=1, padx=5, pady=10, sti
 checkbox = tk.Checkbutton(start_frame, text="Tự động click AutoVLBS", variable=varCheckBox, command=lambda: check_checkbox(varCheckBox))
 checkbox.grid(row=2, columnspan=2, column=1, padx=5, pady=10, sticky="ew")
 
-start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS")
-start_check_fix_VLBS_button.grid(row=2, column=3, padx=5, pady=10)
+entry_time_check_loop_VLBS = ttk.Entry(start_frame, width=4)
+entry_time_check_loop_VLBS.grid(row=2, column=3, padx=5, pady=10)
+
+start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS", command=lambda: on_start_button_click())
+start_check_fix_VLBS_button.grid(row=2, column=4, padx=5, pady=10)
+
+# Gọi khi nhấn nút "Kích hoạt"
+def on_start_button_click():
+    global is_checking_fix_vlbs
+
+    if not is_checking_fix_vlbs:
+        print("Bắt đầu kiểm tra fix lỗi VLBS")
+        REAL_TIME_CHECK.start_checking(int(entry_time_check_loop_VLBS.get().strip()) if entry_time_check_loop_VLBS.get().strip().isdigit() else 1)
+        start_check_fix_VLBS_button.config(text="Dừng kiểm tra")
+        is_checking_fix_vlbs = True
+    else:
+        print("Dừng kiểm tra fix lỗi VLBS")
+        REAL_TIME_CHECK.stop_checking()
+        start_check_fix_VLBS_button.config(text="Tự động fix lỗi VLBS")
+        is_checking_fix_vlbs = False
 
 start_login_button = ttk.Button(start_frame, text="Bắt đầu", command=lambda: start_login(check_checkbox(varCheckBox)))
 start_login_button.grid(row=3, column=1, padx=5, pady=10)
