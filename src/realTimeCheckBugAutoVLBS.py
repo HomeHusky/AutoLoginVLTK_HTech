@@ -12,11 +12,83 @@ import GlobalFunction as GF
 import threading
 from tkinter import messagebox
 import copy
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 
 # === BIẾN TOÀN CỤC ===
 stop_flag = False
 gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'
+
+EMAIL_ADDRESS = "htechvlnotification@gmail.com"
+EMAIL_PASSWORD = "btpwkapwzdknnqfl"
+RECIPIENT_EMAIL = "vitrannhat@gmail.com"
+
+def send_email_report(report_data, loop_time_str, ten_may):
+    """
+    Gửi email báo cáo kết quả kiểm tra tài khoản.
+
+    :param report_data: List chứa các dict như:
+        [
+            {"account": "PT2ÙTLÙHT11", "old": 900, "new": 979.97, "status": "Tăng"},
+            ...
+        ]
+    :param loop_time_str: Thời gian kiểm tra (ví dụ: "2025-07-09 03:00:00")
+    """
+
+    # ===== Soạn HTML nội dung email =====
+    html_rows = ""
+    for item in report_data:
+        color = {"Tăng": "green", "Giảm": "red", "Không đổi": "gray"}.get(item["status"], "black")
+        html_rows += f"""
+            <tr>
+                <td>{item['account']}</td>
+                <td>{item['old']}</td>
+                <td>{item['new']}</td>
+                <td style="color:{color}; font-weight: bold;">{item['status']}</td>
+            </tr>
+        """
+
+    html_content = f"""
+    <html>
+        <body>
+            <h2 style="color: #2e6c80;">📊 Báo cáo kiểm tra tài khoản VLTK máy {ten_may}</h2>
+            <p><b>Thời gian kiểm tra:</b> {loop_time_str}</p>
+            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse;">
+                <thead style="background-color: #f2f2f2;">
+                    <tr>
+                        <th>Tài khoản</th>
+                        <th>Tiền cũ</th>
+                        <th>Tiền mới</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {html_rows}
+                </tbody>
+            </table>
+            <p style="margin-top: 20px;">📧 Đây là email tự động từ hệ thống kiểm tra nhân vật.</p>
+        </body>
+    </html>
+    """
+
+    # ===== Gửi email =====
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"Báo cáo kiểm tra VLTK lúc {loop_time_str}"
+    msg["From"] = EMAIL_ADDRESS
+    msg["To"] = RECIPIENT_EMAIL
+
+    msg.attach(MIMEText(html_content, "html"))
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+            print("✅ Email đã được gửi thành công.")
+    except Exception as e:
+        print(f"❌ Lỗi khi gửi email: {e}")
 
 def load_gom_accounts(filepath = 'accounts.json'):
     with open(os.path.join(GF.join_directory_data(), filepath), 'r', encoding='utf-8') as file:
@@ -88,13 +160,15 @@ def check_accounts_money():
     except Exception as e:
         print(f"Lỗi khi kiểm tra tài khoản: {e}")
 
-def auto_check_loop(minutes):
+def auto_check_loop(minutes, ten_may):
     print(f"🔁 Bắt đầu kiểm tra tự động mỗi {minutes} phút...")
     global stop_flag, gom_accounts_info_data
     previous_data = {}
     while not stop_flag:
         check_accounts_money()
         new_data = copy.deepcopy(gom_accounts_info_data)  # ✅ Đảm bảo dữ liệu không bị ghi đè
+        loop_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        report = []
         for acc in new_data:
             name = acc[0]
             money = float(acc[1]) 
@@ -104,26 +178,43 @@ def auto_check_loop(minutes):
                 old_money = previous_data[name]
                 if money > old_money:
                     print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
+                    status = "Tăng"
                 elif money < old_money:
                     print(f"[{timestamp}] ⚠️ {name} giảm tiền: {old_money} → {money}")
+                    status = "Giảm"
                 else:
                     print(f"[{timestamp}] ⏸️ {name} không đổi: {money}")
+                    status = "Không đổi"
+                report.append({
+                    "account": name,
+                    "old": old_money,
+                    "new": money,
+                    "status": status
+                })
             else:
                 print(f"[{timestamp}] 🆕 {name} mới, tiền: {money}")
-
+                report.append({
+                    "account": name,
+                    "old": 0,
+                    "new": money,
+                    "status": "Mới"
+                })
+            
             previous_data[name] = money
 
+        send_email_report(report, loop_time_str, ten_may)
         for i in range(minutes * 60):
             if stop_flag:
                 print("🛑 Đã dừng kiểm tra.")
                 return
             print(f"{minutes * 60 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
+        
 
-def start_checking(minutes):
+def start_checking(minutes, ten_may):
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=auto_check_loop, args=(minutes,), daemon=True)
+    t = threading.Thread(target=auto_check_loop, args=(minutes,ten_may), daemon=True)
     t.start()
     print("🔁 Bắt đầu kiểm tra...")
 

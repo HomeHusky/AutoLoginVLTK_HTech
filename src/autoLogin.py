@@ -1110,16 +1110,16 @@ checkbox.grid(row=2, columnspan=2, column=1, padx=5, pady=10, sticky="ew")
 entry_time_check_loop_VLBS = ttk.Entry(start_frame, width=4)
 entry_time_check_loop_VLBS.grid(row=2, column=3, padx=5, pady=10)
 
-start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS", command=lambda: on_start_button_click())
+start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS", command=lambda: on_start_button_click(entry_title_mail.get().strip()))
 start_check_fix_VLBS_button.grid(row=2, column=4, padx=5, pady=10)
 
 # Gọi khi nhấn nút "Kích hoạt"
-def on_start_button_click():
+def on_start_button_click(ten_may):
     global is_checking_fix_vlbs
 
     if not is_checking_fix_vlbs:
         print("Bắt đầu kiểm tra fix lỗi VLBS")
-        REAL_TIME_CHECK.start_checking(int(entry_time_check_loop_VLBS.get().strip()) if entry_time_check_loop_VLBS.get().strip().isdigit() else 1)
+        REAL_TIME_CHECK.start_checking(int(entry_time_check_loop_VLBS.get().strip()) if entry_time_check_loop_VLBS.get().strip().isdigit() else 1, ten_may)
         start_check_fix_VLBS_button.config(text="Dừng kiểm tra")
         is_checking_fix_vlbs = True
     else:
