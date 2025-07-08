@@ -21,6 +21,7 @@ from email.mime.text import MIMEText
 stop_flag = False
 gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'
+previous_data = {}  # Dùng để lưu trữ số dư tiền của các tài khoản trước khi kiểm tra
 
 EMAIL_ADDRESS = "htechvlnotification@gmail.com"
 EMAIL_PASSWORD = "btpwkapwzdknnqfl"
@@ -161,55 +162,79 @@ def check_accounts_money():
         print(f"Lỗi khi kiểm tra tài khoản: {e}")
 
 def auto_check_loop(minutes, ten_may):
+    global stop_flag, gom_accounts_info_data, previous_data
     print(f"🔁 Bắt đầu kiểm tra tự động mỗi {minutes} phút...")
-    global stop_flag, gom_accounts_info_data
-    previous_data = {}
+
+    known_accounts = set()  # lưu tài khoản đã từng xuất hiện
+    missing_accounts = set()  # lưu tài khoản đã bị văng
+
     while not stop_flag:
         check_accounts_money()
-        new_data = copy.deepcopy(gom_accounts_info_data)  # ✅ Đảm bảo dữ liệu không bị ghi đè
+        new_data = copy.deepcopy(gom_accounts_info_data)
         loop_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         report = []
+
+        # === Tạo set tài khoản hiện tại
+        current_accounts = set(acc[0] for acc in new_data)
+
+        # === Kiểm tra từng tài khoản trong dữ liệu mới
         for acc in new_data:
             name = acc[0]
-            money = float(acc[1]) 
+            money = float(acc[1])
             timestamp = acc[2]
 
             if name in previous_data:
                 old_money = previous_data[name]
                 if money > old_money:
-                    print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
                     status = "Tăng"
+                    print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
                 elif money < old_money:
-                    print(f"[{timestamp}] ⚠️ {name} giảm tiền: {old_money} → {money}")
                     status = "Giảm"
+                    print(f"[{timestamp}] ⚠️ {name} giảm tiền: {old_money} → {money}")
                 else:
-                    print(f"[{timestamp}] ⏸️ {name} không đổi: {money}")
                     status = "Không đổi"
-                report.append({
-                    "account": name,
-                    "old": old_money,
-                    "new": money,
-                    "status": status
-                })
+                    print(f"[{timestamp}] ⏸️ {name} không đổi: {money}")
+            elif name in missing_accounts:
+                status = "Mới"
+                print(f"[{timestamp}] 🔄 {name} quay lại sau khi bị văng. Tiền: {money}")
+                missing_accounts.remove(name)
             else:
+                status = "Mới"
                 print(f"[{timestamp}] 🆕 {name} mới, tiền: {money}")
-                report.append({
-                    "account": name,
-                    "old": 0,
-                    "new": money,
-                    "status": "Mới"
-                })
-            
-            previous_data[name] = money
 
+            report.append({
+                "account": name,
+                "old": previous_data.get(name, 0),
+                "new": money,
+                "status": status
+            })
+
+            # Lưu vào bộ nhớ
+            previous_data[name] = money
+            known_accounts.add(name)
+
+        # === Kiểm tra các tài khoản bị mất
+        for known_name in known_accounts:
+            if known_name not in current_accounts:
+                print(f"[{loop_time_str}] ❌ {known_name} bị văng game (không còn trong danh sách).")
+                report.append({
+                    "account": known_name,
+                    "old": previous_data[known_name],
+                    "new": 0,
+                    "status": "Văng game"
+                })
+                missing_accounts.add(known_name)
+
+        # === Gửi email
         send_email_report(report, loop_time_str, ten_may)
+
+        # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 60):
             if stop_flag:
                 print("🛑 Đã dừng kiểm tra.")
                 return
             print(f"{minutes * 60 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
-        
 
 def start_checking(minutes, ten_may):
     global stop_flag
