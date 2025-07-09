@@ -1119,7 +1119,7 @@ def on_start_button_click(ten_may):
 
     if not is_checking_fix_vlbs:
         print("Bắt đầu kiểm tra fix lỗi VLBS")
-        REAL_TIME_CHECK.start_checking(int(entry_time_check_loop_VLBS.get().strip()) if entry_time_check_loop_VLBS.get().strip().isdigit() else 1, ten_may)
+        REAL_TIME_CHECK.start_checking(int(entry_time_check_loop_VLBS.get().strip()) if entry_time_check_loop_VLBS.get().strip().isdigit() else 30, ten_may)
         start_check_fix_VLBS_button.config(text="Dừng kiểm tra")
         is_checking_fix_vlbs = True
     else:

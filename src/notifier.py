@@ -8,7 +8,9 @@ def format_report_discord(report, ten_may, timestamp):
     Tạo nội dung báo cáo gửi lên Discord.
     """
     description = ""
+    stt = 0
     for item in report:
+        stt = stt + 1
         name = item['account']
         old = item['old']
         new = item['new']
@@ -27,7 +29,7 @@ def format_report_discord(report, ten_may, timestamp):
         else:
             emoji = "❓"
 
-        description += f"{emoji} **{name}**: {old} → {new} ({status})\n"
+        description += f"{emoji} {stt} **{name}**: {old} → {new} ({status})\n"
 
     embed = {
         "title": f"📡 Báo cáo máy {ten_may}",
