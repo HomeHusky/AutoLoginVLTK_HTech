@@ -54,6 +54,8 @@ def fix_account(account_name):
             print(f"Thử kết nối lần {attempt + 1}...")
             # backend = GF.get_backend()
             list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
+            list_control.set_focus()
+            list_control.type_keys("{HOME}")  # Cuộn lên đầu danh sách
             print("Kết nối thành công!")
             break  # Nếu kết nối thành công, thoát vòng lặp
         except Exception as e:
