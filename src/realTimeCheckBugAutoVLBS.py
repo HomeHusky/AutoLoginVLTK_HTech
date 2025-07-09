@@ -125,6 +125,18 @@ def check_accounts_money():
                     if not list_control.exists():
                         print("Không tìm thấy bảng!")
                     else:
+                        try:
+                            # Cách 1: Dùng phím Home
+                            list_control.set_focus()
+                            list_control.type_keys("{HOME}")
+                            
+                            # Hoặc cách 2: Dùng scroll pattern (nếu ứng dụng hỗ trợ)
+                            # list_control.iface_scroll.SetScrollPercent(horizontalPercent=None, verticalPercent=0)
+                            
+                            time.sleep(0.5)  # Đợi scroll hoàn thành
+                        except Exception as e:
+                            print(f"Lỗi khi scroll: {str(e)}")
+                        # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
                         # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
                         items = list_control.children(control_type="ListItem")
                         if items:
