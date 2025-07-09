@@ -3,9 +3,31 @@ import threading
 from pywinauto import Application
 import pyautogui
 import time
+import os
+import json
 
 stop_flag = False
 global_time_sleep = GF.load_global_time_sleep()
+
+def get_account_by_ingame(ingame_name, file_path='accounts.json'):
+
+    full_path = os.path.join(GF.join_directory_data(), file_path)
+    with open(full_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        for account in data.get('accounts', []):
+            if account.get('ingame') == ingame_name:
+                return account
+    return None  # Không tìm thấy
+
+def get_password_by_ingame(ingame_name, file_path='accounts.json'):
+
+    full_path = os.path.join(GF.join_directory_data(), file_path)
+    with open(full_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        for account in data.get('accounts', []):
+            if account.get('ingame') == ingame_name:
+                return account.get('password')
+    return None 
 
 def fixErrorAccounts(error_accounts_array):
     """
@@ -53,13 +75,12 @@ def fix_account(account_name):
                         time.sleep(global_time_sleep)
                         pyautogui.press('enter')
                         time.sleep(global_time_sleep)
-                        pyautogui.write('Htech317@', interval=0.1)
+                        pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
                         time.sleep(global_time_sleep)
                         pyautogui.press('enter')
                         time.sleep(global_time_sleep)
                         pyautogui.press('enter')
                         time.sleep(2)
-                        # Sau khi sửa lỗi:
                         pyautogui.hotkey('ctrl', 'g')
                         time.sleep(global_time_sleep)
                         pyautogui.press('esc')
@@ -67,8 +88,9 @@ def fix_account(account_name):
                         time.sleep(2)
                         item.type_keys("{SPACE}") # Nhấp space để bật auto game
                         time.sleep(2)
-                        item.type_keys("{SPACE}") # Nhấp space để bật auto game
                         item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
+                        time.sleep(global_time_sleep)
+                        item.type_keys("{SPACE}") # Nhấp space để bật auto game
                         print(f"✅ Đã sửa lỗi cho tài khoản: {account_name}")
                         return
     print(f"Không tìm thấy tài khoản: {account_name} trong danh sách.")
