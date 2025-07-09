@@ -15,6 +15,7 @@ import copy
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from notifier import send_discord_report
 
 
 # === BIẾN TOÀN CỤC ===
@@ -109,13 +110,26 @@ def check_accounts_money():
         for attempt in range(3):
             try:
                 print(f"Thử kết nối lần {attempt + 1}...")
-                backend = GF.get_backend()
+                # backend = GF.get_backend()
                 list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
                 print("Kết nối thành công!")
                 break  # Nếu kết nối thành công, thoát vòng lặp
             except Exception as e:
                 print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
-                time.sleep(1)  # Đợi 1 giây trước khi thử lại
+                # backend = GF.get_backend()
+                nameAutoVLBS = GF.getNameAutoVLBS()
+                if not GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS):
+                    list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+                    if not list_control.exists():
+                        print("Không tìm thấy bảng!")
+                    else:
+                        # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
+                        items = list_control.children(control_type="ListItem")
+                        if items:
+                            items[0].right_click_input()
+                        else:
+                            print("Không có mục nào trong danh sách!")
+                    time.sleep(1)
 
         items = list_control.children(control_type="ListItem")
         gom_accounts_info_data = []
@@ -226,7 +240,11 @@ def auto_check_loop(minutes, ten_may):
                 missing_accounts.add(known_name)
 
         # === Gửi email
-        send_email_report(report, loop_time_str, ten_may)
+        # send_email_report(report, loop_time_str, ten_may)
+
+        # === Gửi báo cáo Discord
+        send_discord_report(report, ten_may, loop_time_str)
+
 
         # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 60):
