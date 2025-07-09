@@ -87,8 +87,12 @@ def fix_account(account_name):
     
     # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
     items = list_control.children(control_type="ListItem")
+    i = 0
     for item in items:
         countChild = 0
+        if i == 19:
+            list_control.set_focus()
+            list_control.type_keys("{HOME}")
         for child in item.children():
             if countChild == 1:
                 if child.window_text() == account_name:
@@ -139,6 +143,7 @@ def fix_account(account_name):
                     print(f"✅ Đã sửa lỗi cho tài khoản: {account_name}")
                     return
             countChild += 1
+            i += 1
     print(f"Không tìm thấy tài khoản: {account_name} trong danh sách.")
 
 def relogin_lost_accounts(lost_accounts_array):
