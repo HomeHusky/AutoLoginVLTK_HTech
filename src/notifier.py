@@ -18,6 +18,8 @@ def format_report_discord(report, ten_may, timestamp):
 
         if status == "Tăng":
             emoji = "🟢"
+        elif status == "Chưa đạt KPI":
+            emoji = "⚠️"
         elif status == "Giảm":
             emoji = "🔻"
         elif status == "Không đổi":

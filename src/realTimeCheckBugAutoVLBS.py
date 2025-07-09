@@ -16,9 +16,11 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from notifier import send_discord_report
+from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts
 
 
 # === BIẾN TOÀN CỤC ===
+kpi_1m = (35/24)/60
 stop_flag = False
 gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'
@@ -181,12 +183,15 @@ def auto_check_loop(minutes, ten_may):
 
     known_accounts = set()  # lưu tài khoản đã từng xuất hiện
     missing_accounts = set()  # lưu tài khoản đã bị văng
+    error_accounts = set()  # lưu tài khoản có lỗi
 
     while not stop_flag:
         check_accounts_money()
         new_data = copy.deepcopy(gom_accounts_info_data)
         loop_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         report = []
+        error_accounts_array = []
+        lost_accounts_array = []
 
         # === Tạo set tài khoản hiện tại
         current_accounts = set(acc[0] for acc in new_data)
@@ -200,14 +205,23 @@ def auto_check_loop(minutes, ten_may):
             if name in previous_data:
                 old_money = previous_data[name]
                 if money > old_money:
-                    status = "Tăng"
-                    print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
+                    profit = money - old_money
+                    if profit >= kpi_1m*minutes:
+                        status = "Tăng"
+                        print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
+                    else:
+                        status = "KPI"
+                        print(f"[{timestamp}] ⚠️ {name} tăng tiền: {old_money} → {money} (Chưa đạt KPI)")
                 elif money < old_money:
                     status = "Giảm"
-                    print(f"[{timestamp}] ⚠️ {name} giảm tiền: {old_money} → {money}")
+                    print(f"[{timestamp}] 🔻 {name} giảm tiền: {old_money} → {money}")
                 else:
                     status = "Không đổi"
                     print(f"[{timestamp}] ⏸️ {name} không đổi: {money}")
+                    error_accounts.add(name)
+                    error_accounts_array.append({
+                        "account": name,
+                    })
             elif name in missing_accounts:
                 status = "Mới"
                 print(f"[{timestamp}] 🔄 {name} quay lại sau khi bị văng. Tiền: {money}")
@@ -238,13 +252,17 @@ def auto_check_loop(minutes, ten_may):
                     "status": "Văng game"
                 })
                 missing_accounts.add(known_name)
+                lost_accounts_array.append({
+                    "account": known_name,
+                })
 
         # === Gửi email
         # send_email_report(report, loop_time_str, ten_may)
 
         # === Gửi báo cáo Discord
         send_discord_report(report, ten_may, loop_time_str)
-
+        fixErrorAccounts(error_accounts_array)
+        # relogin_lost_accounts(lost_accounts_array)
 
         # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 60):

@@ -18,8 +18,10 @@ import zipfile
 import sys
 import shutil
 import client
+import fixErrorAccounts as FIX_ERROR_ACCOUNTS
 
 is_checking_fix_vlbs = False  # Cờ trạng thái kiểm tra
+is_testing_code = False  # Cờ trạng thái kiểm tra code
 pyautogui.FAILSAFE = False
 
 def get_current_version():
@@ -1110,11 +1112,11 @@ checkbox.grid(row=2, columnspan=2, column=1, padx=5, pady=10, sticky="ew")
 entry_time_check_loop_VLBS = ttk.Entry(start_frame, width=4)
 entry_time_check_loop_VLBS.grid(row=2, column=3, padx=5, pady=10)
 
-start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS", command=lambda: on_start_button_click(entry_title_mail.get().strip()))
+start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS", command=lambda: on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip()))
 start_check_fix_VLBS_button.grid(row=2, column=4, padx=5, pady=10)
 
 # Gọi khi nhấn nút "Kích hoạt"
-def on_start_button_click(ten_may):
+def on_start_check_fix_VLBS_button_click(ten_may):
     global is_checking_fix_vlbs
 
     if not is_checking_fix_vlbs:
@@ -1270,6 +1272,28 @@ def load_to_tab_money_manager():
                 item['server']
             ))
             stt += 1  # Tăng STT
+
+# Gọi khi nhấn nút "Kích hoạt"
+def on_test_code_button_click():
+    error_accounts_array = []
+    error_accounts_array.append({
+                        "account": "PT2ÙTLÙHT11",
+                    })
+    error_accounts_array.append({
+                        "account": "PT2ÙTNÙHT11",
+                    })
+    
+    global is_testing_code
+    if not is_testing_code:
+        print("Bắt đầu test_code")
+        FIX_ERROR_ACCOUNTS.start_fixing(error_accounts_array)
+        test_code_button.config(text="Dừng")
+        is_testing_code = True
+    else:
+        print("Dừng test code")
+        FIX_ERROR_ACCOUNTS.stop_fixing()
+        test_code_button.config(text="Test code")
+        is_testing_code = False
 
 def update_to_tab_money_manager():
     save_monitor_time()
@@ -1459,6 +1483,10 @@ btn_save_gom_accounts.pack(pady=5)
 # # Nút tải dữ liệu
 # load_money_button = ttk.Button(button_money_frame, text="Refresh", command=run_load_to_tab_money_manager)
 # load_money_button.grid(row=1, column=2, padx=10, pady=5)
+
+# Nút test code
+test_code_button = ttk.Button(button_money_frame, text="Test code", command=on_test_code_button_click)
+test_code_button.grid(row=1, column=2, padx=10, pady=5)
 
 # Nút tải dữ liệu
 update_money_button = ttk.Button(button_money_frame, text="Cập nhật mới nhất", command=update_to_tab_money_manager)
