@@ -222,7 +222,7 @@ def auto_check_loop(minutes, ten_may):
                         status = "Tăng"
                         print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
                     else:
-                        status = "KPI"
+                        status = "Chưa đạt KPI"
                         print(f"[{timestamp}] ⚠️ {name} tăng tiền: {old_money} → {money} (Chưa đạt KPI)")
                 elif money < old_money:
                     status = "Giảm"
