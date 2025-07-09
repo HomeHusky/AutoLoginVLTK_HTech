@@ -117,7 +117,7 @@ def fix_account(account_name):
                     time.sleep(global_time_sleep)
                     pyautogui.press('esc')
                     time.sleep(2)
-                    items[0].right_click_input()
+                    item.right_click_input()
                     time.sleep(global_time_sleep)
                     send_keys("{DOWN}") # 1
                     send_keys("{DOWN}") # 2
@@ -131,7 +131,7 @@ def fix_account(account_name):
                     time.sleep(2)
                     item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
                     time.sleep(global_time_sleep)
-                    items[0].right_click_input()
+                    item.right_click_input()
                     time.sleep(global_time_sleep)
                     send_keys("{DOWN}")
                     time.sleep(global_time_sleep)
