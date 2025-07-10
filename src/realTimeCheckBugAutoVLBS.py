@@ -196,6 +196,7 @@ def auto_check_loop(minutes, ten_may):
     known_accounts = set()  # lưu tài khoản đã từng xuất hiện
     missing_accounts = set()  # lưu tài khoản đã bị văng
     error_accounts = set()  # lưu tài khoản có lỗi
+    is_first_run = True  # Biến để xác định lần chạy đầu tiên
 
     while not stop_flag:
         check_accounts_money()
@@ -272,8 +273,12 @@ def auto_check_loop(minutes, ten_may):
         # send_email_report(report, loop_time_str, ten_may)
 
         # === Gửi báo cáo Discord
-        send_discord_report(report, ten_may, loop_time_str)
-        fixErrorAccounts(error_accounts_array)
+        if is_first_run:
+            print("🔔 Lần chạy đầu tiên, không gửi báo cáo Discord.")
+            is_first_run = False
+        else:
+            send_discord_report(report, ten_may, loop_time_str)
+            fixErrorAccounts(error_accounts_array)
         # relogin_lost_accounts(lost_accounts_array)
 
         # === Đếm ngược trước vòng lặp tiếp theo
