@@ -113,10 +113,10 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
 
     working_dir = os.path.dirname(account['game_path'])
     
-    print(f"Base length of VLTK windows: {base_length}")
-
     for attempt in range(3):
         base_length = len(GF.get_all_vpid_vo_lam_windows())
+        print(f"Base length of VLTK windows: {base_length}")
+
         subprocess.Popen(account['game_path'], cwd=working_dir)
         time.sleep(sleepTime[0]['wait_time_open'])
         new_length = len(GF.get_all_vpid_vo_lam_windows())
