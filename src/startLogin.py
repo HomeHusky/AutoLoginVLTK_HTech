@@ -112,10 +112,25 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     # pyautogui.press('enter')
 
     working_dir = os.path.dirname(account['game_path'])
-    try:
+    all_pids = []
+    all_pids = GF.get_all_vpid_vo_lam_windows()
+    base_length = len(all_pids)
+    print(f"Base length of VLTK windows: {base_length}")
+
+    for attempt in range(3):
+        
         subprocess.Popen(account['game_path'], cwd=working_dir)
-    except Exception as e:
-        print("Lỗi khi mở game:", e)
+        time.sleep(sleepTime[0]['wait_time_open'])
+        new_length = len(GF.get_all_vpid_vo_lam_windows())
+        print(f"Attempt {attempt + 1}: New length of VLTK windows: {new_length}")
+        if new_length > base_length:
+            print(f"Đã mở game: {account['game_path']}")
+            break
+        else:
+            print("Lỗi khi mở game:", account['game_path'])
+            print(f"Thử lại lần {attempt + 2} để mở game: {account['game_path']}")
+
+
 
     # # Mở game bằng ctypes và os
     # path = account['game_path']
@@ -127,8 +142,6 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         if mo_game_lau:
             print(f"Chờ thêm {sleepTime[0]['wait_time_open2']}s vì server này mở game lâu")
             time.sleep(sleepTime[0]['wait_time_open2'])
-        else:
-            time.sleep(sleepTime[0]['wait_time_open'])
     except Exception as e:
         time.sleep(sleepTime[0]['wait_time_open'])
 

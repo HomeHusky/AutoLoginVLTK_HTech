@@ -4,6 +4,7 @@ import win32api
 import win32con
 import re
 import win32gui
+import win32process
 import pyautogui
 from pywinauto import Application
 import platform
@@ -182,6 +183,31 @@ def get_visible_vo_lam_windows():
 
     win32gui.EnumWindows(enum_windows_callback, None)
     return hwnds
+
+def get_all_vltk_windows_win32():
+    results = []
+
+    def enum_handler(hwnd, _):
+        title = win32gui.GetWindowText(hwnd)
+        if "Vo Lam Truyen Ky" in title:
+            _, pid = win32process.GetWindowThreadProcessId(hwnd)
+            results.append({
+                "title": title,
+                "handle": hwnd,
+                "pid": pid,
+                "visible": win32gui.IsWindowVisible(hwnd)
+            })
+
+    win32gui.EnumWindows(enum_handler, None)
+    return results
+
+def get_all_vpid_vo_lam_windows():
+    """Lấy danh sách các cửa sổ 'Vo Lam Truyen Ky' đang hiển thị và trả về danh sách các PID của chúng."""
+    windows = get_all_vltk_windows_win32()
+    vltk_pids = []
+    for w in windows:
+        vltk_pids.append(w['pid'])
+    return vltk_pids
 
 def get_child_window_text(hwnd):
     """Lấy nội dung của các cửa sổ con (child controls) của cửa sổ popup."""
