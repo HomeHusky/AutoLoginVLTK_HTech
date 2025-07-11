@@ -20,7 +20,8 @@ def scroll_to_list_item(list_control, index):
 
     # Dùng keyboard để cuộn đến item
     list_control.set_focus()
-
+    list_control.type_keys("{HOME}")
+    
     # Cuộn xuống đến đúng dòng
     for _ in range(index):
         send_keys("{DOWN}")
