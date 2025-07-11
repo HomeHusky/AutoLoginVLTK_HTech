@@ -287,13 +287,13 @@ def fix_account_stuck_on_map_Sa_Mac():
                         item.type_keys("{DOWN}")  # 5
                         item.type_keys("{DOWN}")  # 6
                         item.type_keys("{DOWN}")  # 7
-                        item.type_keys("{Enter}")
+                        pyautogui.press('enter')
                         time.sleep(2)
                         item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
                         time.sleep(global_time_sleep)
                         item.right_click_input()
                         item.type_keys("{DOWN}")  # 1
-                        item.type_keys("{Enter}")
+                        pyautogui.press('enter')
                         print(f"✅ Đã sửa lỗi kẹt map Sa Mạc cho tài khoản: {account_name}")
                 countChild += 1
 
