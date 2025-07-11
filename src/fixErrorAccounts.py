@@ -211,6 +211,86 @@ def fixLowBloodAccounts():
             countChild += 1
     print("🔧 Hoàn thành xử lý các tài khoản bị mất kết nối vì thấp máu.")
 
+def fix_account_stuck_on_map_Sa_Mac():
+    """
+    Lấy tên bản đồ hiện tại của tài khoản đang hoạt động.
+    :return: Tên bản đồ hiện tại.
+    """
+    try:
+        list_control = None
+        for attempt in range(3):
+            try:
+                print(f"Thử kết nối lần {attempt + 1}...")
+                list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
+                print("Kết nối thành công!")
+                break  # Nếu kết nối thành công, thoát vòng lặp
+            except Exception as e:
+                print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
+                nameAutoVLBS = GF.getNameAutoVLBS()
+                if not GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS):
+                    list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+                    if not list_control.exists():
+                        print("Không tìm thấy bảng!")
+                    else:
+                        try:
+                            list_control.set_focus()
+                            list_control.type_keys("{HOME}")
+                            time.sleep(0.5)  # Đợi scroll hoàn thành
+                        except Exception as e:
+                            print(f"Lỗi khi scroll: {str(e)}")
+                        # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
+                        items = list_control.children(control_type="ListItem")
+                        if items:
+                            items[0].right_click_input()
+                        else:
+                            print("Không có mục nào trong danh sách!")
+                    time.sleep(1)
+        items = list_control.children(control_type="ListItem")
+        for i, item in enumerate(items):
+            account_name = ""
+            account_map = ""
+            countChild = 0
+            for child in item.children():
+                if countChild == 1:
+                    account_name = child.window_text()
+                if countChild == 8:
+                    account_map = child.window_text()
+                    if account_map.lower().startswith("sa m¹c ®Þa biÓu".lower()):
+                        print("Account {account_name} đang ở bản đồ Sa mạc Địa Biểu!")
+                        scroll_to_list_item(list_control, i)
+                        # Nhấp chuột phải vào mục này
+                        item.click_input(double=True) # Nhấp đúp vào mục để mở game
+                        pyautogui.hotkey('alt', 'x')
+                        time.sleep(global_time_sleep)
+                        pyautogui.press('enter')
+                        time.sleep(global_time_sleep)
+                        pyautogui.press('enter')
+                        time.sleep(global_time_sleep)
+                        pyautogui.press('enter')
+                        time.sleep(global_time_sleep)
+                        pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
+                        time.sleep(global_time_sleep)
+                        pyautogui.press('enter')
+                        time.sleep(global_time_sleep)
+                        pyautogui.press('enter')
+                        time.sleep(2)
+                        pyautogui.hotkey('ctrl', 'g')
+                        time.sleep(global_time_sleep)
+                        pyautogui.press('esc')
+                        time.sleep(2)
+                        time.sleep(global_time_sleep)
+                        item.type_keys("{SPACE}")
+                        time.sleep(2)
+                        item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
+                        time.sleep(global_time_sleep)
+                        item.type_keys("{SPACE}")
+                        print(f"✅ Đã sửa lỗi kẹt map Sa Mạc cho tài khoản: {account_name}")
+                countChild += 1
+
+        # messagebox.showinfo("Dữ liệu:", gom_accounts_info_data)
+    except Exception as e:
+        print(f"Lỗi khi kiểm tra tài khoản: {e}")
+
 # # test hàm fixErrorAccounts
 # def start_fixing(error_accounts_array):
 #     global stop_flag
@@ -219,13 +299,21 @@ def fixLowBloodAccounts():
 #     t.start()
 #     print("🔁 Bắt đầu sửa...")
 
-# test hàm fixLowBloodAccounts
+# # test hàm fixLowBloodAccounts
+# def start_fixing(error_accounts_array):
+#     global stop_flag
+#     stop_flag = False
+#     t = threading.Thread(target=fixLowBloodAccounts, args=(), daemon=True)
+#     t.start()
+#     print("🔁 Bắt đầu sửa...")
+
+# test hàm lấy tên bản đồ hiện tại
 def start_fixing(error_accounts_array):
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=fixLowBloodAccounts, args=(), daemon=True)
+    t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
     t.start()
-    print("🔁 Bắt đầu sửa...")
+    print("🔁 Bắt đầu lấy bản đồ...")
 
 def stop_fixing():
     global stop_flag

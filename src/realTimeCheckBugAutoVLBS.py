@@ -16,7 +16,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from notifier import send_discord_report
-from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts
+from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac
 from tkinter import ttk
 
 # === BIẾN TOÀN CỤC ===
@@ -480,6 +480,7 @@ def auto_check_loop(minutes, ten_may):
             fixErrorAccounts(error_accounts_array)
             # Xử lý các tài khoản bị mất kết nối vì thấp máu
             fixLowBloodAccounts()
+            fix_account_stuck_on_map_Sa_Mac()
         # relogin_lost_accounts(lost_accounts_array)
         print(f"📊 Báo cáo kiểm tra tài khoản máy {ten_may} lúc {loop_time_str} đã hoàn thành.")
         # === Đếm ngược trước vòng lặp tiếp theo
