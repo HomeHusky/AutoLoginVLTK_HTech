@@ -81,9 +81,7 @@ def fix_account(account_name):
         except Exception as e:
             print(f"Lỗi kết nối đến ứng dụng lần {attempt + 1}: {e}")
             time.sleep(2)
-    if not list_control.exists():
-        print("Không tìm thấy bảng!")
-        return
+
     # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
     items = list_control.children(control_type="ListItem")
     for i, item in enumerate(items):
