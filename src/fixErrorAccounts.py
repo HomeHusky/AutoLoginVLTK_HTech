@@ -69,10 +69,17 @@ def fix_account(account_name):
     """
     list_control = None
 
-    # backend = GF.get_backend()
-    nameAutoVLBS = GF.getNameAutoVLBS()
-    GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
-    list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+    for attempt in range(3):
+        try:
+            print(f"Thử kết nối lần {attempt + 1}...")
+            # backend = GF.get_backend()
+            nameAutoVLBS = GF.getNameAutoVLBS()
+            GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
+            list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+            break  # Thoát vòng lặp nếu kết nối thành công
+        except Exception as e:
+            print(f"Lỗi kết nối đến ứng dụng lần {attempt + 1}: {e}")
+            time.sleep(2)
     if not list_control.exists():
         print("Không tìm thấy bảng!")
         return
