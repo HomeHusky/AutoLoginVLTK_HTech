@@ -1,3 +1,10 @@
+# ===============================
+# 🧠 AUTO LOGIN VÕ LÂM TRUYỀN KỲ
+# ===============================
+
+# ================================================================
+# 📦 1. IMPORT THƯ VIỆN
+# ================================================================
 import json
 import subprocess
 import tkinter as tk
@@ -19,6 +26,10 @@ import sys
 import shutil
 import client
 import fixErrorAccounts as FIX_ERROR_ACCOUNTS
+
+# ================================================================
+# ⚙️ 2. BIẾN TOÀN CỤC / CẤU HÌNH
+# ================================================================
 
 is_checking_fix_vlbs = False  # Cờ trạng thái kiểm tra
 is_testing_code = False  # Cờ trạng thái kiểm tra code
