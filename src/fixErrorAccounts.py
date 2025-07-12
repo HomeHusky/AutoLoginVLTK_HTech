@@ -194,6 +194,7 @@ def fixLowBloodAccounts():
                     pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
                     time.sleep(global_time_sleep)
                     pyautogui.press('enter')
+                    time.sleep(3)
                     time.sleep(global_time_sleep)
                     pyautogui.press('enter')
                     time.sleep(2)
@@ -256,7 +257,7 @@ def fix_account_stuck_on_map_Sa_Mac():
                 if countChild == 8:
                     account_map = child.window_text()
                     if account_map.lower().startswith("sa m¹c ®Þa biÓu".lower()):
-                        print("Account {account_name} đang ở bản đồ Sa mạc Địa Biểu!")
+                        print(f"Account {account_name} đang ở bản đồ Sa mạc Địa Biểu!")
                         scroll_to_list_item(list_control, i)
                         # Nhấp chuột phải vào mục này
                         item.click_input(double=True) # Nhấp đúp vào mục để mở game
@@ -271,6 +272,7 @@ def fix_account_stuck_on_map_Sa_Mac():
                         pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
                         time.sleep(global_time_sleep)
                         pyautogui.press('enter')
+                        time.sleep(3)
                         time.sleep(global_time_sleep)
                         pyautogui.press('enter')
                         time.sleep(2)
