@@ -348,6 +348,7 @@ def load_to_gui():
 
     # Ràng buộc sự kiện nhấp chuột vào heading
     tree_accounts.bind("<Button-1>", on_heading_click)
+    REAL_TIME_CHECK.render_profit_table_ui(monitor_money_frame, entry_title_mail.get().strip())
 
 # Kiểm tra tài khoản tồn tại
 def check_exist_account(username, gamepath, data):
@@ -449,7 +450,7 @@ def edit_account():
                 mo_game_lau_checkbox.deselect()
 
         entry_solanxuong.insert(0, values[8])
-        entry_solanxuong2.insert(0, values[8])
+        entry_solanxuong2.insert(0, values[9])
         
         
         # Lưu tài khoản đang chỉnh sửa
@@ -980,34 +981,37 @@ input_frame = ttk.LabelFrame(account_tab, text="Thông tin tài khoản", paddin
 input_frame.pack(padx=5, pady=10, fill="x")
 
 # Nhập Username
-ttk.Label(input_frame, text="Username:").grid(row=0, column=0, padx=5, pady=5)
+ttk.Label(input_frame, text="Username, pass, ingame:").grid(row=0, column=0, padx=5, pady=5)
 entry_username = ttk.Entry(input_frame)
 entry_username.grid(row=0, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Nhập Password
-ttk.Label(input_frame, text="Password:").grid(row=0, column=2, padx=5, pady=5)
+# ttk.Label(input_frame, text="Password:").grid(row=0, column=2, padx=5, pady=5)
 entry_password = ttk.Entry(input_frame)
-entry_password.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
+entry_password.grid(row=0, column=2, columnspan=1, padx=5, pady=5, sticky="ew")
+
+# Nhập Ingame
+# ttk.Label(input_frame, text="Ingame:").grid(row=0, column=4, padx=0, pady=5)
+entry_ingame = ttk.Entry(input_frame)
+entry_ingame.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Nhập Server
 ttk.Label(input_frame, text="Server:").grid(row=1, column=0, padx=5, pady=5)
 # Tạo Combobox servers
 servers_dropdown = ttk.Combobox(input_frame, textvariable=selected_server, values=server_names, state="readonly")
-servers_dropdown.grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
+servers_dropdown.grid(row=1, column=1, columnspan=1, padx=10, pady=10, sticky="ew")
 
 mo_game_lau_checkbox = tk.Checkbutton(input_frame, text="Server mở game lâu", variable=varMoGameLau, command=lambda: check_checkbox(varMoGameLau))
-mo_game_lau_checkbox.grid(row=1, column=4, columnspan=1)
+mo_game_lau_checkbox.grid(row=1, column=2, columnspan=1)
 
 # Nút chọn đường dẫn game
 hide_game_button = ttk.Button(input_frame, text="Ẩn All game", command=lambda: GF.hideWindow("Vo Lam Truyen Ky"))
-hide_game_button.grid(row=1, column=5, padx=5, pady=5)
+hide_game_button.grid(row=1, column=3, padx=5, pady=5, sticky="ew")
 
 # Nhập Game Path
 ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=2, column=0, padx=5, pady=5)
 entry_game_path = ttk.Entry(input_frame)
-entry_game_path.grid(row=2, column=1, columnspan=3, padx=5, pady=5, sticky="ew")
-
-
+entry_game_path.grid(row=2, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Hàm cập nhật path
 def update_path():
@@ -1047,24 +1051,25 @@ servers_dropdown.bind("<<ComboboxSelected>>", on_server_select)
 # Nhập AutoUpdate Path
 ttk.Label(input_frame, text="Đường dẫn AutoUpdate:").grid(row=3, column=0, padx=5, pady=5)
 entry_auto_update_path = ttk.Entry(input_frame)
-entry_auto_update_path.grid(row=3, column=1, columnspan=2, padx=5, pady=5, sticky="ew")
+entry_auto_update_path.grid(row=3, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Nút chọn đường dẫn game
 browse_button = ttk.Button(input_frame, text="Browse", command=browse_game_path)
-browse_button.grid(row=2, column=4, padx=5, pady=5)
+browse_button.grid(row=2, column=2, padx=5, pady=5, sticky="ew")
 
 update_button = ttk.Button(input_frame, text="Update path", command=update_path)
-update_button.grid(row=2, column=5, padx=5, pady=5)
+update_button.grid(row=2, column=3, padx=5, pady=5, sticky="ew")
 
 gom_checkbox = tk.Checkbutton(input_frame, text="TK gom", variable=varGomCheckBox, command=lambda: check_checkbox(varGomCheckBox))
-gom_checkbox.grid(row=3, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
+gom_checkbox.grid(row=3, column=2, columnspan=1, padx=5, pady=5, sticky="ew")
 
 xe_2_checkbox = tk.Checkbutton(input_frame, text="Xe 2", variable=varXe2CheckBox, command=lambda: check_checkbox(varXe2CheckBox))
-xe_2_checkbox.grid(row=3, column=4,columnspan=1, padx=5, pady=5, sticky="ew")
+# xe_2_checkbox.grid(row=3, column=3,columnspan=1, padx=5, pady=5, sticky="ew")
 
 small_frame = ttk.Frame(input_frame, width=10)
-small_frame.grid(row=3, column=5, columnspan=1, padx=0, pady=0)
+small_frame.grid(row=3, column=3, columnspan=1, padx=0, pady=0)
 
+ttk.Label(small_frame, text="Chọn server").pack(side="left", padx=(0, 2))
 entry_solanxuong = ttk.Entry(small_frame, width=4)
 entry_solanxuong.pack(side="left", padx=(0, 2))
 
@@ -1081,17 +1086,15 @@ entry_solanxuong2.pack(side="right", padx=(2, 0))
 # load_button = ttk.Button(input_frame, text="Refresh", command=load_to_gui)
 # load_button.grid(row=0, column=4, padx=10, pady=5)
 
-# Nhập Ingame
-ttk.Label(input_frame, text="Ingame:").grid(row=0, column=4, padx=0, pady=5)
-entry_ingame = ttk.Entry(input_frame, width=10)
-entry_ingame.grid(row=0, column=5, columnspan=1, padx=0, pady=5, sticky="ew")
-
 # Frame chứa các nút chức năng
 button_frame = ttk.Frame(input_frame)
-button_frame.grid(row=4, column=0, columnspan=3, pady=10)
+button_frame.grid(row=4, column=0, columnspan=2, pady=10)
 
 start_frame = ttk.LabelFrame(input_frame)
-start_frame.grid(row=4, column=3, columnspan=3, pady=10)
+start_frame.grid(row=4, column=2, columnspan=2, pady=10)
+
+monitor_money_frame = ttk.Frame(input_frame)
+monitor_money_frame.grid(row=0, column=4, rowspan=5, padx=10, pady=10)
 
 add_button = ttk.Button(button_frame, text="Thêm", command=add_account)
 add_button.grid(row=0, column=0, padx=5, pady=10)
@@ -1207,7 +1210,7 @@ auto_frame.pack(padx=5, pady=10, fill="x")
 # Nhập đường dẫn tool auto
 ttk.Label(auto_frame, text="Đường dẫn Tool auto:").grid(row=0, column=0, padx=5, pady=5)
 entry_auto_path = ttk.Entry(auto_frame)
-entry_auto_path.grid(row=0, column=1, columnspan=4, padx=5, pady=5, sticky="ew")
+entry_auto_path.grid(row=0, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Nút chọn đường dẫn auto
 browse_auto_button = ttk.Button(auto_frame, text="Browse", command=browse_auto_path)

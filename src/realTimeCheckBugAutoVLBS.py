@@ -18,6 +18,8 @@ from email.mime.text import MIMEText
 from notifier import send_discord_report
 from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac
 from tkinter import ttk
+import tkinter as tk
+
 
 # === BIẾN TOÀN CỤC ===
 kpi_1m = (35/24)/60
@@ -204,24 +206,17 @@ def render_profit_table_ui(frame, ten_may):
 
     table = get_profit_table_last_24h(ten_may)
 
-    columns = ("account", "start", "end", "profit", "start_time", "end_time")
-    tree = ttk.Treeview(frame, columns=columns, show="headings")
+    # Tính tổng profit
+    total_profit = sum(row["profit"] for row in table)
 
-    for col in columns:
-        tree.heading(col, text=col.upper())
-        tree.column(col, width=120)
-
-    for row in table:
-        tree.insert("", "end", values=(
-            row["account"],
-            f"{row['start']:.2f}",
-            f"{row['end']:.2f}",
-            f"{row['profit']:+.2f}",
-            row["start_time"],
-            row["end_time"]
-        ))
-
-    tree.pack(expand=True, fill="both")
+    # Tạo label hiển thị tổng lợi nhuận
+    label = tk.Label(
+        frame,
+        text=f"Profit in 24h: {total_profit:+.2f} [vạn]",
+        font=("Arial", 14, "bold"),
+        fg="green" if total_profit >= 0 else "red"
+    )
+    label.pack(expand=True, fill="both", padx=10, pady=10)
 
 # === HÀM GỬI MAIL ===
 # Hàm này sẽ gửi email báo cáo kết quả kiểm tra tài khoản
