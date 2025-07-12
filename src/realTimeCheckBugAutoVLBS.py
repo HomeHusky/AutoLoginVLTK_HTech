@@ -212,7 +212,7 @@ def render_profit_table_ui(frame, ten_may):
     # Tạo label hiển thị tổng lợi nhuận
     label = tk.Label(
         frame,
-        text=f"Profit in 24h: {total_profit:+.2f} [vạn]",
+        text=f"{total_profit:+.2f}",
         font=("Arial", 14, "bold"),
         fg="green" if total_profit >= 0 else "red"
     )
