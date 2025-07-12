@@ -875,7 +875,7 @@ root = tk.Tk()
 version = get_current_version()
 
 root.title(f"Auto Login Htechnology - {version}")
-root.geometry("900x700+0+0")
+root.geometry("850x700+0+0")
 root.resizable(True, True)
 
 server_names = list(servers.keys())
@@ -1126,7 +1126,7 @@ checkbox.grid(row=2, columnspan=2, column=1, padx=5, pady=10, sticky="ew")
 entry_time_check_loop_VLBS = ttk.Entry(start_frame, width=4)
 entry_time_check_loop_VLBS.grid(row=2, column=3, padx=5, pady=10)
 
-start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi VLBS", command=lambda: on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip()))
+start_check_fix_VLBS_button = ttk.Button(start_frame, text="Tự động fix lỗi", command=lambda: on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip()))
 start_check_fix_VLBS_button.grid(row=2, column=4, padx=5, pady=10)
 
 # Gọi khi nhấn nút "Kích hoạt"
