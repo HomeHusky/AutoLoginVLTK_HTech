@@ -22,7 +22,7 @@ import tkinter as tk
 
 
 # === BIẾN TOÀN CỤC ===
-kpi_1m = (35/24)/60
+kpi_1m = (43/24)/60
 stop_flag = False
 gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'
