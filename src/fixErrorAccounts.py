@@ -193,6 +193,7 @@ def relogin_account():
             print(f"Đang mới có {online_accounts} acc đang online so với {all_accounts}.")
             run_reLogin(currentAutoName, True)
             CHECK_STATUS.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime)
+            print("Hoàn thành login!")
         else:
             print(f"Tất cả {all_accounts} tài khoản đều đang online.")
         # Giả lập việc đăng nhập lại, ví dụ: mở game và nhập thông tin đăng nhập
@@ -235,7 +236,6 @@ def run_reLogin(currentAutoName, isAutoClickVLBS):
                 if login_success != 1:
                     # add_server_fail_value('fail_servers.json', account['auto_update_path'])
                     print(f"Server failed for account {account['username']}")
-    print("Hoàn thành login!")
     
 def fixLowBloodAccounts():
     """
