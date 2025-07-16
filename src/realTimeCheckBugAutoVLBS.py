@@ -218,6 +218,28 @@ def render_profit_table_ui(frame, ten_may):
     )
     label.pack(expand=True, fill="both", padx=10, pady=10)
 
+def render_current_online_accounts(frame, nameAutoVLBS):
+    account_online = load_len_accounts_online(nameAutoVLBS)
+    # Tạo label hiển thị tổng lợi nhuận
+    label = tk.Label(
+        frame,
+        text=f"{account_online} online",
+        font=("Arial", 14, "bold"),
+        fg="green" if account_online > 0 else "red"
+    )
+    label.pack(expand=True, fill="both", padx=10, pady=10)
+
+def load_len_accounts_online(nameAutoVLBS):
+    try:
+        GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
+        list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+
+        items = list_control.children(control_type="ListItem")
+        return len(items)
+    except Exception as e:
+        print(f"Lỗi khi lấy số lượng tài khoản online: {e}")
+        return 0
+
 # === HÀM GỬI MAIL ===
 # Hàm này sẽ gửi email báo cáo kết quả kiểm tra tài khoản
 def send_email_report(report_data, loop_time_str, ten_may):

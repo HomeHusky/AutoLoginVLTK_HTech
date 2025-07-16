@@ -118,11 +118,11 @@ def fix_account(account_name):
                     pyautogui.press('esc')
                     time.sleep(2)
                     time.sleep(global_time_sleep)
-                    item.type_keys("{SPACE}")
-                    time.sleep(2)
+                    # item.type_keys("{SPACE}")
+                    # time.sleep(2)
                     item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
                     time.sleep(global_time_sleep)
-                    item.type_keys("{SPACE}")
+                    # item.type_keys("{SPACE}")
                     print(f"✅ Đã sửa lỗi cho tài khoản: {account_name}")
                     return
             countChild += 1
@@ -203,11 +203,11 @@ def fixLowBloodAccounts():
                     pyautogui.press('esc')
                     time.sleep(2)
                     time.sleep(global_time_sleep)
-                    item.type_keys("{SPACE}")
-                    time.sleep(2)
+                    # item.type_keys("{SPACE}")
+                    # time.sleep(2)
                     item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
                     time.sleep(global_time_sleep)
-                    item.type_keys("{SPACE}")
+                    # item.type_keys("{SPACE}")
                     print(f"✅ Đã sửa lỗi thấp máu cho tài khoản: {account_name}")
             countChild += 1
     print("🔧 Hoàn thành xử lý các tài khoản bị mất kết nối vì thấp máu.")
@@ -281,21 +281,21 @@ def fix_account_stuck_on_map_Sa_Mac():
                         pyautogui.press('esc')
                         time.sleep(2)
                         time.sleep(global_time_sleep)
-                        item.right_click_input()
-                        item.type_keys("{DOWN}")  # 1
-                        item.type_keys("{DOWN}")  # 2
-                        item.type_keys("{DOWN}")  # 3
-                        item.type_keys("{DOWN}")  # 4
-                        item.type_keys("{DOWN}")  # 5
-                        item.type_keys("{DOWN}")  # 6
-                        item.type_keys("{DOWN}")  # 7
-                        pyautogui.press('enter')
-                        time.sleep(2)
+                        # item.right_click_input()
+                        # item.type_keys("{DOWN}")  # 1
+                        # item.type_keys("{DOWN}")  # 2
+                        # item.type_keys("{DOWN}")  # 3
+                        # item.type_keys("{DOWN}")  # 4
+                        # item.type_keys("{DOWN}")  # 5
+                        # item.type_keys("{DOWN}")  # 6
+                        # item.type_keys("{DOWN}")  # 7
+                        # pyautogui.press('enter')
+                        # time.sleep(2)
                         item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
                         time.sleep(global_time_sleep)
-                        item.right_click_input()
-                        item.type_keys("{DOWN}")  # 1
-                        pyautogui.press('enter')
+                        # item.right_click_input()
+                        # item.type_keys("{DOWN}")  # 1
+                        # pyautogui.press('enter')
                         print(f"✅ Đã sửa lỗi kẹt map Sa Mạc cho tài khoản: {account_name}")
                 countChild += 1
 

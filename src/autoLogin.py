@@ -349,6 +349,7 @@ def load_to_gui():
     # Ràng buộc sự kiện nhấp chuột vào heading
     tree_accounts.bind("<Button-1>", on_heading_click)
     REAL_TIME_CHECK.render_profit_table_ui(monitor_money_frame, entry_title_mail.get().strip())
+    lambda: REAL_TIME_CHECK.render_current_online_accounts(current_online_frame, currentAutoName)
 
 # Kiểm tra tài khoản tồn tại
 def check_exist_account(username, gamepath, data):
@@ -1094,7 +1095,10 @@ start_frame = ttk.LabelFrame(input_frame)
 start_frame.grid(row=4, column=2, columnspan=2, pady=10)
 
 monitor_money_frame = ttk.Frame(input_frame)
-monitor_money_frame.grid(row=0, column=4, rowspan=5, padx=10, pady=10)
+monitor_money_frame.grid(row=0, column=4, rowspan=2, padx=10, pady=10)
+
+current_online_frame = ttk.Frame(input_frame)
+current_online_frame.grid(row=2, column=4, rowspan=2, padx=10, pady=10)
 
 add_button = ttk.Button(button_frame, text="Thêm", command=add_account)
 add_button.grid(row=0, column=0, padx=5, pady=10)
