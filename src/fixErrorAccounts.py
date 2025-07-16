@@ -417,7 +417,7 @@ def fix_account_stuck_on_map_Sa_Mac():
 #     print("🔁 Bắt đầu lấy bản đồ...")
 
 # test hàm relogin_lost_accounts
-def stop_fixing():
+def start_fixing(error_accounts_array):
     global stop_flag
     stop_flag = False
     t = threading.Thread(target=relogin_lost_accounts, args=(), daemon=True)
