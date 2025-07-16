@@ -498,7 +498,7 @@ def auto_check_loop(minutes, ten_may):
             # Xử lý các tài khoản bị mất kết nối vì thấp máu
             fixLowBloodAccounts()
             fix_account_stuck_on_map_Sa_Mac()
-        # relogin_lost_accounts(lost_accounts_array)
+            relogin_lost_accounts()
         print(f"📊 Báo cáo kiểm tra tài khoản máy {ten_may} lúc {loop_time_str} đã hoàn thành.")
         # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 60):

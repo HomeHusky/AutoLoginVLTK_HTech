@@ -6,10 +6,27 @@ import time
 import os
 import json
 from pywinauto.keyboard import send_keys
+import startLogin as START_LOGIN
+import checkStatusAcounts as CHECK_STATUS
 
 stop_flag = False
 global_time_sleep = GF.load_global_time_sleep()
 
+def load_accounts(file_path='accounts.json'):
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+        data = json.load(file)
+        return data['accounts']
+
+def load_auto_tool_path(file_path='accounts.json'):
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+        data = json.load(file)
+        return data['auto_tool_path']
+
+def load_sleepTime(file_path='global_time.json'):
+    with open(os.path.join(GF.join_directory_config(), file_path), 'r') as file:
+        data = json.load(file)
+        return data['sleepTime']
+    
 def scroll_to_list_item(list_control, index):
     list_items = list_control.children(control_type="ListItem")
     if index < 0 or index >= len(list_items):
@@ -29,6 +46,29 @@ def scroll_to_list_item(list_control, index):
 
     # Khi đã hiển thị trên màn hình, click vào item
     target_item.click_input()
+
+def get_length_online_accounts(file_path='accounts.json'):
+    """
+    Lấy danh sách các tài khoản đang online từ file JSON.
+    :param file_path: Đường dẫn đến file JSON chứa thông tin tài khoản.
+    :return: Danh sách các tài khoản đang online.
+    """
+    full_path = os.path.join(GF.join_directory_data(), file_path)
+    with open(full_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        online_accounts = [account for account in data.get('accounts', []) if account.get('is_logged_in')]
+    return len(online_accounts)
+
+def get_length_all_accounts(file_path='accounts.json'):
+    """
+    Lấy tổng số lượng tài khoản từ file JSON.
+    :param file_path: Đường dẫn đến file JSON chứa thông tin tài khoản.
+    :return: Tổng số lượng tài khoản.
+    """
+    full_path = os.path.join(GF.join_directory_data(), file_path)
+    with open(full_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        return len(data.get('accounts', []))
 
 def get_account_by_ingame(ingame_name, file_path='accounts.json'):
 
@@ -128,25 +168,74 @@ def fix_account(account_name):
             countChild += 1
     print(f"❌ Không tìm thấy tài khoản: {account_name} trong danh sách.")
 
-def relogin_lost_accounts(lost_accounts_array):
+def relogin_lost_accounts():
     """
     Đăng nhập lại các tài khoản bị mất kết nối.
     :param lost_accounts_array: Danh sách tài khoản bị mất kết nối.
     """
-    print("🔄 Đang đăng nhập lại các tài khoản bị mất kết nối...")
-    for account in lost_accounts_array:
-        account_name = account['account']
-        # Thực hiện các bước đăng nhập lại cho tài khoản
-        print(f"🔄 Đang đăng nhập lại cho tài khoản: {account_name}")
-        # Giả sử có một hàm đăng nhập lại
-        relogin_account(account_name)
+    print("🔄 Đang kiểm tra và đăng nhập lại các tài khoản bị mất kết nối...")
+    relogin_account()
 
-def relogin_account(account_name):
+def relogin_account():
     """
     Giả lập việc đăng nhập lại cho tài khoản.
     :param account_name: Tên tài khoản cần đăng nhập lại.
     """
+    try:
+        auto_tool_path = START_LOGIN.load_auto_tool_path()
+        sleepTime = START_LOGIN.load_sleepTime()
+        global currentAutoName
+        currentAutoName = GF.getNameAutoVLBS()
+        CHECK_STATUS.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime)
+        online_accounts = get_length_online_accounts()
+        all_accounts = get_length_all_accounts()
+        if online_accounts < all_accounts:
+            print(f"Đang mới có {online_accounts} acc đang online so với {all_accounts}.")
+            run_reLogin(currentAutoName, True)
+        else:
+            print(f"Tất cả {all_accounts} tài khoản đều đang online.")
+        # Giả lập việc đăng nhập lại, ví dụ: mở game và nhập thông tin đăng nhập
 
+    except Exception as e:
+        print(f"❌ Lỗi khi đăng nhập lại: {e}")
+
+def run_reLogin(currentAutoName, isAutoClickVLBS):
+    """
+    Chạy quá trình đăng nhập lại cho các tài khoản bị mất kết nối.
+    """
+    GF.minimizeWindow("Auto Login Htech")
+    global stop_login
+    stop_login = False  # Reset cờ dừng khi bắt đầu
+    sleepTime = load_sleepTime()
+    accounts = load_accounts()
+    for account in accounts:
+        tryLoginNumber = sleepTime[0]['try_number']
+        login_success = 0
+        isChangedServer = False
+        if stop_login:
+            break  # Dừng quá trình nếu cờ được đặt
+        for i in range(tryLoginNumber):
+            if login_success == 1:
+                continue
+            if account['is_logged_in'] != True:
+                if login_success == 2:
+                    if not isChangedServer:
+                        isChangedServer = True
+                        print(f"Login lần {i+1} và thử lại!")
+                elif login_success == 3:
+                    print(f"Login lần {i+1} vì trước đó không hiện gamme!")
+                elif login_success == 4:
+                    print(f"Login lần {i+1} vì trước đó game tự tắt sau khi chạy auto!")
+                    login_success = START_LOGIN.auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, False)
+                else:
+                    print(f"Login lần {i+1}")
+                    login_success = START_LOGIN.auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, False)
+            if i == (tryLoginNumber-1):
+                if login_success != 1:
+                    # add_server_fail_value('fail_servers.json', account['auto_update_path'])
+                    print(f"Server failed for account {account['username']}")
+    print("Hoàn thành login!")
+    
 def fixLowBloodAccounts():
     """
     Xử lý các tài khoản bị mất kết nối vì thấp máu.
@@ -319,13 +408,21 @@ def fix_account_stuck_on_map_Sa_Mac():
 #     t.start()
 #     print("🔁 Bắt đầu sửa...")
 
-# test hàm lấy tên bản đồ hiện tại
-def start_fixing(error_accounts_array):
+# # test hàm lấy tên bản đồ hiện tại
+# def start_fixing(error_accounts_array):
+#     global stop_flag
+#     stop_flag = False
+#     t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
+#     t.start()
+#     print("🔁 Bắt đầu lấy bản đồ...")
+
+# test hàm relogin_lost_accounts
+def stop_fixing():
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
+    t = threading.Thread(target=relogin_lost_accounts, args=(), daemon=True)
     t.start()
-    print("🔁 Bắt đầu lấy bản đồ...")
+    print("🔁 Bắt đầu kiểm tra và relogin!")
 
 def stop_fixing():
     global stop_flag
