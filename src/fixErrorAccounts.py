@@ -192,6 +192,7 @@ def relogin_account():
         if online_accounts < all_accounts:
             print(f"Đang mới có {online_accounts} acc đang online so với {all_accounts}.")
             run_reLogin(currentAutoName, True)
+            CHECK_STATUS.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime)
         else:
             print(f"Tất cả {all_accounts} tài khoản đều đang online.")
         # Giả lập việc đăng nhập lại, ví dụ: mở game và nhập thông tin đăng nhập
