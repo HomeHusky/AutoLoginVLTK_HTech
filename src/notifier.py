@@ -9,6 +9,7 @@ def format_report_discord(report, ten_may, timestamp):
     """
     description = ""
     stt = 0
+    total_profit = 0
     for item in report:
         stt = stt + 1
         name = item['account']
@@ -18,8 +19,10 @@ def format_report_discord(report, ten_may, timestamp):
 
         if status == "Tăng":
             emoji = "🟢"
+            total_profit += new - old
         elif status == "Chưa đạt KPI":
             emoji = "⚠️"
+            total_profit += new - old
         elif status == "Giảm":
             emoji = "🔻"
         elif status == "Không đổi":
@@ -33,9 +36,14 @@ def format_report_discord(report, ten_may, timestamp):
 
         description += f"{emoji} {stt} **{name}**: {old} → {new} ({status})\n"
 
+    if total_profit > 0:
+        total_line = f"💰 **Tổng tiền tăng:** {total_profit:.2f}\n\n"
+    else:
+        total_line = ""
+
     embed = {
         "title": f"📡 Báo cáo máy {ten_may}",
-        "description": description.strip(),
+        "description": total_line + description.strip(),
         "color": 0x3498db,  # Xanh dương
         "footer": {
             "text": f"⏰ {timestamp}"
