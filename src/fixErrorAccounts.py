@@ -266,6 +266,8 @@ def fixLowBloodAccounts():
             if countChild == 1:
                 blood_account = child.window_text()
                 print(f"Máu của tài khoản {account_name} là: {blood_account}")
+                if blood_account == "":
+                    continue  # Bỏ qua nếu máu không được hiển thị
                 if blood_account != "Boss" and int(blood_account) < 600:
                     scroll_to_list_item(list_control, i)
                     # Nhấp chuột phải vào mục này
