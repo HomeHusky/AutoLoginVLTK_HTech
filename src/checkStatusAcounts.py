@@ -44,7 +44,7 @@ def get_dlg(currentAutoName, backend):
         # Kiểm tra số lượng và lấy theo điều kiện
         if len(list_controls) == 3:
             print("Có 3 List control, lấy cái đầu tiên.")
-            list_control = list_controls[0]  # lấy cái đầu tiên
+            list_control = list_controls[2]  # lấy cái đầu tiên
         else:
             list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
     elif GF.checkWindowRunning(currentAutoName) == 2:
@@ -61,7 +61,7 @@ def get_dlg(currentAutoName, backend):
         # Kiểm tra số lượng và lấy theo điều kiện
         if len(list_controls) == 3:
             print("Có 3 List control, lấy cái đầu tiên.")
-            list_control = list_controls[0]  # lấy cái đầu tiên
+            list_control = list_controls[2]  # lấy cái đầu tiên
         else:
             list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
 
@@ -104,7 +104,7 @@ def getCheckData(currentAutoName):
             # Kiểm tra số lượng và lấy theo điều kiện
             if len(list_controls) == 3:
                 print("Có 3 List control, lấy cái đầu tiên.")
-                list_control = list_controls[0]  # lấy cái đầu tiên
+                list_control = list_controls[2]  # lấy cái đầu tiên
             else:
                 list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
         elif GF.checkWindowRunning(currentAutoName) == 2:
@@ -120,7 +120,7 @@ def getCheckData(currentAutoName):
             # Kiểm tra số lượng và lấy theo điều kiện
             if len(list_controls) == 3:
                 print("Có 3 List control, lấy cái đầu tiên.")
-                list_control = list_controls[0]  # lấy cái đầu tiên
+                list_control = list_controls[2]  # lấy cái đầu tiên
             else:
                 list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
         # list_control = get_dlg(currentAutoName, backend)
@@ -156,7 +156,7 @@ def getCheckData(currentAutoName):
                     # Kiểm tra số lượng và lấy theo điều kiện
                     if len(list_controls) == 3:
                         print("Có 3 List control, lấy cái đầu tiên.")
-                        list_control = list_controls[0]  # lấy cái đầu tiên
+                        list_control = list_controls[2]  # lấy cái đầu tiên
                     else:
                         list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
                 elif GF.checkWindowRunning(currentAutoName) == 2:
@@ -172,7 +172,7 @@ def getCheckData(currentAutoName):
                     # Kiểm tra số lượng và lấy theo điều kiện
                     if len(list_controls) == 3:
                         print("Có 3 List control, lấy cái đầu tiên.")
-                        list_control = list_controls[0]  # lấy cái đầu tiên
+                        list_control = list_controls[2]  # lấy cái đầu tiên
                     else:
                         list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
             except Exception as e:

@@ -127,7 +127,7 @@ def fix_account(account_name):
             # Kiểm tra số lượng và lấy theo điều kiện
             if len(list_controls) == 3:
                 print("Có 3 List control, lấy cái đầu tiên.")
-                list_control = list_controls[0]  # lấy cái đầu tiên
+                list_control = list_controls[2]  # lấy cái đầu tiên
             else:
                 list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
             break  # Thoát vòng lặp nếu kết nối thành công
@@ -352,7 +352,7 @@ def fix_account_stuck_on_map_Sa_Mac():
                     # Kiểm tra số lượng và lấy theo điều kiện
                     if len(list_controls) == 3:
                         print("Có 3 List control, lấy cái đầu tiên.")
-                        list_control = list_controls[0]  # lấy cái đầu tiên
+                        list_control = list_controls[2]  # lấy cái đầu tiên
                     else:
                         list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1
                     if not list_control:

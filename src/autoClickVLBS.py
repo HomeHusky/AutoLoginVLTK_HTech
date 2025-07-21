@@ -64,7 +64,7 @@ def run_right_click(name):
         # Kiểm tra số lượng và lấy theo điều kiện
         if len(list_controls) == 3:
             print("Có 3 List control, lấy cái đầu tiên.")
-            list_control = list_controls[0]  # lấy cái đầu tiên
+            list_control = list_controls[2]  # lấy cái đầu tiên
         else:
             list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1
         if not list_control:
@@ -91,7 +91,7 @@ def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
         # Kiểm tra số lượng và lấy theo điều kiện
         if len(list_controls) == 3:
             print("Có 3 List control, lấy cái đầu tiên.")
-            list_control = list_controls[0]  # lấy cái đầu tiên
+            list_control = list_controls[2]  # lấy cái đầu tiên
         else:
             list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
         if not list_control:
