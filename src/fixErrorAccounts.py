@@ -270,7 +270,7 @@ def fixLowBloodAccounts():
             # Kiểm tra số lượng và lấy theo điều kiện
             if len(list_controls) == 3:
                 print("Có 3 List control, lấy cái đầu tiên.")
-                list_control = list_controls[0]  # lấy cái đầu tiên
+                list_control = list_controls[2]  # lấy cái đầu tiên
             else:
                 list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
             break  # Thoát vòng lặp nếu kết nối thành công
@@ -436,21 +436,21 @@ def fix_account_stuck_on_map_Sa_Mac():
 #     t.start()
 #     print("🔁 Bắt đầu sửa...")
 
-# # test hàm fixLowBloodAccounts
-# def start_fixing(error_accounts_array):
-#     global stop_flag
-#     stop_flag = False
-#     t = threading.Thread(target=fixLowBloodAccounts, args=(), daemon=True)
-#     t.start()
-#     print("🔁 Bắt đầu sửa...")
-
-# test hàm lấy tên bản đồ hiện tại
+# test hàm fixLowBloodAccounts
 def start_fixing(error_accounts_array):
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
+    t = threading.Thread(target=fixLowBloodAccounts, args=(), daemon=True)
     t.start()
-    print("🔁 Bắt đầu lấy bản đồ...")
+    print("🔁 Bắt đầu sửa...")
+
+# # test hàm lấy tên bản đồ hiện tại
+# def start_fixing(error_accounts_array):
+#     global stop_flag
+#     stop_flag = False
+#     t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
+#     t.start()
+#     print("🔁 Bắt đầu lấy bản đồ...")
 
 # # test hàm relogin_lost_accounts
 # def start_fixing(error_accounts_array):
