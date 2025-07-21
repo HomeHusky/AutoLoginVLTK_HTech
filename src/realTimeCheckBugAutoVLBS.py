@@ -231,8 +231,20 @@ def render_current_online_accounts(frame, nameAutoVLBS):
 
 def load_len_accounts_online(nameAutoVLBS):
     try:
+        list_control = None
         GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
-        list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+        app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+        dlg = app.window(title_re=nameAutoVLBS)
+
+        # Lấy tất cả control loại List trong cửa sổ
+        list_controls = dlg.descendants(control_type="List")
+
+        # Kiểm tra số lượng và lấy theo điều kiện
+        if len(list_controls) == 3:
+            print("Có 3 List control, lấy cái đầu tiên.")
+            list_control = list_controls[0]  # lấy cái đầu tiên
+        else:
+            list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
 
         items = list_control.children(control_type="ListItem")
         return len(items)
@@ -326,8 +338,19 @@ def check_accounts_money():
                 # backend = GF.get_backend()
                 nameAutoVLBS = GF.getNameAutoVLBS()
                 if not GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS):
-                    list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
-                    if not list_control.exists():
+                    app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+                    dlg = app.window(title_re=nameAutoVLBS)
+
+                    # Lấy tất cả control loại List trong cửa sổ
+                    list_controls = dlg.descendants(control_type="List")
+
+                    # Kiểm tra số lượng và lấy theo điều kiện
+                    if len(list_controls) == 3:
+                        print("Có 3 List control, lấy cái đầu tiên.")
+                        list_control = list_controls[0]  # lấy cái đầu tiên
+                    else:
+                        list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
+                    if not list_control:
                         print("Không tìm thấy bảng!")
                     else:
                         try:

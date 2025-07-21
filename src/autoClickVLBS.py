@@ -53,9 +53,21 @@ def getIngameValueByUserName(username):
 
 def run_right_click(name):
     try:
+        list_control = None
         # backend = GF.get_backend()
-        list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
-        if not list_control.exists():
+        app = Application(backend="uia").connect(title_re=name)
+        dlg = app.window(title_re=name)
+
+        # Lấy tất cả control loại List trong cửa sổ
+        list_controls = dlg.descendants(control_type="List")
+
+        # Kiểm tra số lượng và lấy theo điều kiện
+        if len(list_controls) == 3:
+            print("Có 3 List control, lấy cái đầu tiên.")
+            list_control = list_controls[0]  # lấy cái đầu tiên
+        else:
+            list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1
+        if not list_control:
             print("Không tìm thấy bảng!")
         else:
             # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
@@ -69,8 +81,20 @@ def run_right_click(name):
 
 def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
     try:
-        list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
-        if not list_control.exists():
+        list_control = None
+        app = Application(backend="uia").connect(title_re=name)
+        dlg = app.window(title_re=name)
+
+        # Lấy tất cả control loại List trong cửa sổ
+        list_controls = dlg.descendants(control_type="List")
+
+        # Kiểm tra số lượng và lấy theo điều kiện
+        if len(list_controls) == 3:
+            print("Có 3 List control, lấy cái đầu tiên.")
+            list_control = list_controls[0]  # lấy cái đầu tiên
+        else:
+            list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
+        if not list_control:
             print("Không tìm thấy bảng!")
         else:
             # Scroll lên đầu danh sách
@@ -121,7 +145,7 @@ def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS):
             except Exception as e:
                 print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
                 time.sleep(1)  # Đợi 1 giây trước khi thử lại
-        if not list_control.exists():
+        if not list_control:
             print("Không tìm thấy bảng!")
         else:
             items = list_control.children(control_type="ListItem")

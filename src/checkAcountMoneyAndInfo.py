@@ -171,8 +171,20 @@ def load_xe_2_accounts(filepath = 'accounts.json'):
 
 def run_right_click(name):
     backend = GF.get_backend()
-    list_control = Application(backend="uia").connect(title_re=name).window(title_re=name).child_window(control_type="List")
-    if not list_control.exists():
+    list_control = None
+    app = Application(backend="uia").connect(title_re=name)
+    dlg = app.window(title_re=name)
+
+    # Lấy tất cả control loại List trong cửa sổ
+    list_controls = dlg.descendants(control_type="List")
+
+    # Kiểm tra số lượng và lấy theo điều kiện
+    if len(list_controls) == 3:
+        print("Có 3 List control, lấy cái đầu tiên.")
+        list_control = list_controls[0]  # lấy cái đầu tiên
+    else:
+        list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1    
+    if not list_control:
         print("Không tìm thấy bảng!")
     else:
         # Tìm các mục trong danh sách và nhấp chuột phải vào mục đầu tiên
@@ -189,8 +201,19 @@ def run_update_accounts_money(name, gom_accounts):
         try:
             print(f"Thử kết nối lần {attempt + 1}...")
             backend = GF.get_backend()
-            list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*').window(title_re='^Quan ly nhan vat.*').child_window(control_type="List")
-            print("Kết nối thành công!")
+            app = Application(backend="uia").connect(title_re=name)
+            dlg = app.window(title_re=name)
+
+            # Lấy tất cả control loại List trong cửa sổ
+            list_controls = dlg.descendants(control_type="List")
+
+            # Kiểm tra số lượng và lấy theo điều kiện
+            if len(list_controls) == 3:
+                print("Có 3 List control, lấy cái đầu tiên.")
+                list_control = list_controls[0]  # lấy cái đầu tiên
+            else:
+                list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
+                print("Kết nối thành công!")
             break  # Nếu kết nối thành công, thoát vòng lặp
         except Exception as e:
             print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")

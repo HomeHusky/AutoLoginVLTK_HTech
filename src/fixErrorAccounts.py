@@ -118,7 +118,18 @@ def fix_account(account_name):
             # backend = GF.get_backend()
             nameAutoVLBS = GF.getNameAutoVLBS()
             GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
-            list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+            app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+            dlg = app.window(title_re=nameAutoVLBS)
+
+            # Lấy tất cả control loại List trong cửa sổ
+            list_controls = dlg.descendants(control_type="List")
+
+            # Kiểm tra số lượng và lấy theo điều kiện
+            if len(list_controls) == 3:
+                print("Có 3 List control, lấy cái đầu tiên.")
+                list_control = list_controls[0]  # lấy cái đầu tiên
+            else:
+                list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
             break  # Thoát vòng lặp nếu kết nối thành công
         except Exception as e:
             print(f"Lỗi kết nối đến ứng dụng lần {attempt + 1}: {e}")
@@ -250,7 +261,18 @@ def fixLowBloodAccounts():
             # backend = GF.get_backend()
             nameAutoVLBS = GF.getNameAutoVLBS()
             GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
-            list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
+            app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+            dlg = app.window(title_re=nameAutoVLBS)
+
+            # Lấy tất cả control loại List trong cửa sổ
+            list_controls = dlg.descendants(control_type="List")
+
+            # Kiểm tra số lượng và lấy theo điều kiện
+            if len(list_controls) == 3:
+                print("Có 3 List control, lấy cái đầu tiên.")
+                list_control = list_controls[0]  # lấy cái đầu tiên
+            else:
+                list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
             break  # Thoát vòng lặp nếu kết nối thành công
         except Exception as e:
             print(f"Lỗi kết nối đến ứng dụng lần {attempt + 1}: {e}")
@@ -321,8 +343,19 @@ def fix_account_stuck_on_map_Sa_Mac():
                 print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
                 nameAutoVLBS = GF.getNameAutoVLBS()
                 if not GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS):
-                    list_control = Application(backend="uia").connect(title_re=nameAutoVLBS).window(title_re=nameAutoVLBS).child_window(control_type="List")
-                    if not list_control.exists():
+                    app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+                    dlg = app.window(title_re=nameAutoVLBS)
+
+                    # Lấy tất cả control loại List trong cửa sổ
+                    list_controls = dlg.descendants(control_type="List")
+
+                    # Kiểm tra số lượng và lấy theo điều kiện
+                    if len(list_controls) == 3:
+                        print("Có 3 List control, lấy cái đầu tiên.")
+                        list_control = list_controls[0]  # lấy cái đầu tiên
+                    else:
+                        list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1
+                    if not list_control:
                         print("Không tìm thấy bảng!")
                     else:
                         try:
@@ -411,21 +444,21 @@ def fix_account_stuck_on_map_Sa_Mac():
 #     t.start()
 #     print("🔁 Bắt đầu sửa...")
 
-# # test hàm lấy tên bản đồ hiện tại
-# def start_fixing(error_accounts_array):
-#     global stop_flag
-#     stop_flag = False
-#     t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
-#     t.start()
-#     print("🔁 Bắt đầu lấy bản đồ...")
-
-# test hàm relogin_lost_accounts
+# test hàm lấy tên bản đồ hiện tại
 def start_fixing(error_accounts_array):
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=relogin_lost_accounts, args=(), daemon=True)
+    t = threading.Thread(target=fix_account_stuck_on_map_Sa_Mac, args=(), daemon=True)
     t.start()
-    print("🔁 Bắt đầu kiểm tra và relogin!")
+    print("🔁 Bắt đầu lấy bản đồ...")
+
+# # test hàm relogin_lost_accounts
+# def start_fixing(error_accounts_array):
+#     global stop_flag
+#     stop_flag = False
+#     t = threading.Thread(target=relogin_lost_accounts, args=(), daemon=True)
+#     t.start()
+#     print("🔁 Bắt đầu kiểm tra và relogin!")
 
 def stop_fixing():
     global stop_flag

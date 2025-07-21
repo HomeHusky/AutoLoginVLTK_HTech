@@ -25,6 +25,16 @@ def getIngame(autoName):
                 # Lấy cửa sổ chính của ứng dụng
                 dlg = app.window(title_re=autoName)
 
+                # Lấy tất cả control loại List trong cửa sổ
+                list_controls = dlg.descendants(control_type="List")
+
+                # Kiểm tra số lượng và lấy theo điều kiện
+                if len(list_controls) == 3:
+                    print("Có 3 List control, lấy cái đầu tiên.")
+                    list_control = list_controls[0]  # lấy cái đầu tiên
+                else:
+                    list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
+
             except Exception as e:
                 print("next----------> 1")
 
@@ -32,7 +42,7 @@ def getIngame(autoName):
             for attempt in range(3):
                 try:
                     print(f"Thử kết nối lần {attempt + 1}...")
-                    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+                    app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                     print("Kết nối thành công!")
                     break  # Nếu kết nối thành công, thoát vòng lặp
                 except Exception as e:
@@ -41,13 +51,13 @@ def getIngame(autoName):
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
 
             # Lấy cửa sổ chính của ứng dụng
-            dlg = list_control.window(title_re='^Quan ly nhan vat.*')
+            dlg = app.window(title_re='^Quan ly nhan vat.*')
+            list_control = dlg.child_window(control_type="List")
         
         try:
             # Tìm danh sách điều khiển
-            list_control = dlg.child_window(control_type="List")
             inGame = None
-            if not list_control.exists():
+            if not list_control:
                 print("Không tìm thấy bảng!")
             else:
                 items = list_control.children(control_type="ListItem")

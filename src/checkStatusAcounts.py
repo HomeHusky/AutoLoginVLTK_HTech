@@ -15,21 +15,22 @@ global_time_sleep = GF.load_global_time_sleep()
 def get_dlg(currentAutoName, backend):
     print("currentAutoName: ", currentAutoName)
     print("backend: ", backend)
+    list_control = None
     if GF.checkQuanlynhanvat():
         # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-        list_control = None
         for attempt in range(3):
             try:
                 print(f"Thử kết nối lần {attempt + 1}...")
                 
-                list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+                app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                 print("Kết nối thành công!")
                 break  # Nếu kết nối thành công, thoát vòng lặp
             except Exception as e:
                 print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
                 time.sleep(1)  # Đợi 1 giây trước khi thử lại
         # Lấy cửa sổ chính của ứng dụng
-        dlg = list_control.window(title_re='^Quan ly nhan vat.*')
+        dlg = app.window(title_re='^Quan ly nhan vat.*')
+        list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
     elif GF.checkWindowRunning(currentAutoName) == 1:
         useAutoVLBS = True
         # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
@@ -37,6 +38,15 @@ def get_dlg(currentAutoName, backend):
 
         # Lấy cửa sổ chính của ứng dụng
         dlg = app.window(title_re=currentAutoName)
+        # Lấy tất cả control loại List trong cửa sổ
+        list_controls = dlg.descendants(control_type="List")
+
+        # Kiểm tra số lượng và lấy theo điều kiện
+        if len(list_controls) == 3:
+            print("Có 3 List control, lấy cái đầu tiên.")
+            list_control = list_controls[0]  # lấy cái đầu tiên
+        else:
+            list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
     elif GF.checkWindowRunning(currentAutoName) == 2:
         GF.show_application(currentAutoName)
         useAutoVLBS = True
@@ -45,7 +55,16 @@ def get_dlg(currentAutoName, backend):
 
         # Lấy cửa sổ chính của ứng dụng
         dlg = app.window(title_re=currentAutoName)
-    list_control = dlg.child_window(control_type="List")
+        # Lấy tất cả control loại List trong cửa sổ
+        list_controls = dlg.descendants(control_type="List")
+
+        # Kiểm tra số lượng và lấy theo điều kiện
+        if len(list_controls) == 3:
+            print("Có 3 List control, lấy cái đầu tiên.")
+            list_control = list_controls[0]  # lấy cái đầu tiên
+        else:
+            list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
+
     return list_control
 
 def getCheckData(currentAutoName):
@@ -64,14 +83,15 @@ def getCheckData(currentAutoName):
                 try:
                     print(f"Thử kết nối lần {attempt + 1}...")
                     
-                    list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+                    app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                     print("Kết nối thành công!")
                     break  # Nếu kết nối thành công, thoát vòng lặp
                 except Exception as e:
                     print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
                     time.sleep(1)  # Đợi 1 giây trước khi thử lại
             # Lấy cửa sổ chính của ứng dụng
-            dlg = list_control.window(title_re='^Quan ly nhan vat.*')
+            dlg = app.window(title_re='^Quan ly nhan vat.*')
+            list_control = dlg.child_window(control_type="List")
         elif GF.checkWindowRunning(currentAutoName) == 1:
             useAutoVLBS = True
             # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
@@ -79,6 +99,14 @@ def getCheckData(currentAutoName):
 
             # Lấy cửa sổ chính của ứng dụng
             dlg = app.window(title_re=currentAutoName)
+            list_controls = dlg.descendants(control_type="List")
+
+            # Kiểm tra số lượng và lấy theo điều kiện
+            if len(list_controls) == 3:
+                print("Có 3 List control, lấy cái đầu tiên.")
+                list_control = list_controls[0]  # lấy cái đầu tiên
+            else:
+                list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
         elif GF.checkWindowRunning(currentAutoName) == 2:
             GF.show_application(currentAutoName)
             useAutoVLBS = True
@@ -87,27 +115,35 @@ def getCheckData(currentAutoName):
 
             # Lấy cửa sổ chính của ứng dụng
             dlg = app.window(title_re=currentAutoName)
+            list_controls = dlg.descendants(control_type="List")
+
+            # Kiểm tra số lượng và lấy theo điều kiện
+            if len(list_controls) == 3:
+                print("Có 3 List control, lấy cái đầu tiên.")
+                list_control = list_controls[0]  # lấy cái đầu tiên
+            else:
+                list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
         # list_control = get_dlg(currentAutoName, backend)
-        list_control = dlg.child_window(control_type="List")
-        if not list_control.exists():
+        if not list_control:
             try: 
                 print("Retry with backend uia!")
                 backend = "uia"
+                list_control = None
                 if GF.checkQuanlynhanvat():
                     # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
-                    list_control = None
                     for attempt in range(3):
                         try:
                             print(f"Thử kết nối lần {attempt + 1}...")
                             
-                            list_control = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
+                            app = Application(backend="uia").connect(title_re='^Quan ly nhan vat.*')
                             print("Kết nối thành công!")
                             break  # Nếu kết nối thành công, thoát vòng lặp
                         except Exception as e:
                             print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
                             time.sleep(1)  # Đợi 1 giây trước khi thử lại
                     # Lấy cửa sổ chính của ứng dụng
-                    dlg = list_control.window(title_re='^Quan ly nhan vat.*')
+                    dlg = app.window(title_re='^Quan ly nhan vat.*')
+                    list_control = dlg.child_window(control_type="List")
                 elif GF.checkWindowRunning(currentAutoName) == 1:
                     useAutoVLBS = True
                     # Kết nối đến ứng dụng có tiêu đề "vocongtruyenky"
@@ -115,6 +151,14 @@ def getCheckData(currentAutoName):
 
                     # Lấy cửa sổ chính của ứng dụng
                     dlg = app.window(title_re=currentAutoName)
+                    list_controls = dlg.descendants(control_type="List")
+
+                    # Kiểm tra số lượng và lấy theo điều kiện
+                    if len(list_controls) == 3:
+                        print("Có 3 List control, lấy cái đầu tiên.")
+                        list_control = list_controls[0]  # lấy cái đầu tiên
+                    else:
+                        list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
                 elif GF.checkWindowRunning(currentAutoName) == 2:
                     GF.show_application(currentAutoName)
                     useAutoVLBS = True
@@ -123,10 +167,17 @@ def getCheckData(currentAutoName):
 
                     # Lấy cửa sổ chính của ứng dụng
                     dlg = app.window(title_re=currentAutoName)
-                list_control = dlg.child_window(control_type="List")
+                    list_controls = dlg.descendants(control_type="List")
+
+                    # Kiểm tra số lượng và lấy theo điều kiện
+                    if len(list_controls) == 3:
+                        print("Có 3 List control, lấy cái đầu tiên.")
+                        list_control = list_controls[0]  # lấy cái đầu tiên
+                    else:
+                        list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
             except Exception as e:
                 print("Error as line 64:", e)
-        if not list_control.exists():
+        if not list_control:
             print("Không tìm thấy bảng!")
             return []
         else:
