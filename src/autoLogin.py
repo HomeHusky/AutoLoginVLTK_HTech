@@ -26,6 +26,7 @@ import sys
 import shutil
 import client
 import fixErrorAccounts as FIX_ERROR_ACCOUNTS
+import notifier as NOTIFIER
 
 # ================================================================
 # ⚙️ 2. BIẾN TOÀN CỤC / CẤU HÌNH
@@ -733,7 +734,11 @@ def on_login_complete():
     run_check_status(1)
     load_to_gui()
     # check_delete_fail_servers()
-    messagebox.showinfo("Error", f"Đăng nhập thành công")
+    messagebox.showinfo("Thông báo", f"Đăng nhập thành công")
+
+    time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    NOTIFIER.send_discord_login_report(
+        entry_title_mail.get().strip(), time_stamp)
 
 def on_login_username(username):
     update_status_to_logged_in(username)

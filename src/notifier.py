@@ -71,3 +71,30 @@ def send_discord_report(report, ten_may, timestamp):
             print(f"❌ Lỗi gửi Discord: {response.status_code} - {response.text}")
     except Exception as e:
         print(f"❌ Exception khi gửi Discord: {e}")
+
+def send_discord_login_report(tenmay, timestamp):
+    """
+    Gửi báo cáo đăng nhập thành công qua Discord Webhook.
+    """
+    embed = {
+        "title": "🔔 Thông báo đăng nhập thành công",
+        "description": f"Máy: **{tenmay}**\n⏰ **Thời gian:** {timestamp}",
+        "color": 0x2ecc71,  # Xanh lá
+        "footer": {
+            "text": "AutoLogin VLTK"
+        }
+    }
+
+    payload = {
+        "username": "AutoLoginBot",
+        "embeds": [embed]
+    }
+
+    try:
+        response = requests.post(DISCORD_WEBHOOK_URL, json=payload)
+        if response.status_code == 204:
+            print("✅ Đã gửi thông báo đăng nhập thành công qua Discord.")
+        else:
+            print(f"❌ Lỗi gửi thông báo đăng nhập: {response.status_code} - {response.text}")
+    except Exception as e:
+        print(f"❌ Exception khi gửi thông báo đăng nhập: {e}")
