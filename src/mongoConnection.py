@@ -2,7 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import certifi
 # === CONNECT VÀO MONGODB ===
-def connect_mongo(uri=None, db_name="HtechVolam", collection_name="tai_khoan_may"):
+def connect_mongo(uri=None, db_name="HtechVolam", collection_name="Money_each_computer"):
     """
     Kết nối MongoDB Atlas và trả về collection.
     :param uri: MongoDB connection string URI

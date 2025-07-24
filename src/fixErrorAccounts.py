@@ -485,7 +485,7 @@ def connect_mongodb():
         from pymongo.server_api import ServerApi
 
         # === 1. Kết nối MongoDB Atlas ===
-        mongo_uri = "mongodb+srv://htechvolam:Htech317@htechvolam.oefc26z.mongodb.net/?retryWrites=true&w=majority&appName=HtechVolam"
+        mongo_uri = "mongodb://htechvolam:Htech317@htechvolam-shard-00-00.oefc26z.mongodb.net:27017,htechvolam-shard-00-01.oefc26z.mongodb.net:27017,htechvolam-shard-00-02.oefc26z.mongodb.net:27017/?ssl=true&replicaSet=atlas-8v6xvn-shard-0&authSource=admin&retryWrites=true&w=majority"
         # Create a new client and connect to the server
         client = MongoClient(mongo_uri)
         client.admin.command('ping')
