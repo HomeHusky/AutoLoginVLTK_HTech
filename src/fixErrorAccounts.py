@@ -436,13 +436,13 @@ def fix_account_stuck_on_map_Sa_Mac():
 #     t.start()
 #     print("🔁 Bắt đầu sửa...")
 
-# test hàm fixLowBloodAccounts
-def start_fixing(error_accounts_array):
-    global stop_flag
-    stop_flag = False
-    t = threading.Thread(target=fixLowBloodAccounts, args=(), daemon=True)
-    t.start()
-    print("🔁 Bắt đầu sửa...")
+# # test hàm fixLowBloodAccounts
+# def start_fixing(error_accounts_array):
+#     global stop_flag
+#     stop_flag = False
+#     t = threading.Thread(target=fixLowBloodAccounts, args=(), daemon=True)
+#     t.start()
+#     print("🔁 Bắt đầu sửa...")
 
 # # test hàm lấy tên bản đồ hiện tại
 # def start_fixing(error_accounts_array):
@@ -460,10 +460,90 @@ def start_fixing(error_accounts_array):
 #     t.start()
 #     print("🔁 Bắt đầu kiểm tra và relogin!")
 
+# test hàm connect mongodb
+def load_title_mail(filepath='monitor_time.json'):
+    try:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+            data = json.load(f)
+            return float(data['title_mail'])
+    except FileNotFoundError:
+        # Nếu file không tồn tại, trả về giá trị mặc định
+        print(f"File {filepath} không tồn tại. Sử dụng giá trị mặc định 1.")
+        return 1.0
+
+def load_accounts_data(file_path='accounts.json'):
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as f:
+        data = json.load(f)
+        return data
+    
+def connect_mongodb():
+    try:
+        import pymongo
+        import json
+        import datetime
+        from pymongo.mongo_client import MongoClient
+        from pymongo.server_api import ServerApi
+
+        # === 1. Kết nối MongoDB Atlas ===
+        mongo_uri = "mongodb+srv://htechvolam:Htech317@htechvolam.oefc26z.mongodb.net/?retryWrites=true&w=majority&appName=HtechVolam"
+        # Create a new client and connect to the server
+        client = MongoClient(mongo_uri)
+        client.admin.command('ping')
+        print("✅ Kết nối MongoDB thành công!")
+
+
+        # === 2. Chọn database và collection ===
+        db = client["HtechVolam"]
+        collection = db["tai_khoan_may"]
+
+        # === 3. Load dữ liệu từ file ===
+        ten_may = int(load_title_mail())
+        new_data = load_accounts_data()
+        new_accounts = new_data.get("accounts", [])
+
+        # === 4. Tìm document theo tên máy và group ===
+        existing_doc = collection.find_one({"ten_may": ten_may})
+
+        if existing_doc:
+            print(f"🔁 Đã có dữ liệu máy {ten_may}. Đang cập nhật...")
+
+            # Lấy danh sách username hiện có
+            existing_usernames = {acc["username"] for acc in existing_doc.get("accounts", [])}
+
+            # Lọc ra những account mới chưa có
+            new_unique_accounts = [acc for acc in new_accounts if acc["username"] not in existing_usernames]
+
+            if new_unique_accounts:
+                # Cập nhật thêm account mới vào mảng accounts
+                collection.update_one(
+                    {"_id": existing_doc["_id"]},
+                    {"$push": {"accounts": {"$each": new_unique_accounts}}}
+                )
+                print(f"✅ Đã thêm {len(new_unique_accounts)} account mới vào máy {ten_may}.")
+            else:
+                print("✅ Không có account mới để thêm.")
+
+        else:
+            # Chưa có thì thêm mới toàn bộ
+            new_data["ten_may"] = ten_may
+            new_data["ngay"] = datetime.datetime.now().strftime("%Y-%m-%d")
+            collection.insert_one(new_data)
+            print(f"✅ Đã thêm mới máy {ten_may}.")
+
+    except Exception as e:
+        print(f"❌ Lỗi kết nối MongoDB: {e}")
+
+def start_fixing(error_accounts_array):
+    global stop_flag
+    stop_flag = False
+    t = threading.Thread(target=connect_mongodb, args=(), daemon=True)
+    t.start()
+    print("🔁 Bắt đầu sửa...")
+
 def stop_fixing():
     global stop_flag
     stop_flag = True
     print("⛔ Yêu cầu dừng sửa.")
 
 if __name__ == "__main__":
-    fix_account()
+    connect_mongodb()

@@ -19,7 +19,9 @@ from notifier import send_discord_report
 from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac
 from tkinter import ttk
 import tkinter as tk
-
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+import mongoConnection as MONGO_CONN
 
 # === BIẾN TOÀN CỤC ===
 kpi_1m = (43/24)/60
@@ -73,6 +75,108 @@ def save_snapshot(ten_may, report):
     # Ghi lại
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+# === LƯU DỮ LIỆU VÀO MONGODB ===
+def save_money_data_to_mongo(ten_may, report):
+    """
+    Lưu dữ liệu tiền từng account lên MongoDB
+    :param json_data: dict kiểu {"acc1": [{"money": .., "time": ..}, ...], ...}
+    :param ten_may: tên máy (str)
+    """
+    collection = MONGO_CONN.connect_mongo()
+    docs = []
+    for acc in report:
+        docs.append({
+            "ten_may": ten_may,
+            "account": acc["account"],
+            "money": acc["new"],
+            "time": datetime.now()
+        })
+    if docs:
+        collection.insert_many(docs)
+
+# === TÍNH TOÁN THU NHẬP TRONG 24 GIỜ QUA TRÊN MONGODB===
+def get_24h_income_from_mongo(ten_may):
+    """
+    Tính tổng tiền tăng của tất cả account trong 24h gần nhất cho một máy.
+    :param ten_may: tên máy (str)
+    :return: tổng tiền tăng (float)
+    """
+    collection = MONGO_CONN.connect_mongo()
+
+    now = datetime.now()
+    time_24h_ago = now - timedelta(hours=24)
+
+    total_income = 0
+
+    # Lấy danh sách các account duy nhất của máy
+    accounts = collection.distinct("account", {"ten_may": ten_may})
+
+    for acc in accounts:
+        # Lấy dòng mới nhất
+        latest = collection.find_one(
+            {"ten_may": ten_may, "account": acc},
+            sort=[("time", -1)]
+        )
+
+        # Lấy dòng gần nhất trước mốc 24h
+        old = collection.find_one(
+            {
+                "ten_may": ten_may,
+                "account": acc,
+                "time": {"$lte": time_24h_ago}
+            },
+            sort=[("time", -1)]
+        )
+
+        if latest and old:
+            income = latest["money"] - old["money"]
+            total_income += income
+
+    return total_income
+
+# === TÍNH TOÁN THU NHẬP TRONG THÁNG HIỆN TẠI TRÊN MONGODB===
+def get_month_income(ten_may):
+    """
+    Tính tổng tiền tăng trong tháng hiện tại cho một máy.
+    So sánh dòng mới nhất với dòng đầu tiên trong tháng.
+    :param ten_may: tên máy (str)
+    :return: tổng tiền tăng trong tháng (float)
+    """
+    collection = MONGO_CONN.connect_mongo()
+
+    now = datetime.now()
+    start_of_month = datetime(now.year, now.month, 1)
+
+    total_income = 0
+    accounts = collection.distinct("account", {"ten_may": ten_may})
+
+    for acc in accounts:
+        # Dòng mới nhất trong tháng
+        latest = collection.find_one(
+            {
+                "ten_may": ten_may,
+                "account": acc,
+                "time": {"$gte": start_of_month}
+            },
+            sort=[("time", -1)]
+        )
+
+        # Dòng đầu tiên trong tháng
+        first = collection.find_one(
+            {
+                "ten_may": ten_may,
+                "account": acc,
+                "time": {"$gte": start_of_month}
+            },
+            sort=[("time", 1)]
+        )
+
+        if latest and first:
+            income = latest["money"] - first["money"]
+            total_income += income
+
+    return total_income
 
 # === TÓM TẮT THU NHẬP TRONG 24 GIỜ QUA ===
 def summarize_last_24h_income(ten_may):
@@ -449,8 +553,9 @@ def auto_check_loop(minutes, ten_may):
 
             if name in previous_data:
                 old_money = previous_data[name]
+                profit = money - old_money  # Tính lợi nhuận
                 if money > old_money:
-                    profit = money - old_money
+                    # Kiểm tra xem có đạt KPI không
                     if profit >= kpi_1m*minutes:
                         status = "Tăng"
                         print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
@@ -479,7 +584,8 @@ def auto_check_loop(minutes, ten_may):
                 "account": name,
                 "old": previous_data.get(name, 0),
                 "new": money,
-                "status": status
+                "status": status,
+                "profit": profit
             })
 
             # Lưu vào bộ nhớ
@@ -494,7 +600,8 @@ def auto_check_loop(minutes, ten_may):
                     "account": known_name,
                     "old": previous_data[known_name],
                     "new": 0,
-                    "status": "Văng game"
+                    "status": "Văng game",
+                    "profit": 0
                 })
                 missing_accounts.add(known_name)
                 lost_accounts_array.append({
@@ -506,6 +613,8 @@ def auto_check_loop(minutes, ten_may):
 
         # Lưu snapshot vào file
         save_snapshot(ten_may, report)
+        # Lưu dữ liệu vào MongoDB
+        save_money_data_to_mongo(ten_may, report)
         # Tóm tắt thu nhập trong 24 giờ qua
         summarize_last_24h_income(ten_may)
         # Xóa các snapshot cũ hơn 2 ngày

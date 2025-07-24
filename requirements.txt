@@ -15,3 +15,4 @@ pywinauto==0.6.8
 requests==2.32.3
 six==1.16.0
 urllib3==2.2.3
+pymongo[srv]==3.12
