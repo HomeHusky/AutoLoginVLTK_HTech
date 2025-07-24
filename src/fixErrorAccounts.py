@@ -480,7 +480,7 @@ def connect_mongodb():
     try:
         import pymongo
         import json
-        import datetime
+        from datetime import datetime
         from pymongo.mongo_client import MongoClient
         from pymongo.server_api import ServerApi
 
