@@ -494,7 +494,7 @@ def connect_mongodb():
 
         # === 2. Chọn database và collection ===
         db = client["HtechVolam"]
-        collection = db["money_monitor"]
+        collection = db["tai_khoan_may"]
 
         # === 3. Load dữ liệu từ file ===
         ten_may = int(load_title_mail())
