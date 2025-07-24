@@ -618,7 +618,7 @@ def auto_check_loop(minutes, ten_may):
         # Lưu snapshot vào file
         save_snapshot(ten_may, report)
         # Lưu dữ liệu vào MongoDB
-        # save_money_data_to_mongo(ten_may, report)
+        save_money_data_to_mongo(ten_may, report)
         # Tóm tắt thu nhập trong 24 giờ qua
         summarize_last_24h_income(ten_may)
         # Xóa các snapshot cũ hơn 2 ngày
