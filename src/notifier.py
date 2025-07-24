@@ -35,7 +35,7 @@ def format_report_discord(report, ten_may, timestamp):
         else:
             emoji = "❓"
 
-        description += f"{emoji} {stt} **{name}**: {old} → {new} = {profit} ({status})\n"
+        description += f"{emoji} {stt} **{name}**: {old} → {new} = {profit:.2f} ({status})\n"
 
     if total_profit > 0:
         total_line = f"💰 **Tổng tiền tăng:** {total_profit:.2f}\n\n"
