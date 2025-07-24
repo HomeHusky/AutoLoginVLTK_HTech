@@ -77,7 +77,7 @@ def save_snapshot(ten_may, report):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 # === LƯU DỮ LIỆU VÀO MONGODB ===
-def save_money_data_to_mongo(ten_may, report):
+def save_money_data_to_mongo(ten_may, total_profit):
     """
     Lưu dữ liệu tiền từng account lên MongoDB
     :param json_data: dict kiểu {"acc1": [{"money": .., "time": ..}, ...], ...}
@@ -85,15 +85,13 @@ def save_money_data_to_mongo(ten_may, report):
     """
     client, collection = MONGO_CONN.connect_mongo()
     docs = []
-    for acc in report:
-        docs.append({
-            "ten_may": ten_may,
-            "account": acc["account"],
-            "money": acc["new"],
-            "time": datetime.now()
-        })
+    docs.append({
+        "ten_may": ten_may,
+        "loi_nhuan": total_profit,
+        "time": datetime.now()
+    })
     if docs:
-        collection.insert_many(docs)
+        collection.insert_one(docs)
     
     client.close()
 
@@ -547,7 +545,7 @@ def auto_check_loop(minutes, ten_may):
 
         # === Tạo set tài khoản hiện tại
         current_accounts = set(acc[0] for acc in new_data)
-
+        total_profit = 0
         # === Kiểm tra từng tài khoản trong dữ liệu mới
         for acc in new_data:
             name = acc[0]
@@ -558,6 +556,7 @@ def auto_check_loop(minutes, ten_may):
             if name in previous_data:
                 old_money = previous_data[name]
                 profit = money - old_money  # Tính lợi nhuận
+                total_profit += profit  # Cộng dồn lợi nhuận tổng
                 if money > old_money:
                     # Kiểm tra xem có đạt KPI không
                     if profit >= kpi_1m*minutes:
@@ -618,7 +617,7 @@ def auto_check_loop(minutes, ten_may):
         # Lưu snapshot vào file
         save_snapshot(ten_may, report)
         # Lưu dữ liệu vào MongoDB
-        save_money_data_to_mongo(ten_may, report)
+        save_money_data_to_mongo(ten_may, total_profit)
         # Tóm tắt thu nhập trong 24 giờ qua
         summarize_last_24h_income(ten_may)
         # Xóa các snapshot cũ hơn 2 ngày

@@ -526,7 +526,7 @@ def connect_mongodb():
         else:
             # Chưa có thì thêm mới toàn bộ
             new_data["ten_may"] = ten_may
-            new_data["ngay"] = datetime.datetime.now().strftime("%Y-%m-%d")
+            new_data["ngay"] = datetime.now()
             collection.insert_one(new_data)
             print(f"✅ Đã thêm mới máy {ten_may}.")
 
