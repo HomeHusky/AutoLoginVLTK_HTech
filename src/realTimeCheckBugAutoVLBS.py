@@ -550,7 +550,8 @@ def auto_check_loop(minutes, ten_may):
             name = acc[0]
             money = float(acc[1])
             timestamp = acc[2]
-
+            profit = 0  # Khởi tạo lợi nhuận mặc định
+            
             if name in previous_data:
                 old_money = previous_data[name]
                 profit = money - old_money  # Tính lợi nhuận
