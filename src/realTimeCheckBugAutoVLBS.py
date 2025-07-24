@@ -84,14 +84,13 @@ def save_money_data_to_mongo(ten_may, total_profit):
     :param ten_may: tên máy (str)
     """
     client, collection = MONGO_CONN.connect_mongo()
-    docs = []
-    docs.append({
+    
+    document = {
         "ten_may": ten_may,
         "loi_nhuan": total_profit,
         "time": datetime.now()
-    })
-    if docs:
-        collection.insert_one(docs)
+    }
+    collection.insert_one(document)
     
     client.close()
 
