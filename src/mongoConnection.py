@@ -17,4 +17,4 @@ def connect_mongo(uri=None, db_name="HtechVolam", collection_name="tai_khoan_may
     client = MongoClient(uri)
     db = client[db_name]
     collection = db[collection_name]
-    return collection
+    return client, collection

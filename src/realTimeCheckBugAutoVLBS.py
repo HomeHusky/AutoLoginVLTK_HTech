@@ -83,7 +83,7 @@ def save_money_data_to_mongo(ten_may, report):
     :param json_data: dict kiểu {"acc1": [{"money": .., "time": ..}, ...], ...}
     :param ten_may: tên máy (str)
     """
-    collection = MONGO_CONN.connect_mongo()
+    client, collection = MONGO_CONN.connect_mongo()
     docs = []
     for acc in report:
         docs.append({
@@ -94,6 +94,8 @@ def save_money_data_to_mongo(ten_may, report):
         })
     if docs:
         collection.insert_many(docs)
+    
+    client.close()
 
 # === TÍNH TOÁN THU NHẬP TRONG 24 GIỜ QUA TRÊN MONGODB===
 def get_24h_income_from_mongo(ten_may):
@@ -102,7 +104,7 @@ def get_24h_income_from_mongo(ten_may):
     :param ten_may: tên máy (str)
     :return: tổng tiền tăng (float)
     """
-    collection = MONGO_CONN.connect_mongo()
+    client, collection = MONGO_CONN.connect_mongo()
 
     now = datetime.now()
     time_24h_ago = now - timedelta(hours=24)
@@ -132,7 +134,7 @@ def get_24h_income_from_mongo(ten_may):
         if latest and old:
             income = latest["money"] - old["money"]
             total_income += income
-
+    client.close()
     return total_income
 
 # === TÍNH TOÁN THU NHẬP TRONG THÁNG HIỆN TẠI TRÊN MONGODB===
@@ -143,7 +145,7 @@ def get_month_income(ten_may):
     :param ten_may: tên máy (str)
     :return: tổng tiền tăng trong tháng (float)
     """
-    collection = MONGO_CONN.connect_mongo()
+    client, collection = MONGO_CONN.connect_mongo()
 
     now = datetime.now()
     start_of_month = datetime(now.year, now.month, 1)
@@ -176,6 +178,7 @@ def get_month_income(ten_may):
             income = latest["money"] - first["money"]
             total_income += income
 
+    client.close()
     return total_income
 
 # === TÓM TẮT THU NHẬP TRONG 24 GIỜ QUA ===
