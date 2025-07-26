@@ -735,8 +735,8 @@ def on_login_complete():
     run_check_status(1)
     load_to_gui()
     # check_delete_fail_servers()
-    messagebox.showinfo("Thông báo", f"Đăng nhập thành công")
-
+    # messagebox.showinfo("Thông báo", f"Đăng nhập thành công")
+    # Gửi thông báo đăng nhập thành công qua Discord
     time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     NOTIFIER.send_discord_login_report(
         entry_title_mail.get().strip(), time_stamp)
