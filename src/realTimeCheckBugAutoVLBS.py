@@ -641,10 +641,9 @@ def auto_check_loop(minutes, ten_may):
                 return
             print(f"{minutes * 60 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
-        # Xử lý các tài khoản lỗi sau 30 phut
+        # Xử lý các tài khoản lỗi sau 15 phut
         fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
-        relogin_lost_accounts()
 
         # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 15):
@@ -653,7 +652,7 @@ def auto_check_loop(minutes, ten_may):
                 return
             print(f"{minutes * 45 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
-        # Xử lý các tài khoản lỗi sau 30 phut
+        # Xử lý các tài khoản lỗi sau 15 phut
         fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
         relogin_lost_accounts()
@@ -665,10 +664,9 @@ def auto_check_loop(minutes, ten_may):
                 return
             print(f"{minutes * 30 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
-        # Xử lý các tài khoản lỗi sau 30 phut
+        # Xử lý các tài khoản lỗi sau 15 phut
         fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
-        relogin_lost_accounts()
 
         # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 15):
