@@ -422,6 +422,14 @@ def send_email_report(report_data, loop_time_str, ten_may):
     except Exception as e:
         print(f"❌ Lỗi khi gửi email: {e}")
 
+def sleep_until_next_hour():
+    now = datetime.now()
+    # Calculate next hour (add 1 hour, set minutes and seconds to 0)
+    next_hour = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+    seconds_to_sleep = (next_hour - now).total_seconds()
+    print(f"⏳ Sleeping for {int(seconds_to_sleep)} seconds until next hour: {next_hour.strftime('%H:%M:%S')}")
+    time.sleep(seconds_to_sleep)
+
 # === KIỂM TRA TÀI KHOẢN VÀ LẤY DỮ LIỆU ===
 # Hàm này sẽ kết nối với ứng dụng, lấy danh sách tài khoản và số dư tiền của chúng
 # Lưu ý: Hàm này cần được gọi trong một luồng riêng biệt để tránh làm treo giao diện chính
@@ -527,6 +535,10 @@ def check_accounts_money():
 # ten_may: Tên máy để hiển thị trong báo cáo
 def auto_check_loop(minutes, ten_may):
     global stop_flag, gom_accounts_info_data, previous_data
+    print(f"🔁 Sẽ bắt đầu kiểm tra vào giờ chẵn tiếp theo...")
+
+    sleep_until_next_hour()  # Wait until the next even hour
+
     print(f"🔁 Bắt đầu kiểm tra tự động mỗi {minutes} phút...")
 
     known_accounts = set()  # lưu tài khoản đã từng xuất hiện
