@@ -1,7 +1,7 @@
 import requests
 
 # === Thay bằng Webhook URL bạn tạo ở Discord ===
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1402014337274482830/KC-t1aIfEyEdUDITuebZOn2pfn9poWWQy7VLYTl50-AKdWnL4yGinrOxIOArx7ALq0Ghhttps://discord.com/api/webhooks/1402014337274482830/KC-t1aIfEyEdUDITuebZOn2pfn9poWWQy7VLYTl50-AKdWnL4yGinrOxIOArx7ALq0Gh"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1402034497796440348/n3Ude02whBVRkW49lg59GLz6Sp_zGrHzmMG1UBs83c4mRcp7vzd3-qkfkVPD41zt6MJS"
 
 def format_report_discord(report, ten_may, timestamp):
     """
