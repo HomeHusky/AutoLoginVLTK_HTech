@@ -16,7 +16,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from notifier import send_discord_report
-from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac
+from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac, run_kill_hung_vo_lam
 from tkinter import ttk
 import tkinter as tk
 from pymongo.mongo_client import MongoClient
@@ -640,6 +640,7 @@ def auto_check_loop(minutes, ten_may):
             is_first_run = False
         else:
             send_discord_report(report, ten_may, loop_time_str)
+            run_kill_hung_vo_lam()
             fixErrorAccounts(error_accounts_array)
             # Xử lý các tài khoản bị mất kết nối vì thấp máu
             fixLowBloodAccounts()
@@ -654,6 +655,7 @@ def auto_check_loop(minutes, ten_may):
             print(f"{minutes * 60 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
         # Xử lý các tài khoản lỗi sau 15 phut
+        run_kill_hung_vo_lam()
         fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
 
@@ -665,6 +667,7 @@ def auto_check_loop(minutes, ten_may):
             print(f"{minutes * 45 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
         # Xử lý các tài khoản lỗi sau 15 phut
+        run_kill_hung_vo_lam()
         fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
         relogin_lost_accounts()
@@ -677,6 +680,7 @@ def auto_check_loop(minutes, ten_may):
             print(f"{minutes * 30 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
         # Xử lý các tài khoản lỗi sau 15 phut
+        run_kill_hung_vo_lam()
         fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
 

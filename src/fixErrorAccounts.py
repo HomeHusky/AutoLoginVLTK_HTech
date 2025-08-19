@@ -45,7 +45,7 @@ def kill_hung_vo_lam():
 
     return killed_pids
 
-def test_kill_hung_vo_lam():
+def run_kill_hung_vo_lam():
     result = kill_hung_vo_lam()
     if result:
         print("Đã tắt các PID:", result)
@@ -587,7 +587,7 @@ def connect_mongodb():
 def start_fixing(error_accounts_array):
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=test_kill_hung_vo_lam, args=(), daemon=True)
+    t = threading.Thread(target=run_kill_hung_vo_lam, args=(), daemon=True)
     t.start()
     print("🔁 Bắt đầu sửa...")
 
