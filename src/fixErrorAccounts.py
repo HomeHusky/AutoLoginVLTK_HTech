@@ -8,6 +8,49 @@ import json
 from pywinauto.keyboard import send_keys
 import startLogin as START_LOGIN
 import checkStatusAcounts as CHECK_STATUS
+import psutil
+import win32gui, win32process, ctypes
+
+# WinAPI để kiểm tra app có bị treo không
+IsHungAppWindow = ctypes.windll.user32.IsHungAppWindow
+
+def enum_windows_callback(hwnd, result):
+    """
+    Callback để lấy tất cả hwnd có chứa tiêu đề 'Vo Lam Truyen Ky'
+    """
+    title = win32gui.GetWindowText(hwnd)
+    if "Vo Lam Truyen Ky" in title:
+        result.append(hwnd)
+
+def kill_hung_vo_lam():
+    """
+    Kiểm tra tất cả cửa sổ 'Vo Lam Truyen Ky', 
+    nếu cửa sổ nào treo (Hung) thì kill process của nó.
+    Trả về danh sách PID đã bị kill.
+    """
+    hwnd_list = []
+    win32gui.EnumWindows(enum_windows_callback, hwnd_list)
+
+    killed_pids = []
+    for hwnd in hwnd_list:
+        try:
+            if IsHungAppWindow(hwnd):  # Kiểm tra treo
+                _, pid = win32process.GetWindowThreadProcessId(hwnd)
+                p = psutil.Process(pid)
+                print(f"[!] Treo: {win32gui.GetWindowText(hwnd)} (PID {pid}) -> Đang tắt...")
+                p.terminate()  # Tắt tiến trình
+                killed_pids.append(pid)
+        except Exception as e:
+            print(f"Lỗi khi xử lý hwnd {hwnd}: {e}")
+
+    return killed_pids
+
+def test_kill_hung_vo_lam():
+    result = kill_hung_vo_lam()
+    if result:
+        print("Đã tắt các PID:", result)
+    else:
+        print("Không có cửa sổ nào bị treo.")
 
 stop_flag = False
 global_time_sleep = GF.load_global_time_sleep()
@@ -533,10 +576,18 @@ def connect_mongodb():
     except Exception as e:
         print(f"❌ Lỗi kết nối MongoDB: {e}")
 
+# # test hàm connect mongodb
+# def start_fixing(error_accounts_array):
+#     global stop_flag
+#     stop_flag = False
+#     t = threading.Thread(target=connect_mongodb, args=(), daemon=True)
+#     t.start()
+#     print("🔁 Bắt đầu sửa...")
+
 def start_fixing(error_accounts_array):
     global stop_flag
     stop_flag = False
-    t = threading.Thread(target=connect_mongodb, args=(), daemon=True)
+    t = threading.Thread(target=test_kill_hung_vo_lam, args=(), daemon=True)
     t.start()
     print("🔁 Bắt đầu sửa...")
 
