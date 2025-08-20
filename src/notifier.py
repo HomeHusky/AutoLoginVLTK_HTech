@@ -73,10 +73,15 @@ def send_discord_report(report, ten_may, timestamp):
     except Exception as e:
         print(f"❌ Exception khi gửi Discord: {e}")
 
-def send_discord_login_report(tenmay, timestamp):
+def send_discord_login_report(tenmay, timestamp, is_all_accounts_logged_in):
     """
     Gửi báo cáo đăng nhập thành công qua Discord Webhook.
     """
+    if is_all_accounts_logged_in:
+        title = "🔔 Thông báo đăng nhập thành công tất cả account"
+    else:
+        title = "🔔 Thông báo đăng nhập xong nhưng chưa full acc ❌"
+
     embed = {
         "title": "🔔 Thông báo đăng nhập thành công",
         "description": f"Máy: **{tenmay}**\n⏰ **Thời gian:** {timestamp}",

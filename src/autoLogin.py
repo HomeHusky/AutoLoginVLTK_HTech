@@ -726,8 +726,27 @@ def start_login(isAutoClickVLBS):
         # Nếu người dùng không xác nhận, chỉ cần quay lại
         messagebox.showinfo("Thông báo", "Vui lòng thực hiện yêu cầu trước khi tiếp tục.")
 
-# Hàm callback
+def all_accounts_logged_in(json_path: str) -> bool:
+    """
+    Kiểm tra tất cả account trong file accounts.json
+    đã có is_logged_in = True hay chưa.
+    """
+    with open(os.path.join(GF.join_directory_data(), json_path), "r") as f:
+        data = json.load(f)
 
+    accounts = data.get("accounts", [])
+
+    if not accounts:  # Không có account nào
+        return False
+
+    # Nếu bất kỳ acc nào chưa login thì return False
+    for acc in accounts:
+        if not acc.get("is_logged_in", False):
+            return False
+
+    return True
+
+# Hàm callback
 def on_login_complete():
     # GF.activate_window("Auto Login Htech")
     pass_accounts.clear()
@@ -736,10 +755,19 @@ def on_login_complete():
     load_to_gui()
     # check_delete_fail_servers()
     # messagebox.showinfo("Thông báo", f"Đăng nhập thành công")
-    # Gửi thông báo đăng nhập thành công qua Discord
     time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    is_all_accounts_logged_in = False
+    file_path = "accounts.json"
+    if all_accounts_logged_in(file_path):
+        print("✅ Tất cả account đã login.")
+        is_all_accounts_logged_in = True
+        on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip())
+    else:
+        print("❌ Vẫn còn account chưa login.")
+        
+    # Gửi thông báo đăng nhập thành công qua Discord
     NOTIFIER.send_discord_login_report(
-        entry_title_mail.get().strip(), time_stamp)
+        entry_title_mail.get().strip(), time_stamp, is_all_accounts_logged_in)
 
 def on_login_username(username):
     update_status_to_logged_in(username)
@@ -1151,7 +1179,7 @@ def on_start_check_fix_VLBS_button_click(ten_may):
     else:
         print("Dừng kiểm tra fix lỗi VLBS")
         REAL_TIME_CHECK.stop_checking()
-        start_check_fix_VLBS_button.config(text="Tự động fix lỗi VLBS")
+        start_check_fix_VLBS_button.config(text="Theo dõi")
         is_checking_fix_vlbs = False
 
 start_login_button = ttk.Button(start_frame, text="Bắt đầu", command=lambda: start_login(check_checkbox(varCheckBox)))
