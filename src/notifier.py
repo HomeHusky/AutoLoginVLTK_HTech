@@ -83,7 +83,7 @@ def send_discord_login_report(tenmay, timestamp, is_all_accounts_logged_in):
         title = "🔔 Thông báo đăng nhập xong nhưng chưa full acc ❌"
 
     embed = {
-        "title": "🔔 Thông báo đăng nhập thành công",
+        "title": title,
         "description": f"Máy: **{tenmay}**\n⏰ **Thời gian:** {timestamp}",
         "color": 0x2ecc71,  # Xanh lá
         "footer": {

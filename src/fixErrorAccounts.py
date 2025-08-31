@@ -193,19 +193,19 @@ def fix_account(account_name):
                     # Giả lập việc sửa lỗi, ví dụ: đăng nhập lại
                     # Thực hiện các bước sửa lỗi cụ thể tại đây
                     # Ví dụ: gọi hàm đăng nhập lại hoặc thực hiện thao tác khác
-                    pyautogui.hotkey('alt', 'x')
-                    time.sleep(global_time_sleep)
-                    pyautogui.press('enter')
-                    time.sleep(global_time_sleep)
-                    pyautogui.press('enter')
-                    time.sleep(global_time_sleep)
-                    pyautogui.press('enter')
-                    time.sleep(global_time_sleep)
-                    pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
-                    time.sleep(global_time_sleep)
-                    pyautogui.press('enter')
-                    time.sleep(global_time_sleep)
-                    pyautogui.press('enter')
+                    # pyautogui.hotkey('alt', 'x')
+                    # time.sleep(global_time_sleep)
+                    # pyautogui.press('enter')
+                    # time.sleep(global_time_sleep)
+                    # pyautogui.press('enter')
+                    # time.sleep(global_time_sleep)
+                    # pyautogui.press('enter')
+                    # time.sleep(global_time_sleep)
+                    # pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
+                    # time.sleep(global_time_sleep)
+                    # pyautogui.press('enter')
+                    # time.sleep(global_time_sleep)
+                    # pyautogui.press('enter')
                     time.sleep(2)
                     pyautogui.hotkey('ctrl', 'g')
                     time.sleep(global_time_sleep)
@@ -290,7 +290,156 @@ def run_reLogin(currentAutoName, isAutoClickVLBS):
                 if login_success != 1:
                     # add_server_fail_value('fail_servers.json', account['auto_update_path'])
                     print(f"Server failed for account {account['username']}")
+def getLowBoodAccounts():
+    """
+    Tìm các tài khoản bị mất kết nối vì thấp máu.
+    Trả về danh sách các account bị lỗi.
+    """
+    print("🔍 Đang kiểm tra các tài khoản bị mất kết nối vì thấp máu...")
+    list_control = None
+    error_accounts = []  # Mảng lưu các tài khoản lỗi
+
+    for attempt in range(3):
+        try:
+            print(f"Thử kết nối lần {attempt + 1}...")
+            # backend = GF.get_backend()
+            nameAutoVLBS = GF.getNameAutoVLBS()
+            GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
+            app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+            dlg = app.window(title_re=nameAutoVLBS)
+
+            # Lấy tất cả control loại List trong cửa sổ
+            list_controls = dlg.descendants(control_type="List")
+
+            # Kiểm tra số lượng và lấy theo điều kiện
+            if len(list_controls) == 3:
+                print("Có 3 List control, lấy cái đầu tiên.")
+                list_control = list_controls[2]  # lấy cái đầu tiên
+            else:
+                list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1   
+            break  # Thoát vòng lặp nếu kết nối thành công
+        except Exception as e:
+            print(f"Lỗi kết nối đến ứng dụng lần {attempt + 1}: {e}")
+            time.sleep(2)
+
+    if not list_control:
+        print("❌ Không tìm thấy list control.")
+        return error_accounts
+
+    # Tìm các mục trong danh sách
+    items = list_control.children(control_type="ListItem")
+    for i, item in enumerate(items):
+        countChild = 0
+        account_name = ""
+        blood_account = ""
+        for child in item.children():
+            if countChild == 0:
+                account_name = child.window_text()
+            elif countChild == 1:
+                blood_account = child.window_text()
+                if blood_account == "":
+                    continue # Bỏ qua nếu máu không hiển thị
+                if blood_account != "Boss":
+                    try:
+                        if int(blood_account) < 900:
+                            print(f"⚠️  Tài khoản {account_name} có máu thấp: {blood_account}")
+                            error_accounts.append({
+                                "account": account_name,
+                                "blood": blood_account
+                            })
+                    except ValueError:
+                        print(f"❓ Không parse được máu của {account_name}: {blood_account}")
+            countChild += 1
+
+    print("🔧 Hoàn thành kiểm tra. Tổng số acc lỗi:", len(error_accounts))
+    return error_accounts
     
+def fixLowBloodAccountsWithRepair(prev_errors=None):
+    """
+    Kiểm tra acc thấp máu.
+    - Nếu prev_errors = None → chỉ trả về danh sách lỗi.
+    - Nếu prev_errors có giá trị → sẽ sửa lỗi nếu acc vừa bị lỗi và có trong prev_errors.
+    """
+    print("🔍 Đang kiểm tra các tài khoản bị mất kết nối vì thấp máu...")
+    list_control = None
+    error_accounts = []  # lưu acc bị lỗi trong lần kiểm tra này
+
+    for attempt in range(3):
+        try:
+            print(f"Thử kết nối lần {attempt + 1}...")
+            nameAutoVLBS = GF.getNameAutoVLBS()
+            GF.checkBothAutoVlbsAndQuanLyRunning(nameAutoVLBS)
+            app = Application(backend="uia").connect(title_re=nameAutoVLBS)
+            dlg = app.window(title_re=nameAutoVLBS)
+
+            # Lấy list control
+            list_controls = dlg.descendants(control_type="List")
+            if len(list_controls) == 3:
+                list_control = list_controls[2]
+            else:
+                list_control = dlg.child_window(control_type="List")
+            break
+        except Exception as e:
+            print(f"Lỗi kết nối lần {attempt + 1}: {e}")
+            time.sleep(2)
+
+    if not list_control:
+        print("❌ Không tìm thấy list control.")
+        return error_accounts
+
+    # Quét danh sách acc
+    items = list_control.children(control_type="ListItem")
+    for i, item in enumerate(items):
+        account_name, blood_account = "", ""
+        for idx, child in enumerate(item.children()):
+            if idx == 0:
+                account_name = child.window_text()
+            elif idx == 1:
+                blood_account = child.window_text()
+
+        if blood_account == "" or blood_account == "Boss":
+            continue
+
+        try:
+            if int(blood_account) < 900:
+                print(f"⚠️  Tài khoản {account_name} có máu thấp: {blood_account}")
+                error_accounts.append({"account": account_name, "blood": blood_account})
+
+                # Nếu có prev_errors và acc này nằm trong prev_errors → tiến hành sửa
+                if prev_errors and any(err["account"] == account_name for err in prev_errors):
+                    print(f"🔨 Sửa lỗi cho acc {account_name} (máu {blood_account})")
+                    scroll_to_list_item(list_control, i)
+                    item.click_input(double=True)  # mở game
+                    pyautogui.hotkey('alt', 'x')
+                    time.sleep(global_time_sleep)
+                    pyautogui.press('enter')
+                    time.sleep(global_time_sleep)
+                    pyautogui.press('enter')
+                    time.sleep(global_time_sleep)
+                    pyautogui.press('enter')
+                    time.sleep(global_time_sleep)
+                    pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
+                    time.sleep(global_time_sleep)
+                    pyautogui.press('enter')
+                    time.sleep(4)
+                    time.sleep(global_time_sleep)
+                    pyautogui.press('enter')
+                    time.sleep(3)
+                    pyautogui.hotkey('ctrl', 'g')
+                    time.sleep(global_time_sleep)
+                    pyautogui.press('esc')
+                    time.sleep(2)
+                    time.sleep(global_time_sleep)
+                    item.click_input(double=True)  # ẩn game
+                    time.sleep(global_time_sleep)
+                    print(f"✅ Đã sửa lỗi cho acc: {account_name}")
+        except ValueError:
+            print(f"❓ Không parse được máu của {account_name}: {blood_account}")
+
+    print("🔧 Hoàn thành kiểm tra.")
+    return error_accounts
+
+
 def fixLowBloodAccounts():
     """
     Xử lý các tài khoản bị mất kết nối vì thấp máu.

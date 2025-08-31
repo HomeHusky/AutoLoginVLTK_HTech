@@ -760,6 +760,8 @@ def on_login_complete():
     file_path = "accounts.json"
     if all_accounts_logged_in(file_path):
         print("✅ Tất cả account đã login.")
+        if is_checking_fix_vlbs:
+            return
         is_all_accounts_logged_in = True
         on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip())
     else:

@@ -16,7 +16,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from notifier import send_discord_report
-from fixErrorAccounts import fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac, run_kill_hung_vo_lam
+from fixErrorAccounts import getLowBoodAccounts, fixLowBloodAccountsWithRepair, fixErrorAccounts, relogin_lost_accounts, fixLowBloodAccounts, fix_account_stuck_on_map_Sa_Mac, run_kill_hung_vo_lam
 from tkinter import ttk
 import tkinter as tk
 from pymongo.mongo_client import MongoClient
@@ -33,6 +33,13 @@ previous_data = {}  # Dùng để lưu trữ số dư tiền của các tài kho
 EMAIL_ADDRESS = "htechvlnotification@gmail.com"
 EMAIL_PASSWORD = "btpwkapwzdknnqfl"
 RECIPIENT_EMAIL = "vitrannhat@gmail.com"
+
+def format_time_to_minute_second(seconds: int) -> str:
+    """
+    Chuyển số giây thành chuỗi dạng 'MM phút SS giây'.
+    """
+    m, s = divmod(seconds, 60)
+    return f"{m:02d} phút {s:02d} giây"
 
 # === CÁC HÀM TOÀN CỤC ===
 # Hàm này sẽ tải danh sách tài khoản từ file gom_accounts.json
@@ -553,7 +560,7 @@ def auto_check_loop(minutes, ten_may):
         report = []
         error_accounts_array = []
         lost_accounts_array = []
-
+        low_blood_accounts_array = []
         # === Tạo set tài khoản hiện tại
         current_accounts = set(acc[0] for acc in new_data)
         total_profit = 0
@@ -643,7 +650,8 @@ def auto_check_loop(minutes, ten_may):
             run_kill_hung_vo_lam()
             fixErrorAccounts(error_accounts_array)
             # Xử lý các tài khoản bị mất kết nối vì thấp máu
-            fixLowBloodAccounts()
+            low_blood_accounts_array = getLowBoodAccounts()
+            # fixLowBloodAccounts()
             fix_account_stuck_on_map_Sa_Mac()
             relogin_lost_accounts()
         print(f"📊 Báo cáo kiểm tra tài khoản máy {ten_may} lúc {loop_time_str} đã hoàn thành.")
@@ -652,11 +660,15 @@ def auto_check_loop(minutes, ten_may):
             if stop_flag:
                 print("🛑 Đã dừng kiểm tra.")
                 return
-            print(f"{minutes * 60 - i} giây còn lại trước khi kiểm tra lại...")
+            seconds_left = minutes * 60 - i
+            print(f"Còn lại {format_time_to_minute_second(seconds_left)} trước khi kiểm tra lại...")
+            # print(f"{minutes * 60 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
         # Xử lý các tài khoản lỗi sau 15 phut
         run_kill_hung_vo_lam()
-        fixLowBloodAccounts()
+        fixLowBloodAccountsWithRepair(prev_errors=low_blood_accounts_array)
+        low_blood_accounts_array = []
+        # fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
 
         # === Đếm ngược trước vòng lặp tiếp theo
@@ -664,11 +676,14 @@ def auto_check_loop(minutes, ten_may):
             if stop_flag:
                 print("🛑 Đã dừng kiểm tra.")
                 return
-            print(f"{minutes * 45 - i} giây còn lại trước khi kiểm tra lại...")
+            seconds_left = minutes * 45 - i
+            print(f"Còn lại {format_time_to_minute_second(seconds_left)} trước khi kiểm tra lại...")
+            # print(f"{minutes * 45 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
         # Xử lý các tài khoản lỗi sau 15 phut
         run_kill_hung_vo_lam()
-        fixLowBloodAccounts()
+        low_blood_accounts_array = getLowBoodAccounts()
+        # fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
         relogin_lost_accounts()
 
@@ -677,11 +692,15 @@ def auto_check_loop(minutes, ten_may):
             if stop_flag:
                 print("🛑 Đã dừng kiểm tra.")
                 return
-            print(f"{minutes * 30 - i} giây còn lại trước khi kiểm tra lại...")
+            seconds_left = minutes * 30 - i
+            print(f"Còn lại {format_time_to_minute_second(seconds_left)} trước khi kiểm tra lại...")
+            # print(f"{minutes * 30 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
         # Xử lý các tài khoản lỗi sau 15 phut
         run_kill_hung_vo_lam()
-        fixLowBloodAccounts()
+        fixLowBloodAccountsWithRepair(prev_errors=low_blood_accounts_array)
+        low_blood_accounts_array = []
+        # fixLowBloodAccounts()
         fix_account_stuck_on_map_Sa_Mac()
 
         # === Đếm ngược trước vòng lặp tiếp theo
@@ -689,7 +708,9 @@ def auto_check_loop(minutes, ten_may):
             if stop_flag:
                 print("🛑 Đã dừng kiểm tra.")
                 return
-            print(f"{minutes * 15 - i} giây còn lại trước khi kiểm tra lại...")
+            seconds_left = minutes * 15 - i
+            print(f"Còn lại {format_time_to_minute_second(seconds_left)} trước khi kiểm tra lại...")
+            # print(f"{minutes * 15 - i} giây còn lại trước khi kiểm tra lại...")
             time.sleep(1)
 
 # === HÀM ĐIỀU KHIỂN LUỒNG ===
