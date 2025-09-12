@@ -220,9 +220,10 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
 
     time.sleep(sleepTime[0]['wait_time_load'])
 
-    pyautogui.hotkey("ctrl", "f")
-    time.sleep(global_time_sleep)
-    pyautogui.hotkey("ctrl", "s")
+    if sleepTime[0]['hide_effects'] == 1:
+        pyautogui.hotkey("ctrl", "f")
+        time.sleep(global_time_sleep)
+        pyautogui.hotkey("ctrl", "s")
 
     InGameName = updateIngame.check_valid_ingame_value(account['username'], currentAutoName)
     if InGameName == False:
@@ -232,7 +233,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         # pyautogui.press('enter')
         return 2
 
-    if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS, sleepTime[0]['hide_effects']):
+    if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS):
         print(f"Account tự tắt sau khi chạy auto")
         return 4
     print(f"Đã đăng nhập vào tài khoản: {account['username']}")
