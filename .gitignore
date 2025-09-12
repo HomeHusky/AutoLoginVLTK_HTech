@@ -4,3 +4,4 @@ __pycache__/
 /build/
 /dist/
 autoLogin.spec
+/pass_monitor.txt
