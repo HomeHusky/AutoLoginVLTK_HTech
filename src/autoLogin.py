@@ -921,28 +921,28 @@ print(server_names)
 selected_server = tk.StringVar(value="Chọn server")
 print(selected_server)
 
-def create_server_buttons():
-    # Duyệt qua từng server trong JSON
-    for server_name, path in servers.items():
+# def create_server_buttons():
+#     # Duyệt qua từng server trong JSON
+#     for server_name, path in servers.items():
 
-        server_frame = ttk.LabelFrame(open_game_tab, text=server_name, padding=(10, 5))
-        server_frame.pack(padx=5, pady=10, fill="x")
+#         server_frame = ttk.LabelFrame(open_game_tab, text=server_name, padding=(10, 5))
+#         server_frame.pack(padx=5, pady=10, fill="x")
 
-        # Hiển thị tên server
-        server_label = tk.Label(server_frame, text=server_name, font=("Arial", 10, "bold"))
-        server_label.pack()
+#         # Hiển thị tên server
+#         server_label = tk.Label(server_frame, text=server_name, font=("Arial", 10, "bold"))
+#         server_label.pack()
 
-        # Hiển thị số tài khoản đã đăng nhập (chưa có nghiệp vụ, sẽ để mặc định là 0)
-        account_label = tk.Label(server_frame, text="Số tài khoản đã đăng nhập: 0", font=("Arial", 9))
-        account_label.pack()
+#         # Hiển thị số tài khoản đã đăng nhập (chưa có nghiệp vụ, sẽ để mặc định là 0)
+#         account_label = tk.Label(server_frame, text="Số tài khoản đã đăng nhập: 0", font=("Arial", 9))
+#         account_label.pack()
 
-        # Tạo nút "Chạy Auto Update"
-        auto_update_button = tk.Button(server_frame, text="Chạy Auto Update", width=20, command=lambda s=server_name: print(f"Chạy Auto Update cho {s}"))
-        auto_update_button.pack(pady=5)
+#         # Tạo nút "Chạy Auto Update"
+#         auto_update_button = tk.Button(server_frame, text="Chạy Auto Update", width=20, command=lambda s=server_name: print(f"Chạy Auto Update cho {s}"))
+#         auto_update_button.pack(pady=5)
 
-        # Tạo nút "Chạy Game"
-        game_button = tk.Button(server_frame, text="Chạy Game", width=20, command=lambda s=server_name: print(f"Chạy Game cho {s}"))
-        game_button.pack(pady=5)
+#         # Tạo nút "Chạy Game"
+#         game_button = tk.Button(server_frame, text="Chạy Game", width=20, command=lambda s=server_name: print(f"Chạy Game cho {s}"))
+#         game_button.pack(pady=5)
 
 # Tạo biến để lưu trạng thái của checkbox clickAuto
 varCheckBox = tk.IntVar()
@@ -984,9 +984,9 @@ tab_control = ttk.Notebook(root)
 account_tab = ttk.Frame(tab_control)
 tab_control.add(account_tab, text="Quản lý Tài khoản")
 
-# Tab Quản lý Đường dẫn
-open_game_tab = ttk.Frame(tab_control)
-tab_control.add(open_game_tab, text="Mở Autologin và game")
+# # Tab Quản lý Đường dẫn
+# open_game_tab = ttk.Frame(tab_control)
+# tab_control.add(open_game_tab, text="Mở Autologin và game")
 
 # Tab Quản lý Đường dẫn
 path_tab = ttk.Frame(tab_control)
@@ -1032,18 +1032,75 @@ entry_password.grid(row=0, column=2, columnspan=1, padx=5, pady=5, sticky="ew")
 entry_ingame = ttk.Entry(input_frame)
 entry_ingame.grid(row=0, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
 
+# Frame server
+server_frame = ttk.Frame(input_frame)
+server_frame.grid(row=1, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+
+# Chia tỷ lệ cột
+server_frame.columnconfigure(0, weight=8)  # 80%
+server_frame.columnconfigure(1, weight=2)  # 20%
+
 # Nhập Server
 ttk.Label(input_frame, text="Server:").grid(row=1, column=0, padx=5, pady=5)
 # Tạo Combobox servers
-servers_dropdown = ttk.Combobox(input_frame, textvariable=selected_server, values=server_names, state="readonly")
-servers_dropdown.grid(row=1, column=1, columnspan=1, padx=10, pady=10, sticky="ew")
+servers_dropdown = ttk.Combobox(server_frame, textvariable=selected_server, values=server_names, state="readonly")
+servers_dropdown.grid(row=0, column=0, sticky="ew", padx=(0, 5))
+
+# Reload server
+reload_server_button = ttk.Button(server_frame, text="🗘", command=lambda: reload_server())
+reload_server_button.grid(row=0, column=1, sticky="ew")
+
+def reload_server():
+    # Đọc dữ liệu từ accounts.json
+    with open(os.path.join(GF.join_directory_data(), "accounts.json"), "r", encoding="utf-8") as f:
+        accounts_data = json.load(f)
+
+    # Đọc dữ liệu từ servers.json
+    with open(os.path.join(GF.join_directory_config(), servers_path), "r", encoding="utf-8") as f:
+        servers_data = json.load(f)
+
+    # Tạo servers mới từ accounts
+    new_servers = {}
+    seen_paths = set()
+
+    for acc in accounts_data.get("accounts", []):
+        path = acc.get("game_path")
+        if not path or not path.endswith("game.exe"):
+            continue
+
+        if path not in seen_paths:
+            folder_name = os.path.basename(os.path.dirname(path))
+            new_servers[folder_name] = path
+            seen_paths.add(path)
+
+    # Cập nhật lại servers
+    servers_data["servers"] = new_servers
+
+    # Ghi lại servers.json
+    with open(os.path.join(GF.join_directory_config(), servers_path), "w", encoding="utf-8") as f:
+        json.dump(servers_data, f, indent=4, ensure_ascii=False)
+
+    print("✅ Đã cập nhật servers.json thành công!")
 
 mo_game_lau_checkbox = tk.Checkbutton(input_frame, text="Server mở game lâu", variable=varMoGameLau, command=lambda: check_checkbox(varMoGameLau))
 mo_game_lau_checkbox.grid(row=1, column=2, columnspan=1)
 
-# Nút chọn đường dẫn game
-hide_game_button = ttk.Button(input_frame, text="Ẩn All game", command=lambda: GF.hideWindow("Vo Lam Truyen Ky"))
-hide_game_button.grid(row=1, column=3, padx=5, pady=5, sticky="ew")
+
+# Frame server
+hide_game_and_effects_frame = ttk.Frame(input_frame)
+hide_game_and_effects_frame.grid(row=1, column=3, columnspan=1, padx=5, pady=5, sticky="ew")
+
+# Chia tỷ lệ cột
+hide_game_and_effects_frame.columnconfigure(0, weight=5)  # 50%
+hide_game_and_effects_frame.columnconfigure(1, weight=5)  # 50%
+
+# Ẩn All game
+hide_game_button =ttk.Button(hide_game_and_effects_frame, text="Ẩn tất cả game", command=lambda: GF.hideWindow("Vo Lam Truyen Ky"))
+hide_game_button.grid(row=0, column=0, sticky="ew", padx=(0, 5))
+
+# Reload server
+hide_effects_button = ttk.Button(hide_game_and_effects_frame, text="Ẩn hiệu ứng", command=lambda: GF.hide_effects_all())
+hide_effects_button.grid(row=0, column=1, sticky="ew")
 
 # Nhập Game Path
 ttk.Label(input_frame, text="Đường dẫn Game:").grid(row=2, column=0, padx=5, pady=5)
@@ -1091,10 +1148,10 @@ entry_auto_update_path = ttk.Entry(input_frame)
 entry_auto_update_path.grid(row=3, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Nút chọn đường dẫn game
-browse_button = ttk.Button(input_frame, text="Browse", command=browse_game_path)
+browse_button = ttk.Button(input_frame, text="Chọn đường dẫn", command=browse_game_path)
 browse_button.grid(row=2, column=2, padx=5, pady=5, sticky="ew")
 
-update_button = ttk.Button(input_frame, text="Update path", command=update_path)
+update_button = ttk.Button(input_frame, text="Cập nhật đường dẫn", command=update_path)
 update_button.grid(row=2, column=3, padx=5, pady=5, sticky="ew")
 
 gom_checkbox = tk.Checkbutton(input_frame, text="TK gom", variable=varGomCheckBox, command=lambda: check_checkbox(varGomCheckBox))
@@ -1627,6 +1684,6 @@ if currentAutoName != None:
 load_to_gui()
 # except Exception as e:
 #     messagebox.showerror("Error", f"Có lỗi xảy ra dòng 497 autoLogin!")
-create_server_buttons()
+# create_server_buttons()
 # Bắt đầu vòng lặp giao diện
 root.mainloop()

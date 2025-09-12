@@ -489,6 +489,39 @@ def minimizeWindow(partial_title):
             print(f"Error: No window with title containing '{partial_title}' found.")
     except Exception as e:
         print(f"Error: Could not minimize the window with title containing '{partial_title}'. Reason: {e}")
+
+# Hàm gửi tổ hợp phím tới một cửa sổ
+def send_alt_key(hwnd, key):
+    """Gửi tổ hợp Alt + key tới cửa sổ hwnd"""
+    try:
+        win32gui.PostMessage(hwnd, win32con.WM_SYSKEYDOWN, key, 0x20000000)
+        time.sleep(0.1)
+        win32gui.PostMessage(hwnd, win32con.WM_SYSKEYUP, key, 0x20000000)
+    except Exception as e:
+        print(f"❌ Lỗi gửi phím Alt+{chr(key)} tới hwnd={hwnd}: {e}")
+
+def hide_effects_all():
+    def enum_handler(hwnd, _):
+        if win32gui.IsWindowVisible(hwnd):
+            title = win32gui.GetWindowText(hwnd)
+            if "Vo Lam Truyen Ky" in title or "Vo Lam" in title:  # Tên cửa sổ game
+                try:
+                    print(f"👉 Đang gửi phím tới cửa sổ: {title} (hwnd={hwnd})")
+                    # Alt+F
+                    send_alt_key(hwnd, ord('F'))
+                    time.sleep(0.5)
+                    # Alt+S
+                    send_alt_key(hwnd, ord('S'))
+                    time.sleep(0.5)
+                    print(f"✅ Đã gửi Alt+F và Alt+S tới: {title}")
+                except Exception as e:
+                    print(f"❌ Lỗi khi xử lý cửa sổ {title}: {e}")
+
+    try:
+        win32gui.EnumWindows(enum_handler, None)
+        print("🎯 Hoàn tất quá trình ẩn hiệu ứng cho tất cả acc.")
+    except Exception as e:
+        print(f"❌ Lỗi khi duyệt cửa sổ: {e}")
 # Gọi hàm
 # accounts_file = 'accounts.json'
 # output_file = 'autoUpdate_path.json'

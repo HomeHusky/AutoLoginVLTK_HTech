@@ -1,16 +1,7 @@
 {
     "folder_game": "D:/VoLamTruyenKy/PARTH GAME",
     "servers": {
-        "1.1 VLTK_TUONGPHUNG": "D:/VoLamTruyenKy/PARTH GAME/VLTK TUONG PHUNG/game.exe",
-        "1.2 VLTK_DAIDANH": "D:/VoLamTruyenKy/PARTH GAME/VLTK DAI DANH/game.exe",
-        "1.3 VLTK_LUONGSON": "D:/VoLamTruyenKy/PARTH GAME/VLTK LUONG SON KY SU/game.exe",
-        "2.1 CTC_DANHSON": "D:/VoLamTruyenKy/PARTH GAME/CTC 1 DANH SON/game.exe",
-        "2.2 CTC_HOIUC": "D:/VoLamTruyenKy/PARTH GAME/CTC 2 HOI UC/game.exe",
-        "2.3 CTC_DAIGIA": "D:/VoLamTruyenKy/PARTH GAME/CTC 3 DAI GIA/game.exe",
-        "3.1 PHONGHOA_TINHNGHIA": "D:/VoLamTruyenKy/PARTH GAME/PHONG HOA/game.exe",
-        "3.2 PHONGHOA_GIANGHO": "D:/VoLamTruyenKy/PARTH GAME/VLTK LAC SON DAI DIA/AutoUpdate.exe",
-        "4.1 JXTIEUNGAO_LAMAN": "D:/VoLamTruyenKy/PARTH GAME/VLTK LAC SON DAI DIA/AutoUpdate.exe",
-        "4.2 JXTIEUNGAO_THOSON": "D:/VoLamTruyenKy/PARTH GAME/VLTK LAC SON DAI DIA/AutoUpdate.exe",
-        "5.1 JXCTC_DUOCSON": "D:/VoLamTruyenKy/PARTH GAME/VLTK LAC SON DAI DIA/AutoUpdate.exe"
+        "HoanhSon": "D:/VoLam/HoanhSon/game.exe",
+        "TP 2": "D:/VoLam/TP 2/game.exe"
     }
 }
