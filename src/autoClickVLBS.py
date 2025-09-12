@@ -1,7 +1,6 @@
 from pywinauto import Application
 from pywinauto.keyboard import send_keys
 import json
-import pyautogui
 import time
 import re
 import GlobalFunction as GF
@@ -10,7 +9,7 @@ import updateIngame
 
 global_time_sleep = GF.load_global_time_sleep()
 
-def start_click(username, name, isAutoClickVLBS, isHide_effects):
+def start_click(username, name, isAutoClickVLBS):
     try:
         print("isAutoClickVLBS in autoClickVLBS.py:", isAutoClickVLBS)
         print("name AutoVLBS:", name)
@@ -22,19 +21,19 @@ def start_click(username, name, isAutoClickVLBS, isHide_effects):
         ingameByUsername = getIngameValueByUserName(username)
 
         if GF.checkQuanlynhanvat():
-            if not run_down_enter(ingameByUsername, name, isAutoClickVLBS, isHide_effects):
+            if not run_down_enter(ingameByUsername, name, isAutoClickVLBS):
                 return False
             return True
         elif GF.checkWindowRunning(name) == 1:
             # run_right_click(name)
-            if not run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS, isHide_effects):
+            if not run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
                 return False
             return True
         elif GF.checkWindowRunning(name) == 2:
             GF.show_application(name)
 
             time.sleep(global_time_sleep)
-            if not run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS, isHide_effects):
+            if not run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
                 return False
             return True
         
@@ -80,7 +79,7 @@ def run_right_click(name):
     except Exception as e:
         print(f"Lỗi dòng 45 file autoClickVLBS.py: ", e)
 
-def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS, isHide_effects):
+def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS):
     try:
         list_control = None
         app = Application(backend="uia").connect(title_re=name)
@@ -124,11 +123,6 @@ def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS, isHide_effects
                     # Nhấn phím space
                     first_item.type_keys("{SPACE}")
 
-                    if isHide_effects == 1:
-                        pyautogui.hotkey("ctrl", "s")
-                        time.sleep(1)
-                        pyautogui.hotkey("ctrl", "f")
-
                     if not check_after_click_auto(ingameByUsername, name):
                         return False
                 first_item.double_click_input()
@@ -139,7 +133,7 @@ def run_press_space_VLBS(ingameByUsername, name, isAutoClickVLBS, isHide_effects
     except Exception as e:
         print(f"Lỗi dòng 64 file autoClickVLBS.py: ", e)
 
-def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS, isHide_effects):
+def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS):
     list_control = None
     try:
         for attempt in range(3):
@@ -166,10 +160,6 @@ def run_down_enter(ingameByUsername, currentAutoName, isAutoClickVLBS, isHide_ef
                 time.sleep(global_time_sleep)
                 send_keys("{ENTER}")
                 time.sleep(5)
-                if isHide_effects == 1:
-                    pyautogui.hotkey("ctrl", "s")
-                    time.sleep(1)
-                    pyautogui.hotkey("ctrl", "f")
                 if not check_after_click_auto(ingameByUsername, currentAutoName):
                     return False
             

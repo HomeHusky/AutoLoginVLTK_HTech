@@ -220,6 +220,10 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
 
     time.sleep(sleepTime[0]['wait_time_load'])
 
+    pyautogui.hotkey("ctrl", "f")
+    time.sleep(global_time_sleep)
+    pyautogui.hotkey("ctrl", "s")
+
     InGameName = updateIngame.check_valid_ingame_value(account['username'], currentAutoName)
     if InGameName == False:
         print(f"Có lỗi khi đăng nhập 2: {account['username']}")
