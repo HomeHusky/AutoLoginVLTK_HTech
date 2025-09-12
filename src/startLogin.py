@@ -221,9 +221,9 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     time.sleep(sleepTime[0]['wait_time_load'])
 
     if sleepTime[0]['hide_effects'] == 1:
-        pyautogui.hotkey("ctrl", "f")
+        pyautogui.hotkey("alt", "f")
         time.sleep(global_time_sleep)
-        pyautogui.hotkey("ctrl", "s")
+        pyautogui.hotkey("alt", "s")
 
     InGameName = updateIngame.check_valid_ingame_value(account['username'], currentAutoName)
     if InGameName == False:
