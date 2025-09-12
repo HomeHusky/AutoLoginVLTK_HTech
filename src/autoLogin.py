@@ -1103,6 +1103,12 @@ def reload_server():
     with open(os.path.join(GF.join_directory_config(), servers_path), "w", encoding="utf-8") as f:
         json.dump(servers_data, f, indent=4, ensure_ascii=False)
 
+    # Danh sách server mới
+    server_names = list(new_servers.keys())
+
+    # Cập nhật values của Combobox
+    servers_dropdown["values"] = server_names  
+    
     print("✅ Đã cập nhật servers.json thành công!")
 
 mo_game_lau_checkbox = tk.Checkbutton(input_frame, text="Server mở game lâu", variable=varMoGameLau, command=lambda: check_checkbox(varMoGameLau))
