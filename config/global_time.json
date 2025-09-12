@@ -8,7 +8,8 @@
             "wait_time_open_trainjx": 3,
             "wait_time_load_autovlbs": 5,
             "try_number": 3,
-            "global_time_sleep": 1
+            "global_time_sleep": 1,
+            "hide_effects": 0
         }
     ]
 }

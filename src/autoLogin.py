@@ -215,7 +215,8 @@ def load_global_time():
                 "wait_time_open_trainjx": 3,
                 "wait_time_load_autovlbs": 5,
                 "try_number": 3,
-                "global_time_sleep": 1
+                "global_time_sleep": 1,
+                "hide_effects": 1
             }
         ]}
 
@@ -582,6 +583,7 @@ def load_auto_data():
         entry_wait_time_autovlbs_open.delete(0, tk.END)
         entry_try_number.delete(0, tk.END)
         entry_global_time_sleep.delete(0, tk.END)
+        varHideEffects.set(0)
 
         entry_wait_game_open.insert(0, sleep_times[0]['wait_time_open'])
         entry_wait_game_open2.insert(0, sleep_times[0]['wait_time_open2'])
@@ -591,6 +593,7 @@ def load_auto_data():
         entry_wait_time_autovlbs_open.insert(0, sleep_times[0]['wait_time_load_autovlbs'])
         entry_try_number.insert(0, sleep_times[0]['try_number'])
         entry_global_time_sleep.insert(0, sleep_times[0]['global_time_sleep'])
+        varHideEffects.set(sleep_times[0]['hide_effects'])
 
 def reload_auto_data_to_global_variable():
     auto_tool_path = START_LOGIN.load_auto_tool_path()
@@ -618,6 +621,7 @@ def save_auto_data():
     wait_time_load_autovlbs = entry_wait_time_autovlbs_open.get().strip()
     try_number = entry_try_number.get().strip()
     edit_global_time_sleep = entry_global_time_sleep.get().strip()
+    hide_effects = varHideEffects.get()
 
     global_time_data['sleepTime'] = [{
         'wait_time_open': int(wait_time_open) if wait_time_open.isdigit() else 12,
@@ -628,6 +632,7 @@ def save_auto_data():
         'wait_time_load_autovlbs': int(wait_time_load_autovlbs) if wait_time_load_autovlbs.isdigit() else 3,
         'try_number': int(try_number) if try_number.isdigit() else 3,
         'global_time_sleep': int(edit_global_time_sleep) if edit_global_time_sleep.isdigit() else 2,
+        'hide_effects': int(hide_effects)
     }]
 
     # Lưu dữ liệu vào file JSON
@@ -1345,9 +1350,15 @@ ttk.Label(auto_frame, text="Chờ cục bộ (0.5 hoặc 1 nếu máy nhanh):").
 entry_global_time_sleep = ttk.Entry(auto_frame)
 entry_global_time_sleep.grid(row=11, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
      
+ttk.Label(auto_frame, text="Ẩn hiệu ứng:").grid(row=12, column=0, padx=5, pady=5)
+varHideEffects = tk.IntVar()
+varHideEffects.set(0)
+entry_hide_effects = ttk.Checkbutton(auto_frame, variable=varHideEffects)
+entry_hide_effects.grid(row=12, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+
 # Lưu dữ liệu đường dẫn auto
 save_button = ttk.Button(auto_frame, text="Lưu Cài đặt", command=save_auto_data)
-save_button.grid(row=12, column=5, padx=5, pady=5)
+save_button.grid(row=13, column=5, padx=5, pady=5)
 
 # Cấu hình lưới để mở rộng đúng cách
 root.grid_rowconfigure(2, weight=1)

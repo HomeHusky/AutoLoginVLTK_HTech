@@ -228,7 +228,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         # pyautogui.press('enter')
         return 2
 
-    if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS):
+    if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS, sleepTime[0]['hide_effects']):
         print(f"Account tự tắt sau khi chạy auto")
         return 4
     print(f"Đã đăng nhập vào tài khoản: {account['username']}")
