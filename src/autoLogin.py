@@ -785,6 +785,8 @@ def on_login_complete():
         if is_checking_fix_vlbs:
             return
         is_all_accounts_logged_in = True
+        pass_monitor = get_pass_monitor()
+        print("MAU KHAU THEO DOI:", pass_monitor)
         if check_pass_monitor == True:
             on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip())
     else:
