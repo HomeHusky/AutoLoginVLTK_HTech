@@ -761,7 +761,6 @@ def get_pass_monitor():
         print(f"File {pass_file} không tồn tại.")
         return None
 
-
 # Hàm callback
 def on_login_complete():
     # GF.activate_window("Auto Login Htech")
@@ -783,7 +782,7 @@ def on_login_complete():
         is_all_accounts_logged_in = True
         
         print(pass_monitor == '0919562182qQ!')
-        if pass_monitor == '0919562182qQ':
+        if pass_monitor == '0919562182qQ!':
             on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip())
     else:
         print("❌ Vẫn còn account chưa login.")
