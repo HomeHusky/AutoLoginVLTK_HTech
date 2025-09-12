@@ -761,12 +761,6 @@ def get_pass_monitor():
         print(f"File {pass_file} không tồn tại.")
         return None
 
-def check_pass_monitor():
-    pass_monitor = get_pass_monitor()
-    print("MAU KHAU THEO DOI:", pass_monitor)
-    if pass_monitor == "0919562182qQ!":
-        return True
-    return False
 
 # Hàm callback
 def on_login_complete():
@@ -780,19 +774,21 @@ def on_login_complete():
     time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     is_all_accounts_logged_in = False
     file_path = "accounts.json"
+    pass_monitor = get_pass_monitor()
+    print("MAU KHAU THEO DOI:", pass_monitor)
     if all_accounts_logged_in(file_path):
         print("✅ Tất cả account đã login.")
         if is_checking_fix_vlbs:
             return
         is_all_accounts_logged_in = True
-        pass_monitor = get_pass_monitor()
-        print("MAU KHAU THEO DOI:", pass_monitor)
-        if check_pass_monitor == True:
+        
+        print(pass_monitor == '0919562182qQ!')
+        if pass_monitor == '0919562182qQ':
             on_start_check_fix_VLBS_button_click(entry_title_mail.get().strip())
     else:
         print("❌ Vẫn còn account chưa login.")
         
-    if check_pass_monitor == True:
+    if pass_monitor == '0919562182qQ!':
         # Gửi thông báo đăng nhập thành công qua Discord
         NOTIFIER.send_discord_login_report(
             entry_title_mail.get().strip(), time_stamp, is_all_accounts_logged_in)
