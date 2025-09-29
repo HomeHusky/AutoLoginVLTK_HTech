@@ -217,7 +217,8 @@ def load_global_time():
                 "wait_time_load_autovlbs": 5,
                 "try_number": 3,
                 "global_time_sleep": 1,
-                "hide_effects": 1
+                "hide_effects": 1,
+                "start_up": 1
             }
         ]}
 
@@ -585,6 +586,7 @@ def load_auto_data():
         entry_try_number.delete(0, tk.END)
         entry_global_time_sleep.delete(0, tk.END)
         varHideEffects.set(0)
+        varStartUp.set(0)
 
         entry_wait_game_open.insert(0, sleep_times[0]['wait_time_open'])
         entry_wait_game_open2.insert(0, sleep_times[0]['wait_time_open2'])
@@ -595,6 +597,7 @@ def load_auto_data():
         entry_try_number.insert(0, sleep_times[0]['try_number'])
         entry_global_time_sleep.insert(0, sleep_times[0]['global_time_sleep'])
         varHideEffects.set(sleep_times[0]['hide_effects'])
+        varStartUp.set(sleep_times[0]['start_up'])
 
 def reload_auto_data_to_global_variable():
     auto_tool_path = START_LOGIN.load_auto_tool_path()
@@ -623,6 +626,7 @@ def save_auto_data():
     try_number = entry_try_number.get().strip()
     edit_global_time_sleep = entry_global_time_sleep.get().strip()
     hide_effects = varHideEffects.get()
+    start_up = varStartUp.get()
 
     global_time_data['sleepTime'] = [{
         'wait_time_open': int(wait_time_open) if wait_time_open.isdigit() else 12,
@@ -633,7 +637,8 @@ def save_auto_data():
         'wait_time_load_autovlbs': int(wait_time_load_autovlbs) if wait_time_load_autovlbs.isdigit() else 3,
         'try_number': int(try_number) if try_number.isdigit() else 3,
         'global_time_sleep': int(edit_global_time_sleep) if edit_global_time_sleep.isdigit() else 2,
-        'hide_effects': int(hide_effects)
+        'hide_effects': int(hide_effects),
+        'start_up': int(start_up)
     }]
 
     # Lưu dữ liệu vào file JSON
@@ -1376,6 +1381,12 @@ varHideEffects = tk.IntVar()
 varHideEffects.set(0)
 entry_hide_effects = ttk.Checkbutton(auto_frame, variable=varHideEffects)
 entry_hide_effects.grid(row=12, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+
+ttk.Label(auto_frame, text="Khởi động cùng Window:").grid(row=13, column=0, padx=5, pady=5)
+varStartUp = tk.IntVar()
+varStartUp.set(0)
+entry_hide_effects = ttk.Checkbutton(auto_frame, variable=varStartUp)
+entry_hide_effects.grid(row=13, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
 
 # Lưu dữ liệu đường dẫn auto
 save_button = ttk.Button(auto_frame, text="Lưu Cài đặt", command=save_auto_data)
