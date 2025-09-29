@@ -358,10 +358,6 @@ def load_to_gui():
     REAL_TIME_CHECK.render_profit_table_ui(monitor_money_frame, entry_title_mail.get().strip())
     lambda: REAL_TIME_CHECK.render_current_online_accounts(current_online_frame, currentAutoName)
 
-    is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
-    if is_start_up == 1:
-        start_login_without_confirm(1)
-
 # Kiểm tra tài khoản tồn tại
 def check_exist_account(username, gamepath, data):
     is_exist = False
@@ -1776,6 +1772,12 @@ entry_total_servers.insert(0, load_total_servers())
 if currentAutoName != None:
     print("isAutoVLBS running: True")
     run_check_status(1)
+    is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
+    if is_start_up == 1:
+        print("is_start_up: True")
+        start_login_without_confirm(1)
+    else: 
+        print("is_start_up: False")
     
 load_to_gui()
 
