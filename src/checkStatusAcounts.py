@@ -234,9 +234,10 @@ def set_all_is_logged_accounts_to_false(file_path):
 def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
     updated_data = None
     if not currentAutoName:
-        data = set_all_is_logged_accounts_to_false("accounts.json")
-        print(data["accounts"])
+        # data = set_all_is_logged_accounts_to_false("accounts.json")
+        # print(data["accounts"])
         currentAutoName = startLogin.auto_open_autoVLBS(auto_tool_path, sleepTime)
+        run_check_status(1)
         print("currentAutoName:", currentAutoName)
         return False
             
