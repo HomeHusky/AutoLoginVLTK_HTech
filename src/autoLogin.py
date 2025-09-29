@@ -181,7 +181,8 @@ def run_check_status(tryTest):
     global currentAutoName
     currentAutoName = GF.getNameAutoVLBS()#Kiem tra ten Autovlbs
     if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):#Kiem tra da chay Auto vlbs 1.9 hay chua (Tu dong mo auto neu chua chay)
-        currentAutoName = GF.getNameAutoVLBS()#Gan ten auto VLBS 1.9 cho auto
+        currentAutoName = GF.getNameAutoVLBS()#Gan ten auto VLBS 1.9 cho 
+        run_check_status(0)
         if not GF.checkAutoVlbsBackGroundRunning():
             if tryTest > 0:
                 run_check_status(tryTest-1)
