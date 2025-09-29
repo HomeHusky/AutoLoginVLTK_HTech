@@ -216,25 +216,25 @@ def update_login_status(json_data, checkData):
             print("Error line 91 checkStatusAccounts.py:", e)
     return json_data
 
-def set_all_is_select_accounts_to_false(file_path="accounts.json"):
+def set_all_is_logged_accounts_to_false(file_path="accounts.json"):
     # Đọc file json
     with open(os.path.join(GF.join_directory_data(), file_path), "r", encoding="utf-8") as f:
         data = json.load(f)
 
     # Chỉnh tất cả is_select thành False
     for acc in data.get("accounts", []):
-        acc["is_select"] = False
+        acc["is_logged_in"] = False
 
     # Ghi lại file json
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
     return data
-    
+
 def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
     updated_data = None
     if not currentAutoName:
-        set_all_is_select_accounts_to_false()
+        set_all_is_logged_accounts_to_false()
         currentAutoName = startLogin.auto_open_autoVLBS(auto_tool_path, sleepTime)
         print("currentAutoName:", currentAutoName)
         return False
