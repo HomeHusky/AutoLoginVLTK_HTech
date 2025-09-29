@@ -216,7 +216,7 @@ def update_login_status(json_data, checkData):
             print("Error line 91 checkStatusAccounts.py:", e)
     return json_data
 
-def set_all_is_logged_accounts_to_false(file_path="accounts.json"):
+def set_all_is_logged_accounts_to_false(file_path):
     # Đọc file json
     with open(os.path.join(GF.join_directory_data(), file_path), "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -234,7 +234,8 @@ def set_all_is_logged_accounts_to_false(file_path="accounts.json"):
 def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
     updated_data = None
     if not currentAutoName:
-        set_all_is_logged_accounts_to_false()
+        data = set_all_is_logged_accounts_to_false("accounts.json")
+        print(data["accounts"])
         currentAutoName = startLogin.auto_open_autoVLBS(auto_tool_path, sleepTime)
         print("currentAutoName:", currentAutoName)
         return False
