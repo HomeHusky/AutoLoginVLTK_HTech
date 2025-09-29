@@ -19,6 +19,8 @@ import threading
 import pyautogui
 import time
 import os
+import winshell
+from win32com.client import Dispatch
 import datetime
 from datetime import datetime, timedelta
 import requests
@@ -645,7 +647,41 @@ def save_auto_data():
     save_data(data)
     save_global_time_data(global_time_data)
     reload_auto_data_to_global_variable()
+    if int(start_up) == 1:
+        set_startup(True)
+    else:
+        set_startup(False)
     messagebox.showinfo("Success", "Đã lưu thành công dữ liệu Auto Tool!")
+
+# --- Lấy path tới quick_run.bat ---
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))   # thư mục src
+PARENT_DIR = os.path.dirname(CURRENT_DIR)                  # thư mục project
+QUICK_RUN_PATH = os.path.join(PARENT_DIR, "quick_run.bat") # file quick_run.bat
+
+def set_startup(enable: bool):
+    """Tạo hoặc xóa shortcut trong Startup để chạy quick_run.bat khi mở máy."""
+    startup_folder = winshell.startup()
+    shortcut_path = os.path.join(startup_folder, "QuickRun.lnk")
+
+    if enable:
+        if not os.path.exists(shortcut_path):
+            target = QUICK_RUN_PATH
+            working_dir = os.path.dirname(target)
+
+            shell = Dispatch('WScript.Shell')
+            shortcut = shell.CreateShortCut(shortcut_path)
+            shortcut.Targetpath = target
+            shortcut.WorkingDirectory = working_dir
+            shortcut.save()
+            print(f"✅ Đã tạo shortcut: {shortcut_path}")
+        else:
+            print("ℹ️ Shortcut đã tồn tại.")
+    else:
+        if os.path.exists(shortcut_path):
+            os.remove(shortcut_path)
+            print("❌ Đã xóa shortcut, ứng dụng sẽ không tự chạy nữa.")
+        else:
+            print("ℹ️ Không có shortcut để xóa.")
 
 # Hủy bỏ chỉnh sửa
 def cancel_edit():
