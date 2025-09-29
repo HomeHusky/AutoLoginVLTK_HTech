@@ -197,7 +197,7 @@ def run_check_status(tryTest):
     currentAutoName = GF.getNameAutoVLBS()
     if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
         currentAutoName = GF.getNameAutoVLBS()
-        set_all_is_select_accounts_to_false()
+        # set_all_is_select_accounts_to_false()
         if not GF.checkAutoVlbsBackGroundRunning():
             if tryTest > 0:
                 run_check_status(tryTest-1)
@@ -735,7 +735,7 @@ def start_login(isAutoClickVLBS):
     
     if confirm:  # Nếu người dùng xác nhận
         try:
-            run_check_status(1)
+            run_check_status(2)
             # Tạo luồng cho quá trình login
             login_thread = threading.Thread(target=START_LOGIN.runStartLogin, args=(isAutoClickVLBS, on_login_complete, currentAutoName, pass_accounts, on_login_username))
             login_thread.start()  # Bắt đầu luồng login
