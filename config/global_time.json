@@ -10,7 +10,7 @@
             "try_number": 3,
             "global_time_sleep": 1,
             "hide_effects": 1,
-            "start_up": 1
+            "start_up": 0
         }
     ]
 }
