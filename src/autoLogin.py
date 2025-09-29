@@ -37,21 +37,6 @@ is_checking_fix_vlbs = False  # Cờ trạng thái kiểm tra
 is_testing_code = False  # Cờ trạng thái kiểm tra code
 pyautogui.FAILSAFE = False
 
-def set_all_is_select_accounts_to_false(file_path="accounts.json"):
-    # Đọc file json
-    with open(os.path.join(GF.join_directory_data(), file_path), "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    # Chỉnh tất cả is_select thành False
-    for acc in data.get("accounts", []):
-        acc["is_select"] = False
-
-    # Ghi lại file json
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
-    return data
-
 def get_current_version():
     version_file = "version.txt"
     try:
@@ -191,13 +176,12 @@ folder_game = servers_data['folder_game']
 pass_accounts = []
 
 def run_check_status(tryTest):
-    auto_tool_path = START_LOGIN.load_auto_tool_path()
-    sleepTime = START_LOGIN.load_sleepTime()
+    auto_tool_path = START_LOGIN.load_auto_tool_path()#Lay duong dan auto vlbs
+    sleepTime = START_LOGIN.load_sleepTime()#Lay thoi gian cuc bo
     global currentAutoName
-    currentAutoName = GF.getNameAutoVLBS()
-    if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
-        currentAutoName = GF.getNameAutoVLBS()
-        # set_all_is_select_accounts_to_false()
+    currentAutoName = GF.getNameAutoVLBS()#Kiem tra ten Autovlbs
+    if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):#Kiem tra da chay Auto vlbs 1.9 hay chua (Tu dong mo auto neu chua chay)
+        currentAutoName = GF.getNameAutoVLBS()#Gan ten auto VLBS 1.9 cho auto
         if not GF.checkAutoVlbsBackGroundRunning():
             if tryTest > 0:
                 run_check_status(tryTest-1)
@@ -735,7 +719,7 @@ def start_login(isAutoClickVLBS):
     
     if confirm:  # Nếu người dùng xác nhận
         try:
-            run_check_status(2)
+            run_check_status(1)
             # Tạo luồng cho quá trình login
             login_thread = threading.Thread(target=START_LOGIN.runStartLogin, args=(isAutoClickVLBS, on_login_complete, currentAutoName, pass_accounts, on_login_username))
             login_thread.start()  # Bắt đầu luồng login
