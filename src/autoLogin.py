@@ -1774,18 +1774,21 @@ if currentAutoName != None:
     
 load_to_gui()
 
+def run_after_ui():
+    try:
+        is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
+        if is_start_up == 1:
+            print("is_start_up: True")
+            start_login_without_confirm(1)
+        else: 
+            print("is_start_up: False")
+    except Exception as e:
+        print("Error", str(e))
 # except Exception as e:
 #     messagebox.showerror("Error", f"Có lỗi xảy ra dòng 497 autoLogin!")
 # create_server_buttons()
 # Bắt đầu vòng lặp giao diện
-root.mainloop()
 
-try:
-    is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
-    if is_start_up == 1:
-        print("is_start_up: True")
-        start_login_without_confirm(1)
-    else: 
-        print("is_start_up: False")
-except Exception as e:
-    print("Error", str(e))
+root.after(100, run_after_ui)
+
+root.mainloop()
