@@ -1764,16 +1764,6 @@ entry_total_servers = ttk.Entry(button_money_frame)
 entry_total_servers.grid(row=0, column=5, columnspan=1, padx=5, pady=5, sticky="ew")
 entry_total_servers.insert(0, load_total_servers())
 
-
-try:
-    is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
-    if is_start_up == 1:
-        print("is_start_up: True")
-        start_login_without_confirm(1)
-    else: 
-        print("is_start_up: False")
-except Exception as e:
-    print("Error", str(e))
 # Tải dữ liệu khi khởi động
 # try:
 
@@ -1789,3 +1779,13 @@ load_to_gui()
 # create_server_buttons()
 # Bắt đầu vòng lặp giao diện
 root.mainloop()
+
+try:
+    is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
+    if is_start_up == 1:
+        print("is_start_up: True")
+        start_login_without_confirm(1)
+    else: 
+        print("is_start_up: False")
+except Exception as e:
+    print("Error", str(e))
