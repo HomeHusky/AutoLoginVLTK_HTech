@@ -18,3 +18,4 @@ urllib3==2.2.3
 pymongo[srv]==3.12
 certifi
 psutil
+winshell
