@@ -1789,6 +1789,6 @@ def run_after_ui():
 # create_server_buttons()
 # Bắt đầu vòng lặp giao diện
 
-root.after(100, run_after_ui)
+root.after(4000, run_after_ui)
 
 root.mainloop()
