@@ -37,6 +37,21 @@ is_checking_fix_vlbs = False  # Cờ trạng thái kiểm tra
 is_testing_code = False  # Cờ trạng thái kiểm tra code
 pyautogui.FAILSAFE = False
 
+def set_all_is_select_accounts_to_false(file_path="accounts.json"):
+    # Đọc file json
+    with open(os.path.join(GF.join_directory_data(), file_path), "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Chỉnh tất cả is_select thành False
+    for acc in data.get("accounts", []):
+        acc["is_select"] = False
+
+    # Ghi lại file json
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+    return data
+
 def get_current_version():
     version_file = "version.txt"
     try:
@@ -182,6 +197,7 @@ def run_check_status(tryTest):
     currentAutoName = GF.getNameAutoVLBS()
     if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
         currentAutoName = GF.getNameAutoVLBS()
+        set_all_is_select_accounts_to_false()
         if not GF.checkAutoVlbsBackGroundRunning():
             if tryTest > 0:
                 run_check_status(tryTest-1)
@@ -710,8 +726,6 @@ def update_status_to_logged_in(username):
 
 def start_login(isAutoClickVLBS):
     global login_thread
-
-
 
     # Tạo popup yêu cầu xác nhận
     confirm = messagebox.askyesno(
