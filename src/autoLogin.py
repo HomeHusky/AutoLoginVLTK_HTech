@@ -1772,12 +1772,15 @@ entry_total_servers.insert(0, load_total_servers())
 if currentAutoName != None:
     print("isAutoVLBS running: True")
     run_check_status(1)
+    
 load_to_gui()
+
+is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
+if is_start_up == 1:
+    start_login_without_confirm(1)
+
 # except Exception as e:
 #     messagebox.showerror("Error", f"Có lỗi xảy ra dòng 497 autoLogin!")
 # create_server_buttons()
 # Bắt đầu vòng lặp giao diện
 root.mainloop()
-is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
-if is_start_up == 1:
-    start_login_without_confirm(1)
