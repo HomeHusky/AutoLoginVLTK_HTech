@@ -358,6 +358,10 @@ def load_to_gui():
     REAL_TIME_CHECK.render_profit_table_ui(monitor_money_frame, entry_title_mail.get().strip())
     lambda: REAL_TIME_CHECK.render_current_online_accounts(current_online_frame, currentAutoName)
 
+    is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
+    if is_start_up == 1:
+        start_login_without_confirm(1)
+
 # Kiểm tra tài khoản tồn tại
 def check_exist_account(username, gamepath, data):
     is_exist = False
@@ -1774,10 +1778,6 @@ if currentAutoName != None:
     run_check_status(1)
     
 load_to_gui()
-
-is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
-if is_start_up == 1:
-    start_login_without_confirm(1)
 
 # except Exception as e:
 #     messagebox.showerror("Error", f"Có lỗi xảy ra dòng 497 autoLogin!")
