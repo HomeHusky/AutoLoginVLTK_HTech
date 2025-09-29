@@ -771,6 +771,18 @@ def start_login(isAutoClickVLBS):
         # Nếu người dùng không xác nhận, chỉ cần quay lại
         messagebox.showinfo("Thông báo", "Vui lòng thực hiện yêu cầu trước khi tiếp tục.")
 
+def start_login_without_confirm(isAutoClickVLBS):
+    global login_thread
+
+    try:
+        run_check_status(1)
+        # Tạo luồng cho quá trình login
+        login_thread = threading.Thread(target=START_LOGIN.runStartLogin, args=(isAutoClickVLBS, on_login_complete, currentAutoName, pass_accounts, on_login_username))
+        login_thread.start()  # Bắt đầu luồng login
+    except Exception as e:
+        messagebox.showerror("Error", f"Không thể bắt đầu quá trình đăng nhập: {e}")
+   
+
 def all_accounts_logged_in(json_path: str) -> bool:
     """
     Kiểm tra tất cả account trong file accounts.json
@@ -1766,3 +1778,6 @@ load_to_gui()
 # create_server_buttons()
 # Bắt đầu vòng lặp giao diện
 root.mainloop()
+is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
+if is_start_up == 1:
+    start_login_without_confirm(1)
