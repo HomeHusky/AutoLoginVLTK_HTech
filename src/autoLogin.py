@@ -30,6 +30,7 @@ import shutil
 import client
 import fixErrorAccounts as FIX_ERROR_ACCOUNTS
 import notifier as NOTIFIER
+import psutil
 
 # ================================================================
 # ⚙️ 2. BIẾN TOÀN CỤC / CẤU HÌNH
@@ -1774,12 +1775,40 @@ if currentAutoName != None:
     
 load_to_gui()
 
+def is_system_just_booted(threshold_minutes=2):
+    """
+    Kiểm tra xem hệ thống vừa mới khởi động hay không.
+    
+    Args:
+        threshold_minutes: Số phút để coi là "vừa mới bật" (mặc định 10 phút)
+    
+    Returns:
+        True nếu máy vừa bật trong vòng threshold_minutes phút
+    """
+    try:
+        boot_time = datetime.fromtimestamp(psutil.boot_time())
+        current_time = datetime.now()
+        uptime = current_time - boot_time
+        
+        print(f"Boot time: {boot_time}")
+        print(f"Current time: {current_time}")
+        print(f"Uptime: {uptime}")
+        
+        return uptime < timedelta(minutes=threshold_minutes)
+    except Exception as e:
+        print(f"Error checking boot time: {e}")
+        return False
+
 def run_after_ui():
     try:
         is_start_up = START_LOGIN.load_sleepTime()[0]['start_up']
         if is_start_up == 1:
-            print("is_start_up: True")
-            start_login_without_confirm(1)
+            # Kiểm tra xem máy có vừa mới bật không (trong vòng 10 phút)
+            if is_system_just_booted(threshold_minutes=2):
+                print("is_start_up: True - System just booted, starting auto login...")
+                start_login_without_confirm(1)
+            else:
+                print("is_start_up: True - But system has been running for a while, skipping auto login.")
         else: 
             print("is_start_up: False")
     except Exception as e:
