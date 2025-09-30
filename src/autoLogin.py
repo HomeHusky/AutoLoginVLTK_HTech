@@ -656,7 +656,7 @@ def save_auto_data():
 # --- Lấy path tới quick_run.bat ---
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))   # thư mục src
 PARENT_DIR = os.path.dirname(CURRENT_DIR)                  # thư mục project
-QUICK_RUN_PATH = os.path.join(PARENT_DIR, "quick_run.bat") # file quick_run.bat
+QUICK_RUN_PATH = os.path.join(PARENT_DIR, "quick_run.vbs") # file quick_run.vbs
 
 def set_startup(enable: bool):
     """Tạo hoặc xóa shortcut trong Startup để chạy quick_run.bat khi mở máy."""
