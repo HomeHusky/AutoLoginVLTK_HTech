@@ -210,6 +210,10 @@ class PathManagerTab:
             data = self.data_manager.load_data()
             global_time_data = self.data_manager.load_global_time()
             
+            # Load đường dẫn tool auto
+            self.entry_auto_path.delete(0, tk.END)
+            self.entry_auto_path.insert(0, data.get('auto_tool_path', ''))
+            
             for i, auto in enumerate(data.get('autoNames', [])):
                 entry_game_name = ttk.Entry(self.auto_frame, width=40)
                 entry_game_name.grid(row=i+1, column=1, padx=5, pady=5)
