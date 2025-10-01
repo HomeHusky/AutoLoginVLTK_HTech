@@ -179,23 +179,29 @@ class DashboardTab:
         self.label_ratio.pack(pady=(0, 5))
     
     def toggle_account_table(self):
-        """Toggle hiển thị/ẩn bảng trạng thái tài khoản + Resize window"""
+        """Toggle hiển thị/ẩn bảng trạng thái tài khoản + Auto resize window"""
         if self.is_table_visible:
             # Ẩn bảng - Thu nhỏ window
             self.tree_frame.pack_forget()
             self.toggle_button.config(text="▼ Mở rộng")
             self.is_table_visible = False
-            # Resize window nhỏ lại
-            self.root.geometry("650x450+0+0")
-            print("🔽 Đã thu gọn bảng trạng thái")
+            # Auto resize - Vừa khít với nội dung
+            self.root.update_idletasks()
+            width = max(650, self.parent.winfo_reqwidth() + 20)
+            height = max(450, self.parent.winfo_reqheight() + 80)
+            self.root.geometry(f"{width}x{height}+0+0")
+            print(f"🔽 Đã thu gọn bảng trạng thái - {width}x{height}")
         else:
             # Hiện bảng - To window ra
             self.tree_frame.pack(padx=10, pady=10, fill="both", expand=True)
             self.toggle_button.config(text="▲ Thu gọn")
             self.is_table_visible = True
-            # Resize window to ra
-            self.root.geometry("650x750+0+0")
-            print("🔼 Đã mở rộng bảng trạng thái")
+            # Auto resize - Vừa khít với nội dung
+            self.root.update_idletasks()
+            width = max(650, self.parent.winfo_reqwidth() + 20)
+            height = max(750, self.parent.winfo_reqheight() + 80)
+            self.root.geometry(f"{width}x{height}+0+0")
+            print(f"🔼 Đã mở rộng bảng trạng thái - {width}x{height}")
     
     # ==================== DATA METHODS ====================
     

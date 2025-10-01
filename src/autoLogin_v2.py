@@ -337,23 +337,30 @@ class AutoLoginApp:
     # ==================== EVENT HANDLERS ====================
     
     def on_tab_selected(self, event):
-        """Xử lý khi chuyển tab - Auto resize window"""
+        """Xử lý khi chuyển tab - Auto resize window vừa khít"""
         selected_tab = self.tab_control.index(self.tab_control.select())
         
+        # Update để tính toán kích thước
+        self.root.update_idletasks()
+        
         if selected_tab == self.tab_control.index(self.dashboard_tab_frame):
-            # Dashboard tab - Nhỏ gọn (bảng ẩn mặc định), góc trái trên
-            # Kích thước sẽ tự động thay đổi khi toggle bảng
+            # Dashboard tab - Auto resize theo nội dung
             if not self.dashboard_tab.is_table_visible:
-                self.root.geometry("650x450+0+0")
+                width = max(650, self.dashboard_tab_frame.winfo_reqwidth() + 20)
+                height = max(450, self.dashboard_tab_frame.winfo_reqheight() + 80)
             else:
-                self.root.geometry("650x750+0+0")
+                width = max(650, self.dashboard_tab_frame.winfo_reqwidth() + 20)
+                height = max(750, self.dashboard_tab_frame.winfo_reqheight() + 80)
+            self.root.geometry(f"{width}x{height}+0+0")
             self.dashboard_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.account_tab_frame):
-            # Account tab - Gọn hơn, góc trái trên
-            self.root.geometry("750x700+0+0")
+            # Account tab - Auto resize
+            width = max(750, self.account_tab_frame.winfo_reqwidth() + 20)
+            height = max(700, self.account_tab_frame.winfo_reqheight() + 80)
+            self.root.geometry(f"{width}x{height}+0+0")
             self.account_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.path_tab_frame):
-            # Settings tab - Nhỏ gọn, có scrollbar, góc trái trên
+            # Settings tab - Auto resize (có scrollbar nên cố định)
             self.root.geometry("700x550+0+0")
         # elif selected_tab == self.tab_control.index(self.status_tab_frame):
         #     self.status_tab.load_initial_deposit_account()
