@@ -398,12 +398,17 @@ class AccountManagerTab:
             
             if data['accounts'][index]['is_gom_tien'] == 1:
                 self.gom_checkbox.select()
-                # Load KPI nếu có
+                # Load KPI nếu có, nếu không thì hiển thị default
                 kpi_gom = data['accounts'][index].get('kpi_gom', '')
                 self.entry_kpi_gom.config(state="normal")
                 self.entry_kpi_gom.delete(0, tk.END)
                 if kpi_gom:
+                    # Có KPI riêng
                     self.entry_kpi_gom.insert(0, kpi_gom)
+                else:
+                    # Chưa có KPI riêng, hiển thị default
+                    from modules.config import DEFAULT_KPI_GOM
+                    self.entry_kpi_gom.insert(0, DEFAULT_KPI_GOM)
             else:
                 self.gom_checkbox.deselect()
                 self.entry_kpi_gom.config(state="disabled")
