@@ -43,6 +43,32 @@ def format_time_to_minute_second(seconds: int) -> str:
     m, s = divmod(seconds, 60)
     return f"{m:02d} phút {s:02d} giây"
 
+def update_accounts_online_status(current_accounts):
+    """
+    Cập nhật trạng thái is_logged_in trong accounts.json
+    dựa vào danh sách accounts đang online
+    """
+    try:
+        filepath = os.path.join(GF.join_directory_data(), 'accounts.json')
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Cập nhật trạng thái
+        for account in data['accounts']:
+            ingame = account['ingame']
+            if ingame in current_accounts:
+                account['is_logged_in'] = True
+            else:
+                account['is_logged_in'] = False
+        
+        # Lưu lại file
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        
+        print(f"✅ Đã cập nhật trạng thái online cho {len(current_accounts)} accounts")
+    except Exception as e:
+        print(f"❌ Lỗi cập nhật trạng thái online: {e}")
+
 # === CÁC HÀM TOÀN CỤC ===
 # Hàm này sẽ tải danh sách tài khoản từ file accounts.json
 # và lọc ra các tài khoản đang đăng nhập và có is_gom_tien = 1
@@ -673,6 +699,9 @@ def auto_check_loop(minutes, ten_may):
         # Xóa các snapshot cũ hơn 2 ngày
         clean_old_snapshots(ten_may, days_to_keep=2)
 
+        # === Cập nhật trạng thái is_logged_in trong accounts.json
+        update_accounts_online_status(current_accounts)
+        
         # === Gửi báo cáo Discord
         if is_first_run:
             print("🔔 Lần chạy đầu tiên, không gửi báo cáo Discord.")
