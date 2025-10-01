@@ -371,8 +371,10 @@ class AccountManagerTab:
         
         if selected_item:
             values = self.tree_accounts.item(selected_item)['values']
+            # Columns hiện tại: stt(0), username(1), ingame(2), game_path(3), is_gom_tien(4), is_xe_2(5), so_lan_xuong(6), so_lan_xuong2(7)
+            
             self.entry_username.delete(0, tk.END)
-            self.entry_username.insert(0, values[2])
+            self.entry_username.insert(0, values[1])  # username ở index 1
             
             self.entry_password.delete(0, tk.END)
             self.entry_game_path.delete(0, tk.END)
@@ -391,8 +393,8 @@ class AccountManagerTab:
             original_ingame = data['accounts'][index]['ingame']
             self.entry_ingame.insert(0, original_ingame)
             
-            self.entry_game_path.insert(0, values[4])
-            self.entry_auto_update_path.insert(0, values[4].replace("game.exe", "AutoUpdate.exe"))
+            self.entry_game_path.insert(0, values[3])  # game_path ở index 3
+            self.entry_auto_update_path.insert(0, values[3].replace("game.exe", "AutoUpdate.exe"))
             
             if data['accounts'][index]['is_gom_tien'] == 1:
                 self.gom_checkbox.select()
@@ -420,11 +422,11 @@ class AccountManagerTab:
             except:
                 self.mo_game_lau_checkbox.deselect()
             
-            self.entry_solanxuong.insert(0, values[8])
-            self.entry_solanxuong2.insert(0, values[9])
+            self.entry_solanxuong.insert(0, values[6])  # so_lan_xuong ở index 6
+            self.entry_solanxuong2.insert(0, values[7])  # so_lan_xuong2 ở index 7
             
-            # Lưu tài khoản đang chỉnh sửa
-            self.editting_account = values[2]
+            # Lưu tài khoản đang chỉnh sửa (username ở index 1)
+            self.editting_account = values[1]
             
             # Ẩn nút Edit và hiện nút Update cùng nút Cancel
             self.edit_button.grid_forget()
@@ -436,7 +438,8 @@ class AccountManagerTab:
         selected_item = self.tree_accounts.selection()
         
         if selected_item:
-            if self.tree_accounts.item(selected_item)['values'][2] != self.editting_account:
+            # username ở index 1
+            if self.tree_accounts.item(selected_item)['values'][1] != self.editting_account:
                 messagebox.showwarning("Warning", "Vui lòng chọn tài khoản đang chỉnh sửa!")
                 return
             
