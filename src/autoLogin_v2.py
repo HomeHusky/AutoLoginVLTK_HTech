@@ -291,6 +291,7 @@ class AutoLoginApp:
         # Setup login manager callbacks
         login_manager.set_on_login_complete_callback(self.on_login_complete)
         login_manager.set_on_login_username_callback(self.on_login_username)
+        login_manager.get_title_mail_callback = self.get_title_mail  # Set callback để lấy title_mail
         
         # Setup auto update manager callbacks
         auto_update_manager.set_on_success_callback(self.on_auto_update_success)
@@ -315,7 +316,7 @@ class AutoLoginApp:
             'set_checking_fix_vlbs': self.set_checking_fix_vlbs,
             
             # Getters
-            'get_entry_title_mail': lambda: "AutoVLBS Server",  # Default value since status tab is hidden
+            'get_entry_title_mail': self.get_title_mail,
             'get_current_auto_name': lambda: login_manager.get_current_auto_name()
         }
     
@@ -344,8 +345,8 @@ class AutoLoginApp:
             self.root.geometry("700x800+0+0")
             self.dashboard_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.account_tab_frame):
-            # Account tab - To ra, góc trái trên
-            self.root.geometry("1000x750+0+0")
+            # Account tab - Vừa phải, góc trái trên
+            self.root.geometry("850x750+0+0")
             self.account_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.path_tab_frame):
             # Settings tab - Vừa phải, góc trái trên
@@ -429,14 +430,29 @@ class AutoLoginApp:
     # ==================== UTILITY METHODS ====================
     
     def set_checking_fix_vlbs(self, value: bool):
-        """
-        Set trạng thái checking fix vlbs
-        
-        Args:
-            value: True/False
-        """
+        """Set trạng thái checking fix vlbs"""
         global is_checking_fix_vlbs
         is_checking_fix_vlbs = value
+    
+    def get_title_mail(self) -> str:
+        """Lấy title mail từ config hoặc data"""
+        try:
+            # Thử lấy từ monitor_time.json hoặc config
+            import os
+            import json
+            
+            # Thử đọc từ monitor_time.json
+            monitor_file = os.path.join(GF.join_directory_data(), 'monitor_time.json')
+            if os.path.exists(monitor_file):
+                with open(monitor_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    return data.get('title_mail', DEFAULT_TITLE_MAIL)
+            
+            # Fallback về default
+            return DEFAULT_TITLE_MAIL
+        except Exception as e:
+            print(f"Error getting title_mail: {e}")
+            return DEFAULT_TITLE_MAIL
     
     def run_after_ui(self):
         """Chạy sau khi UI load xong"""

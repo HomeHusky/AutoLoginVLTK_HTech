@@ -198,33 +198,30 @@ class AccountManagerTab:
         tree_frame = ttk.LabelFrame(self.parent, text="Danh sách tài khoản", padding=(10, 5))
         tree_frame.pack(padx=5, pady=10, fill="x")
         
-        columns = ("stt", "is_select", "username", "ingame", "game_path", "is_logged_in", 
+        # Chỉ hiển thị các cột cần thiết (bỏ is_select và is_logged_in)
+        columns = ("stt", "username", "ingame", "game_path", 
                   "is_gom_tien", "is_xe_2", "so_lan_xuong", "so_lan_xuong2")
         self.tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=10)
         
         # Thiết lập heading
-        self.tree_accounts.heading("stt", text="Stt")
-        self.tree_accounts.heading("is_select", text="Bỏ qua")
+        self.tree_accounts.heading("stt", text="STT")
         self.tree_accounts.heading("username", text="Username")
         self.tree_accounts.heading("ingame", text="Ingame")
         self.tree_accounts.heading("game_path", text="PathGame")
-        self.tree_accounts.heading("is_logged_in", text="Trạng thái")
         self.tree_accounts.heading("is_gom_tien", text="Tk gom tiền")
         self.tree_accounts.heading("is_xe_2", text="Xe 2")
         self.tree_accounts.heading("so_lan_xuong", text="Số lần xuống cum server")
         self.tree_accounts.heading("so_lan_xuong2", text="Số lần xuống server")
         
         # Thiết lập column width
-        self.tree_accounts.column("stt", width=30)
-        self.tree_accounts.column("is_select", width=50)
-        self.tree_accounts.column("username", width=100)
-        self.tree_accounts.column("ingame", width=100)
-        self.tree_accounts.column("game_path", width=200)
-        self.tree_accounts.column("is_logged_in", width=60)
-        self.tree_accounts.column("is_gom_tien", width=40)
-        self.tree_accounts.column("is_xe_2", width=40)
-        self.tree_accounts.column("so_lan_xuong", width=40)
-        self.tree_accounts.column("so_lan_xuong2", width=40)
+        self.tree_accounts.column("stt", width=40, anchor="center")
+        self.tree_accounts.column("username", width=120)
+        self.tree_accounts.column("ingame", width=120)
+        self.tree_accounts.column("game_path", width=250)
+        self.tree_accounts.column("is_gom_tien", width=80, anchor="center")
+        self.tree_accounts.column("is_xe_2", width=50, anchor="center")
+        self.tree_accounts.column("so_lan_xuong", width=80, anchor="center")
+        self.tree_accounts.column("so_lan_xuong2", width=80, anchor="center")
         
         # Tạo thanh cuộn
         v_scrollbar = ttk.Scrollbar(tree_frame, orient="vertical", command=self.tree_accounts.yview)
@@ -264,10 +261,9 @@ class AccountManagerTab:
         for i in self.tree_accounts.get_children():
             self.tree_accounts.delete(i)
         
-        # Hiển thị danh sách tài khoản
+        # Hiển thị danh sách tài khoản (bỏ cột Bỏ qua và Trạng thái)
         stt = 1
         for account in self.data['accounts']:
-            is_logged_in_display = "Online" if account.get('is_logged_in', False) else ""
             is_gom_tien_display = "✓" if account['is_gom_tien'] else ""
             is_xe_2_display = "✓" if account['is_xe_2'] else ""
             
@@ -281,15 +277,11 @@ class AccountManagerTab:
             except:
                 so_lan_xuong2_display = ""
             
-            is_select_display = "✓" if account.get('is_select', False) else ""
-            
             self.tree_accounts.insert("", "end", values=(
                 stt,
-                is_select_display,
                 account['username'],
                 account['ingame'],
                 account['game_path'],
-                is_logged_in_display,
                 is_gom_tien_display,
                 is_xe_2_display,
                 so_lan_xuong_display,

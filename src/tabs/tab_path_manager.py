@@ -31,8 +31,28 @@ class PathManagerTab:
     
     def create_ui(self):
         """Tạo giao diện cho tab"""
+        # Frame thông tin máy
+        machine_frame = ttk.LabelFrame(self.parent, text="⚙️ Thông tin Máy", padding=(15, 10))
+        machine_frame.pack(padx=10, pady=10, fill="x")
+        
+        # Tên máy (title_mail)
+        ttk.Label(machine_frame, text="Tên máy (Discord):").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        self.entry_title_mail = ttk.Entry(machine_frame, width=40)
+        self.entry_title_mail.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        
+        ttk.Label(machine_frame, text="Ví dụ: Máy chủ 1, PC Gaming, AutoVLBS Server", 
+                 foreground="#6b7280", font=('Segoe UI', 8)).grid(row=1, column=1, padx=5, pady=(0, 5), sticky="w")
+        
+        # Nút lưu tên máy
+        save_machine_button = ttk.Button(machine_frame, text="💾 Lưu tên máy", 
+                                        style="Success.TButton",
+                                        command=self.save_title_mail)
+        save_machine_button.grid(row=0, column=2, padx=5, pady=5)
+        
+        machine_frame.columnconfigure(1, weight=1)
+        
         # Frame thông tin đường dẫn
-        auto_frame = ttk.LabelFrame(self.parent, text="Cài đặt Tự động", padding=(10, 5))
+        auto_frame = ttk.LabelFrame(self.parent, text="🔧 Cài đặt Tự động", padding=(10, 5))
         auto_frame.pack(padx=5, pady=10, fill="x")
         
         self.auto_frame = auto_frame
@@ -105,44 +125,99 @@ class PathManagerTab:
         save_button = ttk.Button(auto_frame, text="Lưu Cài đặt", command=self.save_auto_data)
         save_button.grid(row=13, column=5, padx=5, pady=5)
     
-    def load_auto_data(self):
-        """Load dữ liệu auto"""
-        data = self.data_manager.load_data()
-        global_time_data = self.data_manager.load_global_time()
-        
-        self.entry_auto_path.delete(0, tk.END)
-        self.entry_auto_path.insert(0, data.get('auto_tool_path', ''))
-        
-        # Hiển thị tên auto
-        for i, auto in enumerate(data.get('autoNames', [])):
-            entry_game_name = ttk.Entry(self.auto_frame, width=40)
-            entry_game_name.grid(row=i+1, column=1, padx=5, pady=5)
-            entry_game_name.insert(0, auto)
-        
-        # Hiển thị thời gian sleepTime
-        sleep_times = global_time_data.get('sleepTime', [])
-        if sleep_times:
-            self.entry_wait_game_open.delete(0, tk.END)
-            self.entry_wait_game_open2.delete(0, tk.END)
-            self.entry_wait_character_open.delete(0, tk.END)
-            self.entry_wait_server_open.delete(0, tk.END)
-            self.entry_wait_time_trainjx_open.delete(0, tk.END)
-            self.entry_wait_time_autovlbs_open.delete(0, tk.END)
-            self.entry_try_number.delete(0, tk.END)
-            self.entry_global_time_sleep.delete(0, tk.END)
-            self.varHideEffects.set(0)
-            self.varStartUp.set(0)
+    def save_title_mail(self):
+        """Lưu tên máy vào file monitor_time.json"""
+        try:
+            title_mail = self.entry_title_mail.get().strip()
             
-            self.entry_wait_game_open.insert(0, sleep_times[0]['wait_time_open'])
-            self.entry_wait_game_open2.insert(0, sleep_times[0]['wait_time_open2'])
-            self.entry_wait_character_open.insert(0, sleep_times[0]['wait_time_load'])
-            self.entry_wait_server_open.insert(0, sleep_times[0]['wait_time_server'])
-            self.entry_wait_time_trainjx_open.insert(0, sleep_times[0]['wait_time_open_trainjx'])
-            self.entry_wait_time_autovlbs_open.insert(0, sleep_times[0]['wait_time_load_autovlbs'])
-            self.entry_try_number.insert(0, sleep_times[0]['try_number'])
-            self.entry_global_time_sleep.insert(0, sleep_times[0]['global_time_sleep'])
-            self.varHideEffects.set(sleep_times[0]['hide_effects'])
-            self.varStartUp.set(sleep_times[0]['start_up'])
+            if not title_mail:
+                messagebox.showwarning("Cảnh báo", "Vui lòng nhập tên máy!")
+                return
+            
+            # Đọc hoặc tạo file monitor_time.json
+            monitor_file = os.path.join(GF.join_directory_data(), 'monitor_time.json')
+            
+            if os.path.exists(monitor_file):
+                with open(monitor_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            else:
+                data = {}
+            
+            # Cập nhật title_mail
+            data['title_mail'] = title_mail
+            
+            # Lưu file
+            with open(monitor_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            
+            messagebox.showinfo("Thành công", f"Đã lưu tên máy: {title_mail}")
+            print(f"✅ Đã lưu tên máy: {title_mail}")
+            
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể lưu tên máy: {e}")
+            print(f"❌ Lỗi lưu tên máy: {e}")
+    
+    def load_title_mail(self):
+        """Load tên máy từ file monitor_time.json"""
+        try:
+            monitor_file = os.path.join(GF.join_directory_data(), 'monitor_time.json')
+            
+            if os.path.exists(monitor_file):
+                with open(monitor_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    title_mail = data.get('title_mail', '')
+                    self.entry_title_mail.delete(0, tk.END)
+                    self.entry_title_mail.insert(0, title_mail)
+                    print(f"📝 Đã load tên máy: {title_mail}")
+            else:
+                # Set default
+                self.entry_title_mail.delete(0, tk.END)
+                self.entry_title_mail.insert(0, "AutoVLBS Server")
+                
+        except Exception as e:
+            print(f"❌ Lỗi load tên máy: {e}")
+    
+    def load_auto_data(self):
+        """Load dữ liệu auto từ file"""
+        # Load tên máy
+        self.load_title_mail()
+        
+        try:
+            data = self.data_manager.load_data()
+            global_time_data = self.data_manager.load_global_time()
+            
+            for i, auto in enumerate(data.get('autoNames', [])):
+                entry_game_name = ttk.Entry(self.auto_frame, width=40)
+                entry_game_name.grid(row=i+1, column=1, padx=5, pady=5)
+                entry_game_name.insert(0, auto)
+            
+            # Hiển thị thời gian sleepTime
+            sleep_times = global_time_data.get('sleepTime', [])
+            if sleep_times:
+                self.entry_wait_game_open.delete(0, tk.END)
+                self.entry_wait_game_open2.delete(0, tk.END)
+                self.entry_wait_character_open.delete(0, tk.END)
+                self.entry_wait_server_open.delete(0, tk.END)
+                self.entry_wait_time_trainjx_open.delete(0, tk.END)
+                self.entry_wait_time_autovlbs_open.delete(0, tk.END)
+                self.entry_try_number.delete(0, tk.END)
+                self.entry_global_time_sleep.delete(0, tk.END)
+                self.varHideEffects.set(0)
+                self.varStartUp.set(0)
+                
+                self.entry_wait_game_open.insert(0, sleep_times[0]['wait_time_open'])
+                self.entry_wait_game_open2.insert(0, sleep_times[0]['wait_time_open2'])
+                self.entry_wait_character_open.insert(0, sleep_times[0]['wait_time_load'])
+                self.entry_wait_server_open.insert(0, sleep_times[0]['wait_time_server'])
+                self.entry_wait_time_trainjx_open.insert(0, sleep_times[0]['wait_time_open_trainjx'])
+                self.entry_wait_time_autovlbs_open.insert(0, sleep_times[0]['wait_time_load_autovlbs'])
+                self.entry_try_number.insert(0, sleep_times[0]['try_number'])
+                self.entry_global_time_sleep.insert(0, sleep_times[0]['global_time_sleep'])
+                self.varHideEffects.set(sleep_times[0]['hide_effects'])
+                self.varStartUp.set(sleep_times[0]['start_up'])
+                
+        except Exception as e:
+            print(f"❌ Lỗi load auto data: {e}")
     
     def save_auto_data(self):
         """Lưu dữ liệu auto"""
