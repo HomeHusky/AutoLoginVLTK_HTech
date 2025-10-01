@@ -96,110 +96,29 @@ class AutoLoginApp:
         self.root.resizable(*WINDOW_RESIZABLE)
     
     def setup_styles(self):
-        """Thiết lập styles cho giao diện - Modern UI"""
+        """Thiết lập styles cho giao diện - Simple UI like original"""
         style = ttk.Style()
         style.theme_use(THEME)
         
-        # Set background color
-        self.root.configure(bg=COLOR_BACKGROUND)
-        
-        # Button styles - Primary
+        # Button styles - Simple
         style.configure("TButton",
                        padding=BUTTON_PADDING,
                        relief="flat",
                        background=BUTTON_BACKGROUND,
-                       foreground=BUTTON_FOREGROUND,
-                       font=LABEL_FONT,
-                       borderwidth=0)
+                       foreground=BUTTON_FOREGROUND)
         style.map("TButton", 
-                 background=[('active', BUTTON_ACTIVE_BACKGROUND), ('pressed', COLOR_PRIMARY_HOVER)])
-        
-        # Success button
-        style.configure("Success.TButton",
-                       background=COLOR_SUCCESS,
-                       foreground="white",
-                       font=LABEL_FONT)
-        style.map("Success.TButton",
-                 background=[('active', COLOR_SUCCESS_HOVER)])
-        
-        # Danger button
-        style.configure("Danger.TButton",
-                       background=COLOR_DANGER,
-                       foreground="white",
-                       font=LABEL_FONT)
-        style.map("Danger.TButton",
-                 background=[('active', COLOR_DANGER_HOVER)])
-        
-        # Warning button
-        style.configure("Warning.TButton",
-                       background=COLOR_WARNING,
-                       foreground="white",
-                       font=LABEL_FONT)
+                 background=[('active', BUTTON_ACTIVE_BACKGROUND)])
         
         # Label styles
         style.configure("TLabel", 
                        padding=LABEL_PADDING, 
-                       font=LABEL_FONT,
-                       background=COLOR_BACKGROUND,
-                       foreground=COLOR_TEXT)
-        
-        style.configure("Title.TLabel",
-                       font=LABEL_FONT_BOLD,
-                       foreground=COLOR_PRIMARY)
-        
-        # Frame styles
-        style.configure("TFrame", background=COLOR_BACKGROUND)
-        style.configure("TLabelframe", 
-                       background=COLOR_SURFACE,
-                       borderwidth=1,
-                       relief="solid")
-        style.configure("TLabelframe.Label", 
-                       font=LABEL_FONT_BOLD,
-                       foreground=COLOR_PRIMARY,
-                       background=COLOR_SURFACE)
-        
-        # Notebook (Tabs) styles - Smaller & Rounded
-        style.configure("TNotebook", 
-                       background=COLOR_BACKGROUND,
-                       borderwidth=0)
-        style.configure("TNotebook.Tab",
-                       padding=[10, 6],  # Nhỏ hơn: 10px horizontal, 6px vertical
-                       font=('Segoe UI', 9),  # Font nhỏ hơn
-                       background=COLOR_SURFACE,
-                       foreground=COLOR_TEXT)
-        style.map("TNotebook.Tab",
-                 background=[('selected', COLOR_PRIMARY)],
-                 foreground=[('selected', 'white'),
-                            ('!selected', COLOR_TEXT_SECONDARY)])
-        
-        # Entry styles
-        style.configure("TEntry",
-                       fieldbackground=COLOR_SURFACE,
-                       foreground=COLOR_TEXT,
-                       borderwidth=1)
+                       font=('Arial', 10))
         
         # Treeview styles
-        style.configure("Treeview",
-                       background=COLOR_SURFACE,
-                       foreground=COLOR_TEXT,
-                       fieldbackground=COLOR_SURFACE,
-                       borderwidth=0,
-                       rowheight=TREEVIEW_ROW_HEIGHT,
-                       font=LABEL_FONT)
-        
-        style.configure("Treeview.Heading",
-                       font=TREEVIEW_HEADING_FONT,
-                       background=COLOR_PRIMARY,
-                       foreground="white",
-                       borderwidth=0,
-                       relief="flat")
-        
-        style.map("Treeview.Heading",
-                 background=[('active', COLOR_PRIMARY_HOVER)])
-        
-        style.map("Treeview",
-                 background=[('selected', COLOR_PRIMARY)],
-                 foreground=[('selected', 'white')])
+        style.configure("Treeview.Heading", 
+                       font=('Arial', 10, 'bold'))
+        style.configure("Treeview", 
+                       rowheight=25)
     
     def create_tabs(self):
         """Tạo các tab"""

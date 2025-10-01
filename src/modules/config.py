@@ -75,20 +75,20 @@ WINDOW_TITLE_PREFIX = "Auto Login Htechnology"
 WINDOW_GEOMETRY = "1000x750+50+50"
 WINDOW_RESIZABLE = (True, True)
 
-# Modern Color Palette - Soft & Elegant
-COLOR_PRIMARY = "#6366f1"      # Indigo 500 (softer)
-COLOR_PRIMARY_HOVER = "#4f46e5"  # Indigo 600
-COLOR_SUCCESS = "#22c55e"      # Green 500 (softer)
-COLOR_SUCCESS_HOVER = "#16a34a"  # Green 600
-COLOR_DANGER = "#f87171"       # Red 400 (softer)
-COLOR_DANGER_HOVER = "#ef4444"   # Red 500
-COLOR_WARNING = "#fbbf24"      # Amber 400 (softer)
-COLOR_INFO = "#60a5fa"         # Blue 400 (softer)
-COLOR_BACKGROUND = "#f9fafb"   # Gray 50
+# Simple Color Palette - Like Original autoLogin.py
+COLOR_PRIMARY = "#5783db"      # Simple blue
+COLOR_PRIMARY_HOVER = "#4681f4"  # Lighter blue on hover
+COLOR_SUCCESS = "#5783db"      # Same as primary (simple)
+COLOR_SUCCESS_HOVER = "#4681f4"  # Same as primary hover
+COLOR_DANGER = "#5783db"       # Same as primary (simple)
+COLOR_DANGER_HOVER = "#4681f4"   # Same as primary hover
+COLOR_WARNING = "#5783db"      # Same as primary (simple)
+COLOR_INFO = "#5783db"         # Same as primary (simple)
+COLOR_BACKGROUND = "#f0f0f0"   # Light gray background
 COLOR_SURFACE = "#ffffff"      # White
-COLOR_TEXT = "#374151"         # Gray 700 (softer)
-COLOR_TEXT_SECONDARY = "#6b7280"  # Gray 500
-COLOR_BORDER = "#e5e7eb"       # Gray 200
+COLOR_TEXT = "#000000"         # Black text
+COLOR_TEXT_SECONDARY = "#666666"  # Gray text
+COLOR_BORDER = "#cccccc"       # Gray border
 
 # Style settings
 THEME = 'clam'

@@ -65,17 +65,14 @@ class DashboardTab:
         row2_frame.pack(fill="x", pady=5)
         
         self.start_login_button = ttk.Button(row2_frame, text="▶ Bắt đầu", 
-                                            style="Success.TButton",
                                             command=lambda: self.callbacks.get('start_login')(self.varCheckBox.get()))
         self.start_login_button.pack(side="left", padx=5)
         
         self.stop_login_button = ttk.Button(row2_frame, text="⏸ Dừng", 
-                                           style="Danger.TButton",
                                            command=self.callbacks.get('stop_login'))
         self.stop_login_button.pack(side="left", padx=5)
         
         self.test_button = ttk.Button(row2_frame, text="🧪 Test", 
-                                      style="Warning.TButton",
                                       command=self.callbacks.get('test_accounts'))
         self.test_button.pack(side="left", padx=5)
         

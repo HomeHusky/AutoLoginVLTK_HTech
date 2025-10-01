@@ -163,7 +163,6 @@ class AccountManagerTab:
         
         # Các nút quản lý tài khoản
         add_button = ttk.Button(button_frame, text="➕ Thêm", 
-                               style="Success.TButton",
                                command=self.add_account)
         add_button.grid(row=0, column=0, padx=5, pady=5)
         
@@ -171,7 +170,6 @@ class AccountManagerTab:
         self.edit_button.grid(row=0, column=1, padx=5, pady=5)
         
         self.update_button = ttk.Button(button_frame, text="💾 Cập nhật", 
-                                       style="Success.TButton",
                                        command=self.update_account)
         self.cancel_button = ttk.Button(button_frame, text="❌ Hủy", 
                                        command=lambda: (self.update_button.grid_forget(), 
@@ -179,7 +177,6 @@ class AccountManagerTab:
                                                        self.edit_button.grid(row=0, column=1, padx=5, pady=5)))
         
         delete_button = ttk.Button(button_frame, text="🗑️ Xoá", 
-                                   style="Danger.TButton",
                                    command=self.delete_account)
         delete_button.grid(row=0, column=2, padx=5, pady=5)
         
@@ -199,7 +196,6 @@ class AccountManagerTab:
         update_app_button.pack(side="left", padx=5, pady=5)
         
         alway_update_app_button = ttk.Button(update_frame, text="Cập nhật ngay", 
-                                            style="Warning.TButton",
                                             command=self.callbacks.get('alway_update_app'))
         alway_update_app_button.pack(side="left", padx=5, pady=5)
     

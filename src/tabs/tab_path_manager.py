@@ -70,7 +70,6 @@ class PathManagerTab:
         
         # Nút lưu tên máy
         save_machine_button = ttk.Button(machine_frame, text="💾 Lưu tên máy", 
-                                        style="Success.TButton",
                                         command=self.save_title_mail)
         save_machine_button.grid(row=0, column=2, padx=5, pady=5)
         
