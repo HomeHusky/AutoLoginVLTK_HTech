@@ -61,7 +61,8 @@ DEFAULT_SLEEP_TIME = {
 
 # Default monitor settings
 DEFAULT_MONITOR_TIME = "5"
-DEFAULT_KPI = "1000"
+DEFAULT_KPI = "1000"  # KPI cho tài khoản thường (Kv/day)
+DEFAULT_KPI_GOM = "2000"  # KPI cho tài khoản gom tiền (Kv/day)
 DEFAULT_TOTAL_SERVERS = "10"
 DEFAULT_TITLE_MAIL = "Máy chủ AutoVLBS"
 

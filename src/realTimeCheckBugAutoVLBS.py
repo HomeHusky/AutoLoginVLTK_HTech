@@ -24,10 +24,12 @@ from pymongo.server_api import ServerApi
 import mongoConnection as MONGO_CONN
 
 # === BIẾN TOÀN CỤC ===
-kpi_1m = (43/24)/60
+kpi_1m = (43/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút)
+kpi_gom_1m = (86/24)/60  # KPI cho tài khoản gom tiền (Kv/phút) - Gấp đôi
 stop_flag = False
 gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'
+gom_accounts_list = []  # Danh sách tài khoản gom tiền
 previous_data = {}  # Dùng để lưu trữ số dư tiền của các tài khoản trước khi kiểm tra
 
 EMAIL_ADDRESS = "htechvlnotification@gmail.com"
@@ -42,18 +44,23 @@ def format_time_to_minute_second(seconds: int) -> str:
     return f"{m:02d} phút {s:02d} giây"
 
 # === CÁC HÀM TOÀN CỤC ===
-# Hàm này sẽ tải danh sách tài khoản từ file gom_accounts.json
+# Hàm này sẽ tải danh sách tài khoản từ file accounts.json
 # và lọc ra các tài khoản đang đăng nhập và có is_gom_tien = 1
-# Trả về danh sách các tài khoản ingame
+# Trả về dictionary: {ingame: kpi_gom}
 def load_gom_accounts(filepath = 'accounts.json'):
     with open(os.path.join(GF.join_directory_data(), filepath), 'r', encoding='utf-8') as file:
         data = json.load(file)
 
-    # Bước 2: Lấy các tài khoản có is_logged_in = True và is_gom_tien = 1
-    filtered_ingames = [account['ingame'] for account in data['accounts'] if account['is_logged_in'] and account['is_gom_tien'] == 1]
-
-    # In kết quả
-    return filtered_ingames
+    # Lấy các tài khoản có is_logged_in = True và is_gom_tien = 1
+    # Trả về dict với ingame và KPI riêng (nếu có)
+    gom_accounts_dict = {}
+    for account in data['accounts']:
+        if account['is_logged_in'] and account['is_gom_tien'] == 1:
+            ingame = account['ingame']
+            kpi_gom = account.get('kpi_gom', '')  # Lấy KPI riêng, nếu không có thì ''
+            gom_accounts_dict[ingame] = kpi_gom
+    
+    return gom_accounts_dict
 
 # === LƯU DỮ LIỆU VÀO FILE ===
 def save_snapshot(ten_may, report):
@@ -541,7 +548,14 @@ def check_accounts_money():
 # và gửi báo cáo qua email hoặc Discord nếu có thay đổi
 # ten_may: Tên máy để hiển thị trong báo cáo
 def auto_check_loop(minutes, ten_may):
-    global stop_flag, gom_accounts_info_data, previous_data
+    global stop_flag, gom_accounts_info_data, previous_data, gom_accounts_list
+    
+    # Load danh sách tài khoản gom tiền với KPI riêng
+    gom_accounts_list = load_gom_accounts()  # Dict: {ingame: kpi_gom}
+    print(f"📋 Danh sách tài khoản GOM với KPI:")
+    for ingame, kpi in gom_accounts_list.items():
+        kpi_display = kpi if kpi else "default"
+        print(f"   - {ingame}: {kpi_display} Kv/day")
     print(f"🔁 Sẽ bắt đầu kiểm tra vào giờ chẵn tiếp theo...")
 
     sleep_until_next_hour()  # Wait until the next even hour
@@ -576,13 +590,31 @@ def auto_check_loop(minutes, ten_may):
                 profit = money - old_money  # Tính lợi nhuận
                 total_profit += profit  # Cộng dồn lợi nhuận tổng
                 if money > old_money:
-                    # Kiểm tra xem có đạt KPI không
-                    if profit >= kpi_1m*minutes:
+                    # Kiểm tra KPI theo loại tài khoản
+                    if name in gom_accounts_list:
+                        # Tài khoản gom tiền
+                        kpi_custom = gom_accounts_list[name]
+                        if kpi_custom:
+                            # Có KPI riêng
+                            kpi_check = (float(kpi_custom)/24)/60  # Chuyển từ Kv/day sang Kv/phút
+                            account_type = f"GOM-{kpi_custom}"
+                        else:
+                            # Dùng KPI default
+                            kpi_check = kpi_gom_1m
+                            account_type = "GOM-default"
+                    else:
+                        # Tài khoản thường
+                        kpi_check = kpi_1m
+                        account_type = "THƯỜNG"
+                    
+                    kpi_required = kpi_check * minutes
+                    
+                    if profit >= kpi_required:
                         status = "Tăng"
-                        print(f"[{timestamp}] ✅ {name} tăng tiền: {old_money} → {money}")
+                        print(f"[{timestamp}] ✅ {name} ({account_type}) tăng tiền: {old_money} → {money} (+{profit:.2f})")
                     else:
                         status = "Chưa đạt KPI"
-                        print(f"[{timestamp}] ⚠️ {name} tăng tiền: {old_money} → {money} (Chưa đạt KPI)")
+                        print(f"[{timestamp}] ⚠️ {name} ({account_type}) tăng tiền: {old_money} → {money} (+{profit:.2f}) (Chưa đạt KPI: {kpi_required:.2f})")
                 elif money < old_money:
                     status = "Giảm"
                     print(f"[{timestamp}] 🔻 {name} giảm tiền: {old_money} → {money}")

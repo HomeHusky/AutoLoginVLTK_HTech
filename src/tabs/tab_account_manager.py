@@ -129,10 +129,20 @@ class AccountManagerTab:
         update_path_button = ttk.Button(parent, text="Cập nhật đường dẫn", command=self.update_path)
         update_path_button.grid(row=2, column=3, padx=5, pady=5, sticky="ew")
         
-        # Checkbox gom tiền
-        self.gom_checkbox = tk.Checkbutton(parent, text="TK gom", variable=self.varGomCheckBox, 
-                                          command=lambda: self.check_checkbox(self.varGomCheckBox))
-        self.gom_checkbox.grid(row=3, column=2, columnspan=1, padx=5, pady=5, sticky="ew")
+        # Checkbox gom tiền và KPI
+        gom_frame = ttk.Frame(parent)
+        gom_frame.grid(row=3, column=2, columnspan=1, padx=5, pady=5, sticky="ew")
+        
+        self.gom_checkbox = tk.Checkbutton(gom_frame, text="TK gom", variable=self.varGomCheckBox, 
+                                          command=self.on_gom_checkbox_change)
+        self.gom_checkbox.pack(side="left")
+        
+        # KPI cho tài khoản gom (chỉ hiện khi tick TK gom)
+        ttk.Label(gom_frame, text="KPI:").pack(side="left", padx=(10, 2))
+        self.entry_kpi_gom = ttk.Entry(gom_frame, width=8)
+        self.entry_kpi_gom.pack(side="left")
+        self.entry_kpi_gom.insert(0, "")  # Để trống = dùng default
+        self.entry_kpi_gom.config(state="disabled")  # Disable mặc định
         
         # Frame số lần xuống
         small_frame = ttk.Frame(parent, width=10)
@@ -244,6 +254,16 @@ class AccountManagerTab:
         """Kiểm tra trạng thái checkbox"""
         return var.get()
     
+    def on_gom_checkbox_change(self):
+        """Xử lý khi thay đổi checkbox TK gom"""
+        if self.varGomCheckBox.get():
+            # Enable KPI input khi tick TK gom
+            self.entry_kpi_gom.config(state="normal")
+        else:
+            # Disable KPI input khi bỏ tick
+            self.entry_kpi_gom.config(state="disabled")
+            self.entry_kpi_gom.delete(0, tk.END)
+    
     def check_exist_account(self, username, gamepath, data):
         """Kiểm tra tài khoản tồn tại"""
         for account in data['accounts']:
@@ -327,6 +347,7 @@ class AccountManagerTab:
             'auto_update_path': auto_update_path,
             'is_logged_in': False,
             'is_gom_tien': self.check_checkbox(self.varGomCheckBox),
+            'kpi_gom': self.entry_kpi_gom.get().strip() if self.check_checkbox(self.varGomCheckBox) else "",
             'is_xe_2': self.check_checkbox(self.varXe2CheckBox),
             'so_lan_xuong': solanxuong if solanxuong else 1,
             'so_lan_xuong2': solanxuong2 if solanxuong2 else 0,
@@ -375,8 +396,16 @@ class AccountManagerTab:
             
             if data['accounts'][index]['is_gom_tien'] == 1:
                 self.gom_checkbox.select()
+                # Load KPI nếu có
+                kpi_gom = data['accounts'][index].get('kpi_gom', '')
+                self.entry_kpi_gom.config(state="normal")
+                self.entry_kpi_gom.delete(0, tk.END)
+                if kpi_gom:
+                    self.entry_kpi_gom.insert(0, kpi_gom)
             else:
                 self.gom_checkbox.deselect()
+                self.entry_kpi_gom.config(state="disabled")
+                self.entry_kpi_gom.delete(0, tk.END)
             
             if data['accounts'][index]['is_xe_2'] == 1:
                 self.mo_game_lau_checkbox.select()
@@ -423,6 +452,7 @@ class AccountManagerTab:
                 'auto_update_path': self.entry_game_path.get().replace("game.exe", "AutoUpdate.exe"),
                 'is_logged_in': data['accounts'][index].get('is_logged_in', False),
                 'is_gom_tien': self.check_checkbox(self.varGomCheckBox),
+                'kpi_gom': self.entry_kpi_gom.get().strip() if self.check_checkbox(self.varGomCheckBox) else "",
                 'is_xe_2': self.check_checkbox(self.varXe2CheckBox),
                 'so_lan_xuong': self.entry_solanxuong.get(),
                 'so_lan_xuong2': self.entry_solanxuong2.get(),
