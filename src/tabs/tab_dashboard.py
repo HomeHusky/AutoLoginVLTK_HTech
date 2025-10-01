@@ -28,6 +28,9 @@ class DashboardTab:
         # Biến checkbox
         self.varCheckBox = tk.IntVar()
         
+        # Lưu reference đến root window để resize
+        self.root = parent.winfo_toplevel()
+        
         # Tạo giao diện
         self.create_ui()
     
@@ -80,13 +83,19 @@ class DashboardTab:
                                                  command=self.callbacks.get('run_all_auto_update'))
         self.run_auto_update_button.pack(side="left", padx=5)
         
-        # Treeview hiển thị trạng thái tài khoản
-        tree_frame = ttk.LabelFrame(self.parent, text="📊 Trạng thái Tài khoản", padding=(15, 10))
-        tree_frame.pack(padx=10, pady=10, fill="both", expand=True)
+        # Nút toggle bảng trạng thái
+        self.toggle_button = ttk.Button(row2_frame, text="▼ Mở rộng", 
+                                       command=self.toggle_account_table)
+        self.toggle_button.pack(side="left", padx=5)
+        
+        # Treeview hiển thị trạng thái tài khoản (ẩn mặc định)
+        self.tree_frame = ttk.LabelFrame(self.parent, text="📊 Trạng thái Tài khoản", padding=(15, 10))
+        # Không pack ngay, sẽ pack khi nhấn nút
+        self.is_table_visible = False
         
         # Chỉ hiển thị các cột cần thiết
         columns = ("stt", "is_select", "ingame", "is_logged_in")
-        self.tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=5)
+        self.tree_accounts = ttk.Treeview(self.tree_frame, columns=columns, show="headings", height=5)
         
         # Thiết lập heading
         self.tree_accounts.heading("stt", text="STT")
@@ -101,7 +110,7 @@ class DashboardTab:
         self.tree_accounts.column("is_logged_in", width=120, anchor="center")
         
         # Tạo thanh cuộn
-        v_scrollbar = ttk.Scrollbar(tree_frame, orient="vertical", command=self.tree_accounts.yview)
+        v_scrollbar = ttk.Scrollbar(self.tree_frame, orient="vertical", command=self.tree_accounts.yview)
         v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.tree_accounts.configure(yscrollcommand=v_scrollbar.set)
         
@@ -168,6 +177,25 @@ class DashboardTab:
                                      font=('Segoe UI', 20, 'bold'),
                                      foreground="#3b82f6")
         self.label_ratio.pack(pady=(0, 5))
+    
+    def toggle_account_table(self):
+        """Toggle hiển thị/ẩn bảng trạng thái tài khoản + Resize window"""
+        if self.is_table_visible:
+            # Ẩn bảng - Thu nhỏ window
+            self.tree_frame.pack_forget()
+            self.toggle_button.config(text="▼ Mở rộng")
+            self.is_table_visible = False
+            # Resize window nhỏ lại
+            self.root.geometry("700x500+0+0")
+            print("🔽 Đã thu gọn bảng trạng thái")
+        else:
+            # Hiện bảng - To window ra
+            self.tree_frame.pack(padx=10, pady=10, fill="both", expand=True)
+            self.toggle_button.config(text="▲ Thu gọn")
+            self.is_table_visible = True
+            # Resize window to ra
+            self.root.geometry("700x800+0+0")
+            print("🔼 Đã mở rộng bảng trạng thái")
     
     # ==================== DATA METHODS ====================
     

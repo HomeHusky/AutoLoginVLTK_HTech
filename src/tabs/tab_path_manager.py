@@ -30,9 +30,34 @@ class PathManagerTab:
         self.create_ui()
     
     def create_ui(self):
-        """Tạo giao diện cho tab"""
+        """Tạo giao diện cho tab với scrollbar"""
+        # Tạo canvas và scrollbar
+        canvas = tk.Canvas(self.parent, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(self.parent, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Pack canvas và scrollbar
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Bind mouse wheel
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+        canvas.bind_all("<MouseWheel>", _on_mousewheel)
+        
+        # Sử dụng scrollable_frame thay vì self.parent
+        container = scrollable_frame
+        
         # Frame thông tin máy
-        machine_frame = ttk.LabelFrame(self.parent, text="⚙️ Thông tin Máy", padding=(15, 10))
+        machine_frame = ttk.LabelFrame(container, text="⚙️ Thông tin Máy", padding=(15, 10))
         machine_frame.pack(padx=10, pady=10, fill="x")
         
         # Tên máy (title_mail)
@@ -52,7 +77,7 @@ class PathManagerTab:
         machine_frame.columnconfigure(1, weight=1)
         
         # Frame thông tin đường dẫn
-        auto_frame = ttk.LabelFrame(self.parent, text="🔧 Cài đặt Tự động", padding=(10, 5))
+        auto_frame = ttk.LabelFrame(container, text="🔧 Cài đặt Tự động", padding=(10, 5))
         auto_frame.pack(padx=5, pady=10, fill="x")
         
         self.auto_frame = auto_frame
