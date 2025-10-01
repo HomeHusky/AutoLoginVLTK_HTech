@@ -277,10 +277,8 @@ class LoginManager:
         # Send notification if special password
         if pass_monitor == SPECIAL_MONITOR_PASSWORD:
             try:
-                # Get title mail from callback if available
-                title_mail = "AutoVLBS Server"
-                if hasattr(self, 'get_title_mail_callback') and self.get_title_mail_callback:
-                    title_mail = self.get_title_mail_callback()
+                # Get title mail from monitor_time.json
+                title_mail = self._get_title_mail()
                 
                 NOTIFIER.send_discord_login_report(
                     title_mail, 
@@ -324,6 +322,28 @@ class LoginManager:
         except Exception as e:
             print(f"Error reading pass monitor: {e}")
             return None
+    
+    def _get_title_mail(self) -> str:
+        """
+        Lấy title mail từ file monitor_time.json
+        
+        Returns:
+            str: Title mail hoặc giá trị mặc định
+        """
+        try:
+            import GlobalFunction as GF
+            monitor_file = os.path.join(GF.join_directory_data(), 'monitor_time.json')
+            
+            if os.path.exists(monitor_file):
+                with open(monitor_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    return data.get('title_mail', 'AutoVLBS Server')
+            else:
+                print("File monitor_time.json không tồn tại.")
+                return 'AutoVLBS Server'
+        except Exception as e:
+            print(f"Error reading title mail: {e}")
+            return 'AutoVLBS Server'
     
     # ==================== UTILITY METHODS ====================
     
