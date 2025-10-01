@@ -33,6 +33,9 @@ class DashboardTab:
     
     def create_ui(self):
         """Tạo giao diện Dashboard"""
+        # Frame thống kê với card design - ĐẶT TRÊN CÙNG
+        self.create_stats_cards()
+        
         # Frame điều khiển chính
         control_frame = ttk.LabelFrame(self.parent, text="🎮 Điều khiển", padding=(15, 10))
         control_frame.pack(padx=10, pady=10, fill="x")
@@ -83,7 +86,7 @@ class DashboardTab:
         
         # Chỉ hiển thị các cột cần thiết
         columns = ("stt", "is_select", "ingame", "is_logged_in")
-        self.tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=8)
+        self.tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=5)
         
         # Thiết lập heading
         self.tree_accounts.heading("stt", text="STT")
@@ -107,7 +110,9 @@ class DashboardTab:
         # Bind events
         self.tree_accounts.bind("<Double-1>", self.on_item_select)
         self.tree_accounts.bind("<Button-1>", self.on_heading_click)
-        
+    
+    def create_stats_cards(self):
+        """Tạo cards thống kê"""
         # Frame thống kê với card design
         stats_container = ttk.LabelFrame(self.parent, text="📈 Thống kê", padding=(15, 10))
         stats_container.pack(padx=10, pady=10, fill="x")
