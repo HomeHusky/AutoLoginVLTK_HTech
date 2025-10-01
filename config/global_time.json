@@ -1,10 +1,10 @@
 {
     "sleepTime": [
         {
-            "wait_time_open": 25,
+            "wait_time_open": 10,
             "wait_time_open2": 35,
             "wait_time_load": 2,
-            "wait_time_server": 8,
+            "wait_time_server": 5,
             "wait_time_open_trainjx": 3,
             "wait_time_load_autovlbs": 5,
             "try_number": 3,

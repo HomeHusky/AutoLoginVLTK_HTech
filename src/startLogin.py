@@ -255,6 +255,11 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
         if stop_login:
             break  # Dừng quá trình nếu cờ được đặt
         for i in range(tryLoginNumber):
+            # Kiểm tra cờ dừng trong vòng lặp
+            if stop_login:
+                print("⏸ Đã nhận lệnh dừng, thoát vòng lặp login")
+                break
+            
             if login_success == 1:
                 continue
             if account['is_logged_in'] != True:
@@ -280,6 +285,11 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
                 if login_success != 1:
                     # add_server_fail_value('fail_servers.json', account['auto_update_path'])
                     print(f"Server failed for account {account['username']}")
+        
+        # Kiểm tra cờ dừng sau mỗi account
+        if stop_login:
+            print("⏸ Đã nhận lệnh dừng, thoát khỏi quá trình login")
+            break
     print("Hoàn thành login!")
     
     # Gọi callback sau khi hoàn thành

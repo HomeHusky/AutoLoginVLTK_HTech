@@ -185,14 +185,23 @@ def run_check_status(tryTest):
     currentAutoName = GF.getNameAutoVLBS()#Kiem tra ten Autovlbs
     if not checkStatusAcounts.checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):#Kiem tra da chay Auto vlbs 1.9 hay chua (Tu dong mo auto neu chua chay)
         currentAutoName = GF.getNameAutoVLBS()#Gan ten auto VLBS 1.9 cho 
-        run_check_status(0)
+        
+        # Kiem tra Auto VLBS co chay trong background khong
         if not GF.checkAutoVlbsBackGroundRunning():
+            # Neu khong chay va con lan thu -> thu lai
             if tryTest > 0:
+                print(f"Auto VLBS không chạy, thử lại... (còn {tryTest} lần)")
                 run_check_status(tryTest-1)
                 return
             else:
+                # Het lan thu -> bao loi
+                print("Đã hết số lần thử, Auto VLBS không chạy!")
                 messagebox.showerror("Error", f"Có lỗi xảy ra dòng 32 autoLogin!")
                 return
+        else:
+            # Auto VLBS dang chay -> thanh cong
+            print("Auto VLBS đang chạy trong background")
+            return
 
 # Tải và lưu dữ liệu JSON
 def load_data():

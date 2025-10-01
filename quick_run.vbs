@@ -1,3 +1,9 @@
+' Kiểm tra quyền admin và tự động yêu cầu nếu chưa có
+If Not WScript.Arguments.Named.Exists("elevated") Then
+    CreateObject("Shell.Application").ShellExecute "wscript.exe", """" & WScript.ScriptFullName & """ /elevated", "", "runas", 1
+    WScript.Quit
+End If
+
 Set WshShell = CreateObject("WScript.Shell")
 
 ' Lấy đường dẫn thư mục hiện tại của script
@@ -15,5 +21,7 @@ Else
     pythonPath = "python"
 End If
 
-' Chạy script Python với cửa sổ minimize (7 = minimized, 2 = minimized nhưng có focus)
-WshShell.Run """" & pythonPath & """ """ & scriptDir & "\src\autoLogin.py""", 7, False
+' Chạy script Python với cửa sổ normal (1 = normal)
+' Console sẽ tự động di chuyển xuống góc dưới trái bởi move_console.py
+' 0 = Hidden, 1 = Normal, 2 = Minimized with focus, 7 = Minimized without focus
+WshShell.Run """" & pythonPath & """ """ & scriptDir & "\src\autoLogin_v2.py""", 1, False

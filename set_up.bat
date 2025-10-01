@@ -51,6 +51,6 @@ py -m pip install --upgrade pip
 pip install -r requirements.txt
 
 :: Chạy chương trình Python
-start "" /min python src\autoLogin.py
+start "" /min python src\autoLogin_v2.py
 pause
 ENDLOCAL
