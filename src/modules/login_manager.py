@@ -20,6 +20,7 @@ import notifier as NOTIFIER
 
 from modules.config import PASS_MONITOR_FILE, SPECIAL_MONITOR_PASSWORD, get_message
 from modules.data_manager import data_manager
+from modules.mongodb_manager import mongodb_manager
 
 
 class LoginManager:
@@ -274,17 +275,21 @@ class LoginManager:
         else:
             print("❌ Vẫn còn account chưa login.")
         
-        # Send notification if special password
+        # Send notification and update MongoDB if special password
         if pass_monitor == SPECIAL_MONITOR_PASSWORD:
             try:
                 # Get title mail from monitor_time.json
                 title_mail = self._get_title_mail()
                 
+                # Send Discord notification
                 NOTIFIER.send_discord_login_report(
                     title_mail, 
                     time_stamp, 
                     is_all_logged_in
                 )
+                
+                # Update server status to MongoDB
+                self._update_mongodb_status()
             except Exception as e:
                 print(f"Error sending notification: {e}")
         
@@ -344,6 +349,18 @@ class LoginManager:
         except Exception as e:
             print(f"Error reading title mail: {e}")
             return 'AutoVLBS Server'
+    
+    def _update_mongodb_status(self):
+        """
+        Cập nhật thông tin máy chủ lên MongoDB
+        Tự động tạo collection nếu chưa tồn tại
+        """
+        try:
+            print("📤 Đang cập nhật thông tin lên MongoDB...")
+            mongodb_manager.update_server_status()
+            mongodb_manager.close()
+        except Exception as e:
+            print(f"❌ Lỗi cập nhật MongoDB: {e}")
     
     # ==================== UTILITY METHODS ====================
     

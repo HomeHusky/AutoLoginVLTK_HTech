@@ -1,0 +1,30 @@
+name: Keep Render Alive
+
+on:
+  schedule:
+    # Chạy mỗi 10 phút
+    - cron: '*/10 * * * *'
+  workflow_dispatch:  # Cho phép chạy thủ công
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Render website
+        run: |
+          echo "🔄 Pinging website..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://your-app.onrender.com/health)
+          
+          if [ $response -eq 200 ]; then
+            echo "✅ Ping successful - Status: $response"
+            echo "⏰ Time: $(date '+%Y-%m-%d %H:%M:%S')"
+          else
+            echo "❌ Ping failed - Status: $response"
+            exit 1
+          fi
+      
+      - name: Log result
+        if: always()
+        run: |
+          echo "Job completed at $(date)"

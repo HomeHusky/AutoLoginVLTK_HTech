@@ -164,16 +164,16 @@ class AutoLoginApp:
         self.path_tab_frame.bind("<Visibility>", lambda e: self.path_tab.load_auto_data())
         self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_selected)
         
-        self.tab_control.pack(expand=1, fill="both")
-        
-        # Progress bar ở dưới cùng
+        # Progress bar ở trên đầu
         self.create_progress_bar()
+        
+        self.tab_control.pack(expand=1, fill="both")
     
     def create_progress_bar(self):
-        """Tạo progress bar ở dưới cùng"""
+        """Tạo progress bar ở trên đầu"""
         # Frame chứa progress bar
         progress_frame = ttk.Frame(self.root)
-        progress_frame.pack(side="bottom", fill="x", padx=5, pady=5)
+        progress_frame.pack(side="top", fill="x", padx=5, pady=5)
         
         # Label hiển thị trạng thái
         self.status_label = ttk.Label(progress_frame, 
