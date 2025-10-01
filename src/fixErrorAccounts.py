@@ -672,6 +672,7 @@ def connect_mongodb():
     try:
         import pymongo
         import json
+        import os
         from datetime import datetime
         from pymongo.mongo_client import MongoClient
         from pymongo.server_api import ServerApi
@@ -682,9 +683,6 @@ def connect_mongodb():
         client = MongoClient(mongo_uri)
         client.admin.command('ping')
         print("✅ Kết nối MongoDB thành công!")
-
-
-        # === 2. Chọn database và collection ===
         db = client["HtechVolam"]
         collection = db["tai_khoan_may"]
 

@@ -1,5 +1,7 @@
+import os
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+
 # === CONNECT VÀO MONGODB ===
 def connect_mongo(uri=None, db_name="HtechVolam", collection_name="money_monitor"):
     """
