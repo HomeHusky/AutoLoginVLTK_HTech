@@ -74,20 +74,20 @@ WINDOW_TITLE_PREFIX = "Auto Login Htechnology"
 WINDOW_GEOMETRY = "1000x750+50+50"
 WINDOW_RESIZABLE = (True, True)
 
-# Modern Color Palette
-COLOR_PRIMARY = "#2563eb"      # Blue 600
-COLOR_PRIMARY_HOVER = "#1d4ed8"  # Blue 700
-COLOR_SUCCESS = "#10b981"      # Green 500
-COLOR_SUCCESS_HOVER = "#059669"  # Green 600
-COLOR_DANGER = "#ef4444"       # Red 500
-COLOR_DANGER_HOVER = "#dc2626"   # Red 600
-COLOR_WARNING = "#f59e0b"      # Amber 500
-COLOR_INFO = "#3b82f6"         # Blue 500
-COLOR_BACKGROUND = "#f8fafc"   # Slate 50
+# Modern Color Palette - Soft & Elegant
+COLOR_PRIMARY = "#6366f1"      # Indigo 500 (softer)
+COLOR_PRIMARY_HOVER = "#4f46e5"  # Indigo 600
+COLOR_SUCCESS = "#22c55e"      # Green 500 (softer)
+COLOR_SUCCESS_HOVER = "#16a34a"  # Green 600
+COLOR_DANGER = "#f87171"       # Red 400 (softer)
+COLOR_DANGER_HOVER = "#ef4444"   # Red 500
+COLOR_WARNING = "#fbbf24"      # Amber 400 (softer)
+COLOR_INFO = "#60a5fa"         # Blue 400 (softer)
+COLOR_BACKGROUND = "#f9fafb"   # Gray 50
 COLOR_SURFACE = "#ffffff"      # White
-COLOR_TEXT = "#1e293b"         # Slate 800
-COLOR_TEXT_SECONDARY = "#64748b"  # Slate 500
-COLOR_BORDER = "#e2e8f0"       # Slate 200
+COLOR_TEXT = "#374151"         # Gray 700 (softer)
+COLOR_TEXT_SECONDARY = "#6b7280"  # Gray 500
+COLOR_BORDER = "#e5e7eb"       # Gray 200
 
 # Style settings
 THEME = 'clam'

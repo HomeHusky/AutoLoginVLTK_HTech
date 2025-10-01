@@ -91,8 +91,8 @@ class AutoLoginApp:
         """Thiết lập cửa sổ chính"""
         version = version_manager.get_current_version() or "Unknown"
         self.root.title(f"{WINDOW_TITLE_PREFIX} - {version}")
-        # Bắt đầu với kích thước nhỏ (Dashboard) - Góc trái trên
-        self.root.geometry("700x600+0+0")
+        # Bắt đầu với kích thước Dashboard - Góc trái trên (cao hơn để thấy stats)
+        self.root.geometry("700x800+0+0")
         self.root.resizable(*WINDOW_RESIZABLE)
     
     def setup_styles(self):
@@ -158,18 +158,19 @@ class AutoLoginApp:
                        foreground=COLOR_PRIMARY,
                        background=COLOR_SURFACE)
         
-        # Notebook (Tabs) styles
+        # Notebook (Tabs) styles - Smaller & Rounded
         style.configure("TNotebook", 
                        background=COLOR_BACKGROUND,
                        borderwidth=0)
         style.configure("TNotebook.Tab",
-                       padding=[TAB_PADDING, 8],
-                       font=LABEL_FONT,
+                       padding=[10, 6],  # Nhỏ hơn: 10px horizontal, 6px vertical
+                       font=('Segoe UI', 9),  # Font nhỏ hơn
                        background=COLOR_SURFACE,
                        foreground=COLOR_TEXT)
         style.map("TNotebook.Tab",
                  background=[('selected', COLOR_PRIMARY)],
-                 foreground=[('selected', 'white')])
+                 foreground=[('selected', 'white'),
+                            ('!selected', COLOR_TEXT_SECONDARY)])
         
         # Entry styles
         style.configure("TEntry",
@@ -245,6 +246,45 @@ class AutoLoginApp:
         self.tab_control.bind("<<NotebookTabChanged>>", self.on_tab_selected)
         
         self.tab_control.pack(expand=1, fill="both")
+        
+        # Progress bar ở dưới cùng
+        self.create_progress_bar()
+    
+    def create_progress_bar(self):
+        """Tạo progress bar ở dưới cùng"""
+        # Frame chứa progress bar
+        progress_frame = ttk.Frame(self.root)
+        progress_frame.pack(side="bottom", fill="x", padx=5, pady=5)
+        
+        # Label hiển thị trạng thái
+        self.status_label = ttk.Label(progress_frame, 
+                                      text="Sẵn sàng",
+                                      font=('Segoe UI', 9),
+                                      foreground=COLOR_TEXT_SECONDARY)
+        self.status_label.pack(side="left", padx=5)
+        
+        # Progress bar
+        self.progress_bar = ttk.Progressbar(progress_frame, 
+                                           mode='determinate',
+                                           length=200)
+        self.progress_bar.pack(side="left", fill="x", expand=True, padx=5)
+        
+        # Ẩn progress bar ban đầu
+        self.progress_bar.pack_forget()
+    
+    def show_progress(self, message: str, value: int = 0):
+        """Hiển thị progress bar với message"""
+        self.status_label.config(text=message)
+        if value >= 0:
+            self.progress_bar.pack(side="left", fill="x", expand=True, padx=5)
+            self.progress_bar['value'] = value
+            self.root.update_idletasks()
+    
+    def hide_progress(self):
+        """Ẩn progress bar"""
+        self.status_label.config(text="Sẵn sàng")
+        self.progress_bar.pack_forget()
+        self.progress_bar['value'] = 0
     
     def setup_managers(self):
         """Setup các managers với callbacks"""
@@ -300,8 +340,8 @@ class AutoLoginApp:
         selected_tab = self.tab_control.index(self.tab_control.select())
         
         if selected_tab == self.tab_control.index(self.dashboard_tab_frame):
-            # Dashboard tab - Nhỏ gọn, góc trái trên
-            self.root.geometry("700x600+0+0")
+            # Dashboard tab - Cao hơn để thấy stats, góc trái trên
+            self.root.geometry("700x800+0+0")
             self.dashboard_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.account_tab_frame):
             # Account tab - To ra, góc trái trên
@@ -349,11 +389,15 @@ class AutoLoginApp:
     
     def test_accounts(self):
         """Test tài khoản"""
+        self.show_progress("Đang kiểm tra Auto VLBS...", 30)
         login_manager.check_auto_vlbs_status(1)
-        from tkinter import messagebox
-        messagebox.showinfo("Success", get_message("test_success"))
+        self.show_progress("Đang tải dữ liệu...", 70)
         self.dashboard_tab.load_to_gui()
         self.account_tab.load_to_gui()
+        self.show_progress("Hoàn thành!", 100)
+        from tkinter import messagebox
+        messagebox.showinfo("Success", get_message("test_success"))
+        self.hide_progress()
     
     def on_login_complete(self):
         """Callback khi đăng nhập hoàn tất"""

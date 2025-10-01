@@ -83,7 +83,7 @@ class DashboardTab:
         
         # Chỉ hiển thị các cột cần thiết
         columns = ("stt", "is_select", "ingame", "is_logged_in")
-        self.tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=15)
+        self.tree_accounts = ttk.Treeview(tree_frame, columns=columns, show="headings", height=8)
         
         # Thiết lập heading
         self.tree_accounts.heading("stt", text="STT")
@@ -108,22 +108,61 @@ class DashboardTab:
         self.tree_accounts.bind("<Double-1>", self.on_item_select)
         self.tree_accounts.bind("<Button-1>", self.on_heading_click)
         
-        # Frame thống kê
-        stats_frame = ttk.Frame(self.parent)
-        stats_frame.pack(padx=10, pady=5, fill="x")
+        # Frame thống kê với card design
+        stats_container = ttk.LabelFrame(self.parent, text="📈 Thống kê", padding=(15, 10))
+        stats_container.pack(padx=10, pady=10, fill="x")
         
-        self.label_total = ttk.Label(stats_frame, text="Tổng: 0", font=('Segoe UI', 10, 'bold'))
-        self.label_total.pack(side="left", padx=10)
+        # Card container
+        cards_frame = ttk.Frame(stats_container)
+        cards_frame.pack(fill="x")
         
-        self.label_online = ttk.Label(stats_frame, text="Online: 0", 
-                                     font=('Segoe UI', 10, 'bold'),
+        # Card 1: Tổng
+        card1 = ttk.Frame(cards_frame, relief="solid", borderwidth=1)
+        card1.pack(side="left", padx=5, pady=5, fill="both", expand=True)
+        
+        ttk.Label(card1, text="📊 TỔNG", 
+                 font=('Segoe UI', 9),
+                 foreground="#64748b").pack(pady=(5, 0))
+        self.label_total = ttk.Label(card1, text="0", 
+                                     font=('Segoe UI', 20, 'bold'),
+                                     foreground="#1e293b")
+        self.label_total.pack(pady=(0, 5))
+        
+        # Card 2: Online
+        card2 = ttk.Frame(cards_frame, relief="solid", borderwidth=1)
+        card2.pack(side="left", padx=5, pady=5, fill="both", expand=True)
+        
+        ttk.Label(card2, text="🟢 ONLINE", 
+                 font=('Segoe UI', 9),
+                 foreground="#10b981").pack(pady=(5, 0))
+        self.label_online = ttk.Label(card2, text="0", 
+                                     font=('Segoe UI', 20, 'bold'),
                                      foreground="#10b981")
-        self.label_online.pack(side="left", padx=10)
+        self.label_online.pack(pady=(0, 5))
         
-        self.label_offline = ttk.Label(stats_frame, text="Offline: 0", 
-                                      font=('Segoe UI', 10, 'bold'),
+        # Card 3: Offline
+        card3 = ttk.Frame(cards_frame, relief="solid", borderwidth=1)
+        card3.pack(side="left", padx=5, pady=5, fill="both", expand=True)
+        
+        ttk.Label(card3, text="⚫ OFFLINE", 
+                 font=('Segoe UI', 9),
+                 foreground="#ef4444").pack(pady=(5, 0))
+        self.label_offline = ttk.Label(card3, text="0", 
+                                      font=('Segoe UI', 20, 'bold'),
                                       foreground="#ef4444")
-        self.label_offline.pack(side="left", padx=10)
+        self.label_offline.pack(pady=(0, 5))
+        
+        # Card 4: Tỷ lệ
+        card4 = ttk.Frame(cards_frame, relief="solid", borderwidth=1)
+        card4.pack(side="left", padx=5, pady=5, fill="both", expand=True)
+        
+        ttk.Label(card4, text="📊 TỶ LỆ", 
+                 font=('Segoe UI', 9),
+                 foreground="#3b82f6").pack(pady=(5, 0))
+        self.label_ratio = ttk.Label(card4, text="0%", 
+                                     font=('Segoe UI', 20, 'bold'),
+                                     foreground="#3b82f6")
+        self.label_ratio.pack(pady=(0, 5))
     
     # ==================== DATA METHODS ====================
     
@@ -168,10 +207,14 @@ class DashboardTab:
         self.tree_accounts.tag_configure('online', foreground='#10b981')
         self.tree_accounts.tag_configure('offline', foreground='#64748b')
         
-        # Cập nhật thống kê
-        self.label_total.config(text=f"Tổng: {total}")
-        self.label_online.config(text=f"Online: {online}")
-        self.label_offline.config(text=f"Offline: {offline}")
+        # Tính tỷ lệ online
+        ratio = (online / total * 100) if total > 0 else 0
+        
+        # Cập nhật thống kê với số lớn
+        self.label_total.config(text=f"{total}")
+        self.label_online.config(text=f"{online}")
+        self.label_offline.config(text=f"{offline}")
+        self.label_ratio.config(text=f"{ratio:.1f}%")
     
     def update_status_to_logged_in(self, username):
         """Cập nhật trạng thái đã login"""
