@@ -186,7 +186,7 @@ class DashboardTab:
             self.toggle_button.config(text="▼ Mở rộng")
             self.is_table_visible = False
             # Resize window nhỏ lại
-            self.root.geometry("700x500+0+0")
+            self.root.geometry("650x450+0+0")
             print("🔽 Đã thu gọn bảng trạng thái")
         else:
             # Hiện bảng - To window ra
@@ -194,7 +194,7 @@ class DashboardTab:
             self.toggle_button.config(text="▲ Thu gọn")
             self.is_table_visible = True
             # Resize window to ra
-            self.root.geometry("700x800+0+0")
+            self.root.geometry("650x750+0+0")
             print("🔼 Đã mở rộng bảng trạng thái")
     
     # ==================== DATA METHODS ====================

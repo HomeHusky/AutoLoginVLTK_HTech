@@ -92,7 +92,7 @@ class AutoLoginApp:
         version = version_manager.get_current_version() or "Unknown"
         self.root.title(f"{WINDOW_TITLE_PREFIX} - {version}")
         # Bắt đầu với kích thước Dashboard nhỏ (bảng ẩn) - Góc trái trên
-        self.root.geometry("700x500+0+0")
+        self.root.geometry("650x450+0+0")
         self.root.resizable(*WINDOW_RESIZABLE)
     
     def setup_styles(self):
@@ -341,20 +341,20 @@ class AutoLoginApp:
         selected_tab = self.tab_control.index(self.tab_control.select())
         
         if selected_tab == self.tab_control.index(self.dashboard_tab_frame):
-            # Dashboard tab - Nhỏ (bảng ẩn mặc định), góc trái trên
+            # Dashboard tab - Nhỏ gọn (bảng ẩn mặc định), góc trái trên
             # Kích thước sẽ tự động thay đổi khi toggle bảng
             if not self.dashboard_tab.is_table_visible:
-                self.root.geometry("700x500+0+0")
+                self.root.geometry("650x450+0+0")
             else:
-                self.root.geometry("700x800+0+0")
+                self.root.geometry("650x750+0+0")
             self.dashboard_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.account_tab_frame):
-            # Account tab - Vừa phải, góc trái trên
-            self.root.geometry("850x750+0+0")
+            # Account tab - Gọn hơn, góc trái trên
+            self.root.geometry("750x700+0+0")
             self.account_tab.load_to_gui()
         elif selected_tab == self.tab_control.index(self.path_tab_frame):
-            # Settings tab - Nhỏ hơn, có scrollbar, góc trái trên
-            self.root.geometry("800x600+0+0")
+            # Settings tab - Nhỏ gọn, có scrollbar, góc trái trên
+            self.root.geometry("700x550+0+0")
         # elif selected_tab == self.tab_control.index(self.status_tab_frame):
         #     self.status_tab.load_initial_deposit_account()
         #     self.status_tab.save_gom_account()
