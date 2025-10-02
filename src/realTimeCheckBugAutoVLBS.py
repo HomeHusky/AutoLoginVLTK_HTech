@@ -24,8 +24,8 @@ from pymongo.server_api import ServerApi
 import mongoConnection as MONGO_CONN
 
 # === BIẾN TOÀN CỤC ===
-kpi_1m = (43/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút)
-kpi_gom_1m = (86/24)/60  # KPI cho tài khoản gom tiền (Kv/phút) - Gấp đôi
+kpi_1m = (48/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút) - 1 giờ tăng 2 Kv
+kpi_gom_1m = (96/24)/60  # KPI cho tài khoản gom tiền (Kv/phút) - 1 giờ tăng 4 Kv (Gấp đôi)
 stop_flag = False
 gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'

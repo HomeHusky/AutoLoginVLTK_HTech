@@ -1725,7 +1725,7 @@ def load_kpi(filepath='monitor_time.json'):
             return data['kpi']
     except FileNotFoundError:
         # Nếu file không tồn tại, trả về giá trị mặc định
-        return "1000"
+        return "48"
     
 def load_total_servers(filepath='monitor_time.json'):
     try:

@@ -335,7 +335,7 @@ class StatusManagerTab:
                 data = json.load(f)
                 return data['kpi']
         except FileNotFoundError:
-            return "1000"
+            return "48"
     
     def load_total_servers(self, filepath='monitor_time.json'):
         """Load tổng số server"""
