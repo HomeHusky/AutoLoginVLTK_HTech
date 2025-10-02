@@ -251,6 +251,7 @@ class LoginManager:
             callback: Function callback
         """
         print(f"🔗 Setting on_login_complete callback: {callback}")
+        print(f"🔍 LoginManager instance id in set_on_login_complete_callback: {id(self)}")
         self.on_login_complete_callback = callback
     
     def set_on_login_username_callback(self, callback: Callable):
@@ -318,6 +319,7 @@ class LoginManager:
         # Call external callback
         print(f"🔄 Calling on_login_complete callback with is_all_logged_in={is_all_logged_in}, pass_monitor={pass_monitor}")
         print(f"🔍 Callback is: {self.on_login_complete_callback}")
+        print(f"🔍 LoginManager instance id in _on_login_complete_internal: {id(self)}")
         if self.on_login_complete_callback:
             try:
                 self.on_login_complete_callback(is_all_logged_in, pass_monitor)

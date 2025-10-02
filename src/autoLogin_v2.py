@@ -79,6 +79,9 @@ class AutoLoginApp:
         self.setup_styles()
         self.create_tabs()
         
+        # Setup các managers với callbacks
+        self.setup_managers()
+        
         # Load dữ liệu ban đầu
         self.initialize_data()
         
@@ -208,7 +211,7 @@ class AutoLoginApp:
     def setup_managers(self):
         """Setup các managers với callbacks"""
         print("🔧 Setting up managers and callbacks...")
-        print(f"🔍 Current login_manager id: {id(login_manager)}")
+        print(f"🔍 Current login_manager id in setup_managers: {id(login_manager)}")
         # Setup login manager callbacks
         login_manager.set_on_login_complete_callback(self.on_login_complete)
         login_manager.set_on_login_username_callback(self.on_login_username)
