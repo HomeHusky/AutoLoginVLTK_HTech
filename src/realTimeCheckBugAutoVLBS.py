@@ -22,6 +22,7 @@ import tkinter as tk
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import mongoConnection as MONGO_CONN
+from modules.mongodb_manager import mongodb_manager
 
 # === BIẾN TOÀN CỤC ===
 kpi_1m = (48/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút) - 1 giờ tăng 2 Kv
@@ -68,6 +69,29 @@ def update_accounts_online_status(current_accounts):
         print(f"✅ Đã cập nhật trạng thái online cho {len(current_accounts)} accounts")
     except Exception as e:
         print(f"❌ Lỗi cập nhật trạng thái online: {e}")
+
+def update_mongodb_server_status():
+    """
+    Cập nhật thông tin máy chủ lên MongoDB
+    Tự động tạo collection 'server_status' nếu chưa tồn tại
+    """
+    try:
+        print("📤 Đang cập nhật thông tin máy chủ lên MongoDB...")
+        
+        # Kết nối và cập nhật
+        if mongodb_manager.connect():
+            success = mongodb_manager.update_server_status(collection_name="server_status")
+            mongodb_manager.close()
+            
+            if success:
+                print("✅ Đã cập nhật MongoDB thành công!")
+            else:
+                print("❌ Cập nhật MongoDB thất bại!")
+        else:
+            print("❌ Không thể kết nối MongoDB!")
+            
+    except Exception as e:
+        print(f"❌ Lỗi cập nhật MongoDB: {e}")
 
 # === CÁC HÀM TOÀN CỤC ===
 # Hàm này sẽ tải danh sách tài khoản từ file accounts.json
@@ -701,6 +725,9 @@ def auto_check_loop(minutes, ten_may):
 
         # === Cập nhật trạng thái is_logged_in trong accounts.json
         update_accounts_online_status(current_accounts)
+        
+        # === Cập nhật thông tin máy chủ lên MongoDB
+        update_mongodb_server_status()
         
         # === Gửi báo cáo Discord
         if is_first_run:
