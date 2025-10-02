@@ -207,6 +207,7 @@ class AutoLoginApp:
     
     def setup_managers(self):
         """Setup các managers với callbacks"""
+        print("🔧 Setting up managers and callbacks...")
         # Setup login manager callbacks
         login_manager.set_on_login_complete_callback(self.on_login_complete)
         login_manager.set_on_login_username_callback(self.on_login_username)
@@ -214,6 +215,7 @@ class AutoLoginApp:
         
         # Setup auto update manager callbacks
         auto_update_manager.set_on_success_callback(self.on_auto_update_success)
+        print("✅ Manager setup completed")
     
     def create_callbacks(self):
         """Tạo dictionary chứa các callback functions"""
@@ -332,6 +334,7 @@ class AutoLoginApp:
 
     def on_login_complete(self, is_all_logged_in: bool, pass_monitor: str):
         """Callback khi đăng nhập hoàn tất"""
+        print(f"🎯 on_login_complete called with is_all_logged_in={is_all_logged_in}, pass_monitor={pass_monitor}")
         try:
             # Clear and update dashboard
             self.dashboard_tab.clear_pass_accounts()
@@ -352,7 +355,7 @@ class AutoLoginApp:
                 except Exception as e:
                     print(f"❌ Lỗi khi tự động theo dõi: {e}")
             else:
-                print("❌ Không theo dõi Auto VLBS")
+                print(f"❌ Không theo dõi Auto VLBS - is_all_logged_in: {is_all_logged_in}, pass_monitor matches SPECIAL_MONITOR_PASSWORD: {pass_monitor == SPECIAL_MONITOR_PASSWORD}")
             
         except Exception as e:
             print(f"❌ Lỗi khi cập nhật giao diện: {e}")

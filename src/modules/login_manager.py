@@ -249,6 +249,7 @@ class LoginManager:
         Args:
             callback: Function callback
         """
+        print(f"🔗 Setting on_login_complete callback: {callback}")
         self.on_login_complete_callback = callback
     
     def set_on_login_username_callback(self, callback: Callable):
@@ -262,6 +263,7 @@ class LoginManager:
     
     def _on_login_complete_internal(self):
         """Internal callback khi login hoàn tất"""
+        print("🚀 _on_login_complete_internal called - Login process completed")
         self.is_running = False
         self.pass_accounts.clear()
         
@@ -312,8 +314,15 @@ class LoginManager:
                 print(f"Error sending notification: {e}")
         
         # Call external callback
+        print(f"🔄 Calling on_login_complete callback with is_all_logged_in={is_all_logged_in}, pass_monitor={pass_monitor}")
         if self.on_login_complete_callback:
-            self.on_login_complete_callback(is_all_logged_in, pass_monitor)
+            try:
+                self.on_login_complete_callback(is_all_logged_in, pass_monitor)
+                print("✅ on_login_complete callback executed successfully")
+            except Exception as e:
+                print(f"❌ Error in on_login_complete callback: {e}")
+        else:
+            print("⚠️ No on_login_complete callback set")
     
     def _on_login_username_internal(self, username: str):
         """
