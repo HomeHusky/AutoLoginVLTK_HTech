@@ -218,7 +218,7 @@ class DataManager:
     
     def all_accounts_logged_in(self) -> bool:
         """
-        Kiểm tra tất cả account đã login chưa
+        Kiểm tra tất cả account đã login chưa (chỉ kiểm tra những account có is_select = false)
         
         Returns:
             bool: True nếu tất cả đã login
@@ -227,7 +227,10 @@ class DataManager:
         if not accounts:
             return False
         
-        for account in accounts:
+        # Chỉ kiểm tra những accounts có is_select = false (không bị bỏ qua)
+        selected_accounts = [account for account in accounts if not account.get('is_select', False)]
+        
+        for account in selected_accounts:
             if not account.get('is_logged_in', False):
                 return False
         

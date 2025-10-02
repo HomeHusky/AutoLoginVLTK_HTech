@@ -130,12 +130,19 @@ class LoginManager:
     
     def all_accounts_logged_in(self) -> bool:
         """
-        Kiểm tra tất cả account đã login chưa
+        Kiểm tra tất cả account đã login chưa (chỉ kiểm tra những account có is_select = false)
         
         Returns:
             bool: True nếu tất cả đã login
         """
-        return data_manager.all_accounts_logged_in()
+        try:
+            data = data_manager.load_data()
+            # Chỉ kiểm tra những accounts có is_select = false (không bị bỏ qua)
+            selected_accounts = [account for account in data['accounts'] if not account.get('is_select', False)]
+            return all(account.get('is_logged_in', False) for account in selected_accounts)
+        except Exception as e:
+            print(f"Error checking all accounts logged in: {e}")
+            return False
     
     # ==================== LOGIN METHODS ====================
     

@@ -794,8 +794,8 @@ def start_login_without_confirm(isAutoClickVLBS):
    
 def all_accounts_logged_in(json_path: str) -> bool:
     """
-    Kiểm tra tất cả account trong file accounts.json
-    đã có is_logged_in = True hay chưa.
+    Kiểm tra tất cả account trong file accounts.json đã có is_logged_in = True hay chưa
+    (chỉ kiểm tra những account có is_select = false)
     """
     with open(os.path.join(GF.join_directory_data(), json_path), "r") as f:
         data = json.load(f)
@@ -805,8 +805,11 @@ def all_accounts_logged_in(json_path: str) -> bool:
     if not accounts:  # Không có account nào
         return False
 
+    # Chỉ kiểm tra những accounts có is_select = false (không bị bỏ qua)
+    selected_accounts = [acc for acc in accounts if not acc.get("is_select", False)]
+
     # Nếu bất kỳ acc nào chưa login thì return False
-    for acc in accounts:
+    for acc in selected_accounts:
         if not acc.get("is_logged_in", False):
             return False
 
@@ -815,11 +818,15 @@ def all_accounts_logged_in(json_path: str) -> bool:
 def get_pass_monitor():
     pass_file = "pass_monitor.txt"
     try:
-        with open(pass_file, "r") as file:
+        # Đọc từ thư mục gốc của project (ngoài src)
+        import os
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        pass_monitor_path = os.path.join(project_root, '..', pass_file)
+        with open(pass_monitor_path, "r") as file:
             pass_monitor = file.read().strip()
             return pass_monitor
     except FileNotFoundError:
-        print(f"File {pass_file} không tồn tại.")
+        print(f"File {pass_file} không tồn tại ở {pass_monitor_path}.")
         return None
 
 # Hàm callback
@@ -835,7 +842,7 @@ def on_login_complete():
     is_all_accounts_logged_in = False
     file_path = "accounts.json"
     pass_monitor = get_pass_monitor()
-    print("MAU KHAU THEO DOI:", pass_monitor)
+    print("MAU KHAU THEO DOI o file autoLogin.py:", pass_monitor)
     if all_accounts_logged_in(file_path):
         print("✅ Tất cả account đã login.")
         if is_checking_fix_vlbs:

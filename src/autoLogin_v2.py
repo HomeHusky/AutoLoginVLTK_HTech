@@ -330,34 +330,6 @@ class AutoLoginApp:
         messagebox.showinfo("Success", get_message("test_success"))
         self.hide_progress()
 
-    def _get_pass_monitor(self) -> [str]:
-        """
-        Lấy password monitor từ file
-        
-        Returns:
-            str: Password hoặc None
-        """
-        try:
-            with open(PASS_MONITOR_FILE, "r", encoding='utf-8') as file:
-                return file.read().strip()
-        except FileNotFoundError:
-            print(f"File {PASS_MONITOR_FILE} không tồn tại ở file autologinv2.")
-            return None
-
-    def is_all_logged_in(self) -> bool:
-        """
-        Kiểm tra tất cả account đã login
-        
-        Returns:
-            bool: True nếu tất cả account đã login, False nếu còn account chưa login
-        """
-        try:
-            data = self.data_manager.load_data()
-            return all(account['is_logged_in'] for account in data['accounts'])
-        except Exception as e:
-            print(f"Error checking all logged in: {e}")
-            return False
-
     def on_login_complete(self):
         """Callback khi đăng nhập hoàn tất"""
         try:
@@ -373,9 +345,10 @@ class AutoLoginApp:
 
             print("✅ Đã cập nhật giao diện sau khi đăng nhập")
 
-            if self.is_all_logged_in() and self._get_pass_monitor() == SPECIAL_MONITOR_PASSWORD:
+            if self.is_all_logged_in():
                 try:
-                    DashboardTab.on_start_check_fix_VLBS_button_click()
+                    self.dashboard_tab.on_start_check_fix_VLBS_button_click()
+                    print("✅ Đã tự động nhấn nút 'Theo dõi' sau khi đăng nhập hoàn tất")
                 except Exception as e:
                     print(f"❌ Lỗi khi tự động theo dõi: {e}")
             
