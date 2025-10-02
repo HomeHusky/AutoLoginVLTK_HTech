@@ -25,6 +25,7 @@ class PathManagerTab:
         # Biến checkbox
         self.varHideEffects = tk.IntVar()
         self.varStartUp = tk.IntVar()
+        self.varHasFixGameServer = tk.IntVar()
         
         # Tạo giao diện
         self.create_ui()
@@ -145,9 +146,29 @@ class PathManagerTab:
         entry_start_up = ttk.Checkbutton(auto_frame, variable=self.varStartUp)
         entry_start_up.grid(row=13, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
         
+        # Có server fix game
+        ttk.Label(auto_frame, text="Có server fix game:").grid(row=14, column=0, padx=5, pady=5)
+        self.varHasFixGameServer.set(0)
+        entry_has_fix_game = ttk.Checkbutton(auto_frame, variable=self.varHasFixGameServer, 
+                                             command=self.on_fix_game_checkbox_change)
+        entry_has_fix_game.grid(row=14, column=1, columnspan=1, padx=5, pady=5, sticky="w")
+        
+        # Đường dẫn game fix
+        ttk.Label(auto_frame, text="Đường dẫn game fix:").grid(row=15, column=0, padx=5, pady=5)
+        self.entry_fix_game_path = ttk.Entry(auto_frame)
+        self.entry_fix_game_path.grid(row=15, column=1, columnspan=1, padx=5, pady=5, sticky="ew")
+        self.entry_fix_game_path.config(state="disabled")  # Disable mặc định
+        
+        # Nút browse cho đường dẫn game fix
+        browse_fix_game_button = ttk.Button(auto_frame, text="Browse", 
+                                            command=self.browse_fix_game_path,
+                                            state="disabled")
+        browse_fix_game_button.grid(row=15, column=5, padx=5, pady=5)
+        self.browse_fix_game_button = browse_fix_game_button
+        
         # Lưu dữ liệu đường dẫn auto
         save_button = ttk.Button(auto_frame, text="Lưu Cài đặt", command=self.save_auto_data)
-        save_button.grid(row=13, column=5, padx=5, pady=5)
+        save_button.grid(row=16, column=5, padx=5, pady=5)
     
     def save_title_mail(self):
         """Lưu tên máy vào file monitor_time.json"""
@@ -244,6 +265,22 @@ class PathManagerTab:
                 self.varHideEffects.set(sleep_times[0]['hide_effects'])
                 self.varStartUp.set(sleep_times[0]['start_up'])
                 
+                # Load fix game server settings
+                has_fix_game = sleep_times[0].get('has_fix_game_server', 0)
+                fix_game_path = sleep_times[0].get('fix_game_path', '')
+                
+                self.varHasFixGameServer.set(has_fix_game)
+                self.entry_fix_game_path.delete(0, tk.END)
+                self.entry_fix_game_path.insert(0, fix_game_path)
+                
+                # Enable/disable based on checkbox
+                if has_fix_game:
+                    self.entry_fix_game_path.config(state="normal")
+                    self.browse_fix_game_button.config(state="normal")
+                else:
+                    self.entry_fix_game_path.config(state="disabled")
+                    self.browse_fix_game_button.config(state="disabled")
+                
         except Exception as e:
             print(f"❌ Lỗi load auto data: {e}")
     
@@ -273,6 +310,8 @@ class PathManagerTab:
         edit_global_time_sleep = self.entry_global_time_sleep.get().strip()
         hide_effects = self.varHideEffects.get()
         start_up = self.varStartUp.get()
+        has_fix_game_server = self.varHasFixGameServer.get()
+        fix_game_path = self.entry_fix_game_path.get().strip()
         
         global_time_data['sleepTime'] = [{
             'wait_time_open': int(wait_time_open) if wait_time_open.isdigit() else 12,
@@ -284,7 +323,9 @@ class PathManagerTab:
             'try_number': int(try_number) if try_number.isdigit() else 3,
             'global_time_sleep': int(edit_global_time_sleep) if edit_global_time_sleep.isdigit() else 2,
             'hide_effects': int(hide_effects),
-            'start_up': int(start_up)
+            'start_up': int(start_up),
+            'has_fix_game_server': int(has_fix_game_server),
+            'fix_game_path': fix_game_path
         }]
         
         # Lưu dữ liệu vào file JSON
@@ -301,6 +342,27 @@ class PathManagerTab:
             self.set_startup(False)
         
         messagebox.showinfo("Success", "Đã lưu thành công dữ liệu Auto Tool!")
+    
+    def on_fix_game_checkbox_change(self):
+        """Xử lý khi thay đổi checkbox Có server fix game"""
+        if self.varHasFixGameServer.get():
+            # Enable input khi tick
+            self.entry_fix_game_path.config(state="normal")
+            self.browse_fix_game_button.config(state="normal")
+        else:
+            # Disable input khi bỏ tick
+            self.entry_fix_game_path.config(state="disabled")
+            self.browse_fix_game_button.config(state="disabled")
+    
+    def browse_fix_game_path(self):
+        """Chọn file đường dẫn game fix"""
+        file_path = filedialog.askopenfilename(
+            title="Chọn đường dẫn game fix",
+            filetypes=(("Executable Files", "*.exe"), ("All Files", "*.*"))
+        )
+        if file_path:
+            self.entry_fix_game_path.delete(0, tk.END)
+            self.entry_fix_game_path.insert(0, file_path)
     
     def browse_auto_path(self):
         """Chọn file đường dẫn auto"""

@@ -245,6 +245,46 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
     stop_login = False  # Reset cờ dừng khi bắt đầu
     auto_tool_path = load_auto_tool_path()
     sleepTime = load_sleepTime()
+    
+    # Kiểm tra và mở game fix nếu có
+    has_fix_game_server = sleepTime[0].get('has_fix_game_server', 0)
+    fix_game_path = sleepTime[0].get('fix_game_path', '')
+    
+    if has_fix_game_server and fix_game_path:
+        print(f"🎮 Phát hiện server fix game, đang mở: {fix_game_path}")
+        try:
+            # Mở game fix
+            subprocess.Popen(fix_game_path)
+            print("✅ Đã mở game fix thành công!")
+            print("⏳ Chờ 5 giây để game fix khởi động...")
+            time.sleep(5)
+            
+            # Ẩn cửa sổ game fix
+            try:
+                # Lấy tên file từ đường dẫn (không có .exe)
+                game_name = os.path.basename(fix_game_path).replace('.exe', '')
+                print(f"🔍 Đang tìm cửa sổ game: {game_name}")
+                
+                # Tìm và ẩn cửa sổ
+                desktop = Desktop(backend="uia")
+                windows = desktop.windows()
+                
+                for window in windows:
+                    try:
+                        window_title = window.window_text()
+                        # Kiểm tra nếu tên game có trong title
+                        if game_name.lower() in window_title.lower():
+                            window.minimize()
+                            print(f"✅ Đã ẩn cửa sổ game fix: {window_title}")
+                            break
+                    except:
+                        continue
+            except Exception as e:
+                print(f"⚠️ Không thể ẩn cửa sổ game fix: {e}")
+                
+        except Exception as e:
+            print(f"❌ Lỗi khi mở game fix: {e}")
+    
     accounts = load_accounts()
     for account in accounts:
         if account['username'] in pass_accounts:
