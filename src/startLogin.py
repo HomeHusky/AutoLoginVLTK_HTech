@@ -245,12 +245,16 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
     stop_login = False  # Reset cờ dừng khi bắt đầu
     auto_tool_path = load_auto_tool_path()
     sleepTime = load_sleepTime()
+    accounts = load_accounts()
     
-    # Kiểm tra và mở game fix nếu có
+    # Kiểm tra xem có account nào đã login chưa
+    any_account_logged_in = any(account.get('is_logged_in', False) for account in accounts)
+    
+    # Chỉ mở game fix khi chưa có account nào login
     has_fix_game_server = sleepTime[0].get('has_fix_game_server', 0)
     fix_game_path = sleepTime[0].get('fix_game_path', '')
     
-    if has_fix_game_server and fix_game_path:
+    if has_fix_game_server and fix_game_path and not any_account_logged_in:
         print(f"🎮 Phát hiện server fix game, đang mở: {fix_game_path}")
         try:
             # Mở game fix
@@ -284,8 +288,9 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
                 
         except Exception as e:
             print(f"❌ Lỗi khi mở game fix: {e}")
+    elif has_fix_game_server and fix_game_path and any_account_logged_in:
+        print(f"ℹ️ Đã có account login, bỏ qua mở game fix")
     
-    accounts = load_accounts()
     for account in accounts:
         if account['username'] in pass_accounts:
             continue
