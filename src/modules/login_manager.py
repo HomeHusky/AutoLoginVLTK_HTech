@@ -190,10 +190,10 @@ class LoginManager:
                 target=START_LOGIN.runStartLogin,
                 args=(
                     is_auto_click_vlbs,
-                    self._on_login_complete_internal,
+                    lambda: self._on_login_complete_internal(),  # Pass a lambda that maintains instance context
                     self.current_auto_name,
                     self.pass_accounts,
-                    self._on_login_username_internal
+                    lambda username: self._on_login_username_internal(username)
                 )
             )
             self.login_thread.daemon = True
@@ -318,14 +318,14 @@ class LoginManager:
         # Call external callback
         print(f"🔄 Calling on_login_complete callback with is_all_logged_in={is_all_logged_in}, pass_monitor={pass_monitor}")
         print(f"🔍 Callback is: {self.on_login_complete_callback}")
-        # if self.on_login_complete_callback:
-        try:
-            self.on_login_complete_callback(is_all_logged_in, pass_monitor)
-            print("✅ on_login_complete callback executed successfully")
-        except Exception as e:
-            print(f"❌ Error in on_login_complete callback: {e}")
-        # else:
-        #     print("⚠️ No on_login_complete callback set")
+        if self.on_login_complete_callback:
+            try:
+                self.on_login_complete_callback(is_all_logged_in, pass_monitor)
+                print("✅ on_login_complete callback executed successfully")
+            except Exception as e:
+                print(f"❌ Error in on_login_complete callback: {e}")
+        else:
+            print("⚠️ No on_login_complete callback set")
     
     def _on_login_username_internal(self, username: str):
         """
