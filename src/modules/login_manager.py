@@ -268,7 +268,7 @@ class LoginManager:
         # Get pass monitor
         pass_monitor = self._get_pass_monitor()
         
-        print(f"MAU KHAU THEO DOI: {pass_monitor}")
+        print(f"MAU KHAU THEO DOI o file login_manager.py: {pass_monitor}")
 
         # Handle retry logic if not all accounts are logged in
         if not is_all_logged_in and not hasattr(self, '_has_retried_login'):
