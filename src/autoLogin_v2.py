@@ -384,13 +384,7 @@ class AutoLoginApp:
             
         except Exception as e:
             print(f"❌ Lỗi khi cập nhật giao diện: {e}")
-            # Try to recover by forcing a full UI refresh
-            try:
-                # Force update all UI components
-                self.dashboard_tab.load_to_gui()
-                self.account_tab.load_to_gui()
-            except:
-                pass
+            pass
     
     def on_login_username(self, username: str):
         """
