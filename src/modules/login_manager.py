@@ -269,11 +269,22 @@ class LoginManager:
         pass_monitor = self._get_pass_monitor()
         
         print(f"MAU KHAU THEO DOI: {pass_monitor}")
+
+        # Handle retry logic if not all accounts are logged in
+        if not is_all_logged_in and not hasattr(self, '_has_retried_login'):
+            print("⏳ Chưa đăng nhập đủ tài khoản, thử lại lần nữa...")
+            self._has_retried_login = True
+            self.start_login(is_auto_click_vlbs=True, show_confirm=False)
+            return
+        
+        # Reset retry flag
+        if hasattr(self, '_has_retried_login'):
+            delattr(self, '_has_retried_login')
         
         if is_all_logged_in:
             print("✅ Tất cả account đã login.")
         else:
-            print("❌ Vẫn còn account chưa login.")
+            print("❌ Vẫn còn account chưa login sau 2 lần thử.")
         
         # Send notification and update MongoDB if special password
         if pass_monitor == SPECIAL_MONITOR_PASSWORD:
@@ -290,6 +301,16 @@ class LoginManager:
                 
                 # Update server status to MongoDB
                 self._update_mongodb_status()
+
+                # Start VLBS check if all accounts are logged in
+                if (is_all_logged_in and 
+                    hasattr(self, 'app') and 
+                    hasattr(self.app, 'dashboard_tab') and
+                    hasattr(self.app.dashboard_tab, 'on_start_check_fix_VLBS_button_click') and
+                    not self.callbacks.get('is_checking_fix_vlbs')()):
+                    
+                    print("🔄 Tự động bắt đầu kiểm tra fix lỗi VLBS...")
+                    self.app.dashboard_tab.on_start_check_fix_VLBS_button_click()
             except Exception as e:
                 print(f"Error sending notification: {e}")
         
