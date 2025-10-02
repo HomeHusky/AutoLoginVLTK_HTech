@@ -330,7 +330,7 @@ class AutoLoginApp:
         messagebox.showinfo("Success", get_message("test_success"))
         self.hide_progress()
 
-    def _get_pass_monitor(self) -> Optional[str]:
+    def _get_pass_monitor(self) -> [str]:
         """
         Lấy password monitor từ file
         
@@ -342,9 +342,6 @@ class AutoLoginApp:
                 return file.read().strip()
         except FileNotFoundError:
             print(f"File {PASS_MONITOR_FILE} không tồn tại.")
-            return None
-        except Exception as e:
-            print(f"Error reading pass monitor: {e}")
             return None
 
     def is_all_logged_in(self) -> bool:
