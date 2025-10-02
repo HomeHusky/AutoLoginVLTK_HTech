@@ -239,12 +239,41 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
     print(f"Đã đăng nhập vào tài khoản: {account['username']}")
     return 1
     
+def reset_all_accounts_login_status():
+    """Reset trạng thái is_logged_in của tất cả accounts về False"""
+    try:
+        filepath = os.path.join(GF.join_directory_data(), 'accounts.json')
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Reset tất cả is_logged_in về False
+        for account in data['accounts']:
+            account['is_logged_in'] = False
+        
+        # Lưu lại file
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        
+        print(f"✅ Đã reset trạng thái login của {len(data['accounts'])} accounts về False")
+    except Exception as e:
+        print(f"❌ Lỗi reset trạng thái login: {e}")
+
 def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, callback_login):
     GF.minimizeWindow("Auto Login Htech")
     global stop_login
     stop_login = False  # Reset cờ dừng khi bắt đầu
     auto_tool_path = load_auto_tool_path()
     sleepTime = load_sleepTime()
+    
+    # Chỉ reset trạng thái is_logged_in khi máy vừa khởi động
+    from modules.system_manager import system_manager
+    if system_manager.is_system_just_booted():
+        print("🔄 Máy vừa khởi động, reset trạng thái login của tất cả accounts...")
+        reset_all_accounts_login_status()
+    else:
+        print("ℹ️ Máy đã chạy lâu, giữ nguyên trạng thái login hiện tại")
+    
+    # Load accounts
     accounts = load_accounts()
     
     # Kiểm tra xem có account nào đã login chưa
