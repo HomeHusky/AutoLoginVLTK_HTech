@@ -306,7 +306,7 @@ class LoginManager:
         
         # Call external callback
         if self.on_login_complete_callback:
-            self.on_login_complete_callback(is_all_logged_in=is_all_logged_in, pass_monitor=pass_monitor)
+            self.on_login_complete_callback()
     
     def _on_login_username_internal(self, username: str):
         """
