@@ -332,10 +332,31 @@ class AutoLoginApp:
     
     def on_login_complete(self):
         """Callback khi đăng nhập hoàn tất"""
-        self.dashboard_tab.clear_pass_accounts()
-        login_manager.check_auto_vlbs_status(1)
-        self.dashboard_tab.load_to_gui()
-        self.account_tab.load_to_gui()
+        try:
+            # Clear and update dashboard
+            self.dashboard_tab.clear_pass_accounts()
+            
+            # Check Auto VLBS status
+            login_manager.check_auto_vlbs_status(1)
+            
+            # Force update all UI components
+            self.dashboard_tab.load_to_gui()
+            self.account_tab.load_to_gui()
+            
+            # Force update the UI
+            self.root.update_idletasks()
+            self.root.update()
+            
+            print("✅ Đã cập nhật giao diện sau khi đăng nhập")
+            
+        except Exception as e:
+            print(f"❌ Lỗi khi cập nhật giao diện: {e}")
+            # Try to recover by forcing a full UI refresh
+            try:
+                self.root.after(1000, self.dashboard_tab.load_to_gui)
+                self.root.after(1000, self.account_tab.load_to_gui)
+            except:
+                pass
     
     def on_login_username(self, username: str):
         """

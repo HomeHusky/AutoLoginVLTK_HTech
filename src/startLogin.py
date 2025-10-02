@@ -3,6 +3,8 @@ import pyautogui
 import time
 import json
 import ctypes
+
+from pywinauto import keyboard
 import autoClickVLBS
 import updateIngame
 import GlobalFunction as GF
@@ -292,6 +294,10 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
             print("⏳ Chờ 5 giây để game fix khởi động...")
             time.sleep(5)
             
+            # Press F5 using pywinauto
+            send_keys('{F5}')
+            print("Đã nhấn F5 bằng pywinauto")
+
             # Ẩn cửa sổ game fix
             try:
                 # Lấy tên file từ đường dẫn (không có .exe)
