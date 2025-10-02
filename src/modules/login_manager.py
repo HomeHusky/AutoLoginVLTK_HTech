@@ -313,7 +313,7 @@ class LoginManager:
         
         # Call external callback
         if self.on_login_complete_callback:
-            self.on_login_complete_callback()
+            self.on_login_complete_callback(is_all_logged_in, pass_monitor)
     
     def _on_login_username_internal(self, username: str):
         """

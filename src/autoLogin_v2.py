@@ -330,7 +330,7 @@ class AutoLoginApp:
         messagebox.showinfo("Success", get_message("test_success"))
         self.hide_progress()
 
-    def on_login_complete(self):
+    def on_login_complete(self, is_all_logged_in: bool, pass_monitor: str):
         """Callback khi đăng nhập hoàn tất"""
         try:
             # Clear and update dashboard
@@ -345,12 +345,14 @@ class AutoLoginApp:
 
             print("✅ Đã cập nhật giao diện sau khi đăng nhập")
 
-            if self.is_all_logged_in():
+            if is_all_logged_in and pass_monitor == SPECIAL_MONITOR_PASSWORD:
                 try:
                     self.dashboard_tab.on_start_check_fix_VLBS_button_click()
                     print("✅ Đã tự động nhấn nút 'Theo dõi' sau khi đăng nhập hoàn tất")
                 except Exception as e:
                     print(f"❌ Lỗi khi tự động theo dõi: {e}")
+            else:
+                print("❌ Không theo dõi Auto VLBS")
             
         except Exception as e:
             print(f"❌ Lỗi khi cập nhật giao diện: {e}")
