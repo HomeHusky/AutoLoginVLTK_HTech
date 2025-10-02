@@ -292,8 +292,8 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
             # Mở game fix
             subprocess.Popen(fix_game_path)
             print("✅ Đã mở game fix thành công!")
-            print("⏳ Chờ 5 giây để game fix khởi động...")
-            time.sleep(5)
+            print("⏳ Chờ 15 giây để game fix khởi động...")
+            time.sleep(15)
             
             # Press F5 using pywinauto
             send_keys('{F5}')
