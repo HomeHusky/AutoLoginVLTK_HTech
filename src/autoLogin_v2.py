@@ -341,7 +341,7 @@ class AutoLoginApp:
             with open(PASS_MONITOR_FILE, "r", encoding='utf-8') as file:
                 return file.read().strip()
         except FileNotFoundError:
-            print(f"File {PASS_MONITOR_FILE} không tồn tại.")
+            print(f"File {PASS_MONITOR_FILE} không tồn tại ở file autologinv2.")
             return None
 
     def is_all_logged_in(self) -> bool:

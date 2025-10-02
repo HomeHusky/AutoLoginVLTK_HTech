@@ -333,7 +333,7 @@ class LoginManager:
             with open(PASS_MONITOR_FILE, "r", encoding='utf-8') as file:
                 return file.read().strip()
         except FileNotFoundError:
-            print(f"File {PASS_MONITOR_FILE} không tồn tại.")
+            print(f"File {PASS_MONITOR_FILE} không tồn tại ở file login manager.")
             return None
         except Exception as e:
             print(f"Error reading pass monitor: {e}")
