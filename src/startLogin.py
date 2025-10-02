@@ -285,7 +285,8 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
     has_fix_game_server = sleepTime[0].get('has_fix_game_server', 0)
     fix_game_path = sleepTime[0].get('fix_game_path', '')
     
-    if has_fix_game_server and fix_game_path and not any_account_logged_in:
+    # if has_fix_game_server and fix_game_path and not any_account_logged_in:
+    if has_fix_game_server and fix_game_path:
         print(f"🎮 Phát hiện server fix game, đang mở: {fix_game_path}")
         try:
             # Mở game fix
