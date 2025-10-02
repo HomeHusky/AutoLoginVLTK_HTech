@@ -329,8 +329,8 @@ class AutoLoginApp:
         from tkinter import messagebox
         messagebox.showinfo("Success", get_message("test_success"))
         self.hide_progress()
-    
-    def on_login_complete(self):
+
+    def on_login_complete(self, is_all_logged_in: bool, pass_monitor: Optional[str]):
         """Callback khi đăng nhập hoàn tất"""
         try:
             # Clear and update dashboard
@@ -342,19 +342,22 @@ class AutoLoginApp:
             # Force update all UI components
             self.dashboard_tab.load_to_gui()
             self.account_tab.load_to_gui()
-            
-            # Force update the UI
-            self.root.update_idletasks()
-            self.root.update()
-            
+
             print("✅ Đã cập nhật giao diện sau khi đăng nhập")
+
+            if is_all_logged_in and pass_monitor == SPECIAL_MONITOR_PASSWORD:
+                try:
+                    DashboardTab.on_start_check_fix_VLBS_button_click()
+                except Exception as e:
+                    print(f"❌ Lỗi khi tự động theo dõi: {e}")
             
         except Exception as e:
             print(f"❌ Lỗi khi cập nhật giao diện: {e}")
             # Try to recover by forcing a full UI refresh
             try:
-                self.root.after(1000, self.dashboard_tab.load_to_gui)
-                self.root.after(1000, self.account_tab.load_to_gui)
+                # Force update all UI components
+                self.dashboard_tab.load_to_gui()
+                self.account_tab.load_to_gui()
             except:
                 pass
     

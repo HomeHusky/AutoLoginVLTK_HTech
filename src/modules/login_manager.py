@@ -301,22 +301,12 @@ class LoginManager:
                 
                 # Update server status to MongoDB
                 self._update_mongodb_status()
-
-                # Start VLBS check if all accounts are logged in
-                if (is_all_logged_in and 
-                    hasattr(self, 'app') and 
-                    hasattr(self.app, 'dashboard_tab') and
-                    hasattr(self.app.dashboard_tab, 'on_start_check_fix_VLBS_button_click') and
-                    not self.callbacks.get('is_checking_fix_vlbs')()):
-                    
-                    print("🔄 Tự động bắt đầu kiểm tra fix lỗi VLBS...")
-                    self.app.dashboard_tab.on_start_check_fix_VLBS_button_click()
             except Exception as e:
                 print(f"Error sending notification: {e}")
         
         # Call external callback
         if self.on_login_complete_callback:
-            self.on_login_complete_callback()
+            self.on_login_complete_callback(is_all_logged_in=is_all_logged_in, pass_monitor=pass_monitor)
     
     def _on_login_username_internal(self, username: str):
         """
