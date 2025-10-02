@@ -29,6 +29,7 @@ class LoginManager:
     """
     
     def __init__(self):
+        print(f"🆕 LoginManager instance created with id: {id(self)}")
         self.login_thread: Optional[threading.Thread] = None
         self.is_running = False
         self.current_auto_name: Optional[str] = None
@@ -264,6 +265,7 @@ class LoginManager:
     def _on_login_complete_internal(self):
         """Internal callback khi login hoàn tất"""
         print("🚀 _on_login_complete_internal called - Login process completed")
+        print(f"🔍 LoginManager instance id in _on_login_complete_internal: {id(self)}")
         self.is_running = False
         self.pass_accounts.clear()
         
@@ -315,14 +317,15 @@ class LoginManager:
         
         # Call external callback
         print(f"🔄 Calling on_login_complete callback with is_all_logged_in={is_all_logged_in}, pass_monitor={pass_monitor}")
-        if self.on_login_complete_callback:
-            try:
-                self.on_login_complete_callback(is_all_logged_in, pass_monitor)
-                print("✅ on_login_complete callback executed successfully")
-            except Exception as e:
-                print(f"❌ Error in on_login_complete callback: {e}")
-        else:
-            print("⚠️ No on_login_complete callback set")
+        print(f"🔍 Callback is: {self.on_login_complete_callback}")
+        # if self.on_login_complete_callback:
+        try:
+            self.on_login_complete_callback(is_all_logged_in, pass_monitor)
+            print("✅ on_login_complete callback executed successfully")
+        except Exception as e:
+            print(f"❌ Error in on_login_complete callback: {e}")
+        # else:
+        #     print("⚠️ No on_login_complete callback set")
     
     def _on_login_username_internal(self, username: str):
         """
