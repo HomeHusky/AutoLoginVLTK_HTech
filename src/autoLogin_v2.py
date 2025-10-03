@@ -430,6 +430,28 @@ class AutoLoginApp:
             print(f"Error getting title_mail: {e}")
             return DEFAULT_TITLE_MAIL
     
+    def run_after_ui(self):
+        """Chạy sau khi UI load xong"""
+        try:
+            sleep_time = data_manager.get_sleep_time()
+            is_start_up = sleep_time.get('start_up', 0)
+            
+            if is_start_up == 1:
+                if system_manager.is_system_just_booted():
+                    print("is_start_up: True - System just booted, starting auto login...")
+                    pass_accounts = self.dashboard_tab.get_pass_accounts()
+                    login_manager.start_login(
+                        is_auto_click_vlbs=True,
+                        pass_accounts=pass_accounts,
+                        show_confirm=False
+                    )
+                else:
+                    print("is_start_up: True - But system has been running for a while, skipping auto login.")
+            else:
+                print("is_start_up: False")
+        except Exception as e:
+            print(f"Error in run_after_ui: {e}")
+    
     def _get_pass_monitor_from_file(self) -> str:
         """Lấy password monitor từ file pass_monitor.txt"""
         try:
