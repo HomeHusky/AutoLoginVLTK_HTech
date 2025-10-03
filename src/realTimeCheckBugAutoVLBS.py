@@ -24,7 +24,7 @@ from pymongo.server_api import ServerApi
 import mongoConnection as MONGO_CONN
 from modules.mongodb_manager import mongodb_manager
 
-# === BIẾN TOÀN CỤC ===
+# Global variables
 kpi_1m = (48/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút) - 1 giờ tăng 2 Kv
 kpi_gom_1m = (96/24)/60  # KPI cho tài khoản gom tiền (Kv/phút) - 1 giờ tăng 4 Kv (Gấp đôi)
 stop_flag = False
@@ -32,6 +32,7 @@ gom_accounts_info_data = []
 gom_account_file = 'gom_accounts.json'
 gom_accounts_list = []  # Danh sách tài khoản gom tiền
 previous_data = {}  # Dùng để lưu trữ số dư tiền của các tài khoản trước khi kiểm tra
+all_online_accounts = set()  # All currently online accounts
 
 # Global callback for UI updates after each check cycle
 ui_update_callback = None
@@ -552,8 +553,9 @@ def sleep_until_next_hour():
 # Hàm này sẽ kết nối với ứng dụng, lấy danh sách tài khoản và số dư tiền của chúng
 # Lưu ý: Hàm này cần được gọi trong một luồng riêng biệt để tránh làm treo giao diện chính
 def check_accounts_money():
-    global gom_accounts_info_data
+    global gom_accounts_info_data, all_online_accounts
     gom_accounts = load_gom_accounts()
+    all_online_accounts = set()  # Reset for new check
     try:
         list_control = None
         for attempt in range(3):
@@ -614,6 +616,7 @@ def check_accounts_money():
                 
                 if countChild == 1:
                     array_name = child.window_text()  # Tên tài khoản
+                    all_online_accounts.add(array_name)  # Collect all online accounts
                     if array_name not in gom_accounts:
                         countChild += 1
                         nextItem = True
@@ -679,8 +682,8 @@ def auto_check_loop(minutes, ten_may):
         error_accounts_array = []
         lost_accounts_array = []
         low_blood_accounts_array = []
-        # === Tạo set tài khoản hiện tại
-        current_accounts = set(acc[0] for acc in new_data)
+        # === Tạo set tài khoản hiện tại (all online accounts)
+        current_accounts = all_online_accounts.copy()
         total_profit = 0
         # === Kiểm tra từng tài khoản trong dữ liệu mới
         for acc in new_data:
