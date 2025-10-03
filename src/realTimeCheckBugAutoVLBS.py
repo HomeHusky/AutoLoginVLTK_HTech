@@ -172,6 +172,28 @@ def save_snapshot(ten_may, report):
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+# === CẬP NHẬT TRẠNG THÁI MÁY CHỦ LÊN MONGODB ===
+def update_mongodb_server_status():
+    """
+    Cập nhật thông tin trạng thái máy chủ lên MongoDB
+    """
+    try:
+        print("📤 Đang cập nhật thông tin máy chủ lên MongoDB...")
+        # Cập nhật server status thông qua mongodb_manager
+        success = mongodb_manager.update_server_status()
+        # Đóng kết nối sau khi sử dụng
+        mongodb_manager.close()
+
+        if success:
+            print("✅ Đã cập nhật MongoDB thành công!")
+        else:
+            print("❌ Cập nhật MongoDB thất bại!")
+
+        return success
+    except Exception as e:
+        print(f"❌ Lỗi khi cập nhật MongoDB: {e}")
+        return False
+
 # === LƯU DỮ LIỆU VÀO MONGODB ===
 def save_money_data_to_mongo(ten_may, total_profit):
     """
