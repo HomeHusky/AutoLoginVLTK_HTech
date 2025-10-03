@@ -370,14 +370,14 @@ class AutoLoginApp:
             
             # Force update all UI components
             self.dashboard_tab.load_to_gui()
-            if is_all_logged_in and pass_monitor == SPECIAL_MONITOR_PASSWORD:
+            if is_all_logged_in and pass_monitor == SPECIAL_MONITOR_PASSWORD and not self.callbacks.get('is_checking_fix_vlbs')():
                 try:
                     self.dashboard_tab.on_start_check_fix_VLBS_button_click()
                     print("✅ Đã tự động nhấn nút 'Theo dõi' sau khi đăng nhập hoàn tất")
                 except Exception as e:
                     print(f"❌ Lỗi khi tự động theo dõi: {e}")
             else:
-                print(f"❌ Không theo dõi Auto VLBS - is_all_logged_in: {is_all_logged_in}, pass_monitor matches SPECIAL_MONITOR_PASSWORD: {pass_monitor == SPECIAL_MONITOR_PASSWORD}")
+                print(f"❌ Không theo dõi Auto VLBS - is_all_logged_in: {is_all_logged_in}, pass_monitor matches SPECIAL_MONITOR_PASSWORD: {pass_monitor == SPECIAL_MONITOR_PASSWORD}, is_checking: {self.callbacks.get('is_checking_fix_vlbs')()}")
             
         except Exception as e:
             print(f"❌ Lỗi khi cập nhật giao diện: {e}")
