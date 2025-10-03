@@ -24,6 +24,15 @@ from pymongo.server_api import ServerApi
 import mongoConnection as MONGO_CONN
 from modules.mongodb_manager import mongodb_manager
 
+# === BIẾN TOÀN CỤC ===
+kpi_1m = (48/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút) - 1 giờ tăng 2 Kv
+kpi_gom_1m = (96/24)/60  # KPI cho tài khoản gom tiền (Kv/phút) - 1 giờ tăng 4 Kv (Gấp đôi)
+stop_flag = False
+gom_accounts_info_data = []
+gom_account_file = 'gom_accounts.json'
+gom_accounts_list = []  # Danh sách tài khoản gom tiền
+previous_data = {}  # Dùng để lưu trữ số dư tiền của các tài khoản trước khi kiểm tra
+
 # Global callback for UI updates after each check cycle
 ui_update_callback = None
 
