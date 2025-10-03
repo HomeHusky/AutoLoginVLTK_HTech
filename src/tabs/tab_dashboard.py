@@ -302,14 +302,40 @@ class DashboardTab:
         except Exception as e:
             print(f"Lỗi click heading: {e}")
     
+    def update_ui_from_monitoring(self, data):
+        """Callback function to update UI from monitoring system"""
+        try:
+            # Update statistics cards
+            total = data.get('total_accounts', 0)
+            online = data.get('online_accounts', 0)
+            offline = data.get('offline_accounts', 0)
+
+            # Calculate ratio
+            ratio = (online / total * 100) if total > 0 else 0
+
+            # Update labels
+            self.label_total.config(text=f"{total}")
+            self.label_online.config(text=f"{online}")
+            self.label_offline.config(text=f"{offline}")
+            self.label_ratio.config(text=f"{ratio:.1f}%")
+
+            print(f"🔄 UI updated: {online}/{total} online ({ratio:.1f}%)")
+
+        except Exception as e:
+            print(f"❌ Error updating UI from monitoring: {e}")
+
     def on_start_check_fix_VLBS_button_click(self):
         """Xử lý sự kiện click nút theo dõi"""
         is_checking = self.callbacks.get('is_checking_fix_vlbs')
-        
+
         if not is_checking():
             print("Bắt đầu kiểm tra fix lỗi VLBS")
             entry_title_mail = self.callbacks.get('get_entry_title_mail')()
             time_check = int(self.entry_time_check_loop_VLBS.get().strip()) if self.entry_time_check_loop_VLBS.get().strip().isdigit() else 60
+
+            # Set up UI update callback before starting monitoring
+            REAL_TIME_CHECK.set_ui_update_callback(self.update_ui_from_monitoring)
+
             REAL_TIME_CHECK.start_checking(time_check, entry_title_mail)
             self.start_check_fix_VLBS_button.config(text="Dừng kiểm tra")
             self.callbacks.get('set_checking_fix_vlbs')(True)

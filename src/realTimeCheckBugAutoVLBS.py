@@ -24,14 +24,46 @@ from pymongo.server_api import ServerApi
 import mongoConnection as MONGO_CONN
 from modules.mongodb_manager import mongodb_manager
 
-# === BIẾN TOÀN CỤC ===
-kpi_1m = (48/24)/60  # KPI mặc định cho tài khoản thường (Kv/phút) - 1 giờ tăng 2 Kv
-kpi_gom_1m = (96/24)/60  # KPI cho tài khoản gom tiền (Kv/phút) - 1 giờ tăng 4 Kv (Gấp đôi)
-stop_flag = False
-gom_accounts_info_data = []
-gom_account_file = 'gom_accounts.json'
-gom_accounts_list = []  # Danh sách tài khoản gom tiền
-previous_data = {}  # Dùng để lưu trữ số dư tiền của các tài khoản trước khi kiểm tra
+# Global callback for UI updates after each check cycle
+ui_update_callback = None
+
+def set_ui_update_callback(callback_func):
+    """Set the callback function to update UI after each check cycle"""
+    global ui_update_callback
+    ui_update_callback = callback_func
+    print("✅ UI update callback đã được thiết lập")
+
+def trigger_ui_update(current_accounts, ten_may):
+    """Trigger UI update with current account status and machine info"""
+    if ui_update_callback:
+        try:
+            # Get current account statistics
+            total_accounts = len(current_accounts)
+            online_accounts = len(current_accounts)
+            offline_accounts = 0
+
+            # Get all accounts from accounts.json to calculate offline
+            try:
+                filepath = os.path.join(GF.join_directory_data(), 'accounts.json')
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    offline_accounts = len(data['accounts']) - online_accounts
+            except:
+                offline_accounts = 0
+
+            # Call the UI update callback
+            ui_update_callback({
+                'total_accounts': total_accounts,
+                'online_accounts': online_accounts,
+                'offline_accounts': offline_accounts,
+                'machine_name': ten_may,
+                'current_accounts': list(current_accounts)
+            })
+            print("✅ Đã cập nhật giao diện sau khi kiểm tra")
+        except Exception as e:
+            print(f"❌ Lỗi khi cập nhật giao diện: {e}")
+    else:
+        print("⚠️ Không có callback UI để cập nhật")
 
 EMAIL_ADDRESS = "htechvlnotification@gmail.com"
 EMAIL_PASSWORD = "btpwkapwzdknnqfl"
@@ -725,10 +757,10 @@ def auto_check_loop(minutes, ten_may):
 
         # === Cập nhật trạng thái is_logged_in trong accounts.json
         update_accounts_online_status(current_accounts)
-        
+
         # === Cập nhật thông tin máy chủ lên MongoDB
         update_mongodb_server_status()
-        
+
         # === Gửi báo cáo Discord
         if is_first_run:
             print("🔔 Lần chạy đầu tiên, không gửi báo cáo Discord.")
@@ -742,6 +774,10 @@ def auto_check_loop(minutes, ten_may):
             # fixLowBloodAccounts()
             fix_account_stuck_on_map_Sa_Mac()
             relogin_lost_accounts()
+
+        # === Cập nhật giao diện người dùng với thông tin hiện tại ===
+        trigger_ui_update(current_accounts, ten_may)
+
         print(f"📊 Báo cáo kiểm tra tài khoản máy {ten_may} lúc {loop_time_str} đã hoàn thành.")
         # === Đếm ngược trước vòng lặp tiếp theo
         for i in range(minutes * 15):
