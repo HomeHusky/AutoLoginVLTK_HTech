@@ -102,28 +102,33 @@ def update_accounts_online_status(current_accounts):
     except Exception as e:
         print(f"❌ Lỗi cập nhật trạng thái online: {e}")
 
-def update_mongodb_server_status():
+def update_accounts_status_to_mongodb():
     """
-    Cập nhật thông tin máy chủ lên MongoDB
-    Tự động tạo collection 'server_status' nếu chưa tồn tại
+    Cập nhật trạng thái tài khoản lên MongoDB
+    Tự động tạo collection 'account_status' nếu chưa tồn tại
     """
     try:
-        print("📤 Đang cập nhật thông tin máy chủ lên MongoDB...")
-        
+        print("📤 Đang cập nhật trạng thái tài khoản lên MongoDB...")
+
+        # Đọc dữ liệu tài khoản hiện tại
+        filepath = os.path.join(GF.join_directory_data(), 'accounts.json')
+        with open(filepath, 'r', encoding='utf-8') as f:
+            accounts_data = json.load(f)
+
         # Kết nối và cập nhật
         if mongodb_manager.connect():
-            success = mongodb_manager.update_server_status(collection_name="server_status")
+            success = mongodb_manager.update_account_status(accounts_data['accounts'], collection_name="account_status")
             mongodb_manager.close()
-            
+
             if success:
-                print("✅ Đã cập nhật MongoDB thành công!")
+                print(f"✅ Đã cập nhật trạng thái {len(accounts_data['accounts'])} tài khoản lên MongoDB!")
             else:
-                print("❌ Cập nhật MongoDB thất bại!")
+                print("❌ Cập nhật trạng thái tài khoản lên MongoDB thất bại!")
         else:
             print("❌ Không thể kết nối MongoDB!")
-            
+
     except Exception as e:
-        print(f"❌ Lỗi cập nhật MongoDB: {e}")
+        print(f"❌ Lỗi cập nhật trạng thái tài khoản lên MongoDB: {e}")
 
 # === CÁC HÀM TOÀN CỤC ===
 # Hàm này sẽ tải danh sách tài khoản từ file accounts.json

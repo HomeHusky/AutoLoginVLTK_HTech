@@ -234,6 +234,61 @@ class MongoDBManager:
         except Exception as e:
             print(f"❌ Lỗi lấy danh sách servers: {e}")
             return []
+    def update_account_status(self, accounts_data: list, collection_name: str = "account_status") -> bool:
+        """
+        Cập nhật trạng thái chi tiết của tất cả tài khoản lên MongoDB
+
+        Args:
+            accounts_data: Danh sách tài khoản từ accounts.json
+            collection_name: Tên collection (mặc định: account_status)
+
+        Returns:
+            bool: True nếu thành công
+        """
+        try:
+            # Đảm bảo đã kết nối
+            if not self.client:
+                if not self.connect():
+                    return False
+
+            # Đảm bảo collection tồn tại
+            self.ensure_collection_exists(collection_name)
+
+            # Lấy thông tin máy
+            ten_may = self.get_title_mail()
+
+            # Tạo document với tất cả thông tin tài khoản
+            account_status_data = {
+                "ten_may": ten_may,
+                "accounts": accounts_data,
+                "so_luong_tai_khoan": len(accounts_data),
+                "cap_nhat_luc": datetime.now(),
+                "timestamp": datetime.now().isoformat()
+            }
+
+            # Lấy collection
+            collection = self.db[collection_name]
+
+            # Kiểm tra xem đã có dữ liệu cho máy này chưa
+            existing_data = collection.find_one({"ten_may": ten_may})
+
+            if existing_data:
+                # Cập nhật dữ liệu hiện có
+                collection.update_one(
+                    {"ten_may": ten_may},
+                    {"$set": account_status_data}
+                )
+                print(f"✅ Đã cập nhật trạng thái {len(accounts_data)} tài khoản cho máy '{ten_may}'")
+            else:
+                # Thêm mới
+                collection.insert_one(account_status_data)
+                print(f"✅ Đã thêm trạng thái {len(accounts_data)} tài khoản cho máy '{ten_may}'")
+
+            return True
+
+        except Exception as e:
+            print(f"❌ Lỗi cập nhật account status: {e}")
+            return False
 
 
 # Singleton instance

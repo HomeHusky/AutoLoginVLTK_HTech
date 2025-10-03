@@ -331,6 +331,28 @@ class AutoLoginApp:
         self.show_progress("Đang tải dữ liệu...", 70)
         self.dashboard_tab.load_to_gui()
         self.account_tab.load_to_gui()
+
+        # Send account status to MongoDB after test
+        self.show_progress("Đang cập nhật trạng thái lên MongoDB...", 90)
+        try:
+            from modules.mongodb_manager import mongodb_manager
+            if mongodb_manager.connect():
+                # Update server status (includes account counts)
+                mongodb_manager.update_server_status()
+                # Update detailed account status
+                import os
+                import json
+                import GlobalFunction as GF
+                accounts_file = os.path.join(GF.join_directory_data(), 'accounts.json')
+                if os.path.exists(accounts_file):
+                    with open(accounts_file, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                        mongodb_manager.update_account_status(data['accounts'])
+                mongodb_manager.close()
+                print("✅ Đã cập nhật trạng thái tài khoản lên MongoDB")
+        except Exception as e:
+            print(f"❌ Lỗi cập nhật MongoDB: {e}")
+
         self.show_progress("Hoàn thành!", 100)
         from tkinter import messagebox
         messagebox.showinfo("Success", get_message("test_success"))
