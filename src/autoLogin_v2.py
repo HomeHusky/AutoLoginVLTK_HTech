@@ -337,19 +337,10 @@ class AutoLoginApp:
         try:
             from modules.mongodb_manager import mongodb_manager
             if mongodb_manager.connect():
-                # Update server status (includes account counts)
+                # Update server status (includes account counts) - uses existing server_status collection
                 mongodb_manager.update_server_status()
-                # Update detailed account status
-                import os
-                import json
-                import GlobalFunction as GF
-                accounts_file = os.path.join(GF.join_directory_data(), 'accounts.json')
-                if os.path.exists(accounts_file):
-                    with open(accounts_file, 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                        mongodb_manager.update_account_status(data['accounts'])
                 mongodb_manager.close()
-                print("✅ Đã cập nhật trạng thái tài khoản lên MongoDB")
+                print("✅ Đã cập nhật trạng thái tài khoản lên MongoDB (server_status collection)")
         except Exception as e:
             print(f"❌ Lỗi cập nhật MongoDB: {e}")
 
