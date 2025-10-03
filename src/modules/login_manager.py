@@ -315,6 +315,8 @@ class LoginManager:
                 self._update_mongodb_status()
             except Exception as e:
                 print(f"Error sending notification: {e}")
+        else:
+            print("ℹ️ Mật khẩu không đúng hoặc không có file pass_monitor.txt, bỏ qua Discord và MongoDB updates")
         
         # Call external callback
         print(f"🔄 Calling on_login_complete callback with is_all_logged_in={is_all_logged_in}, pass_monitor={pass_monitor}")

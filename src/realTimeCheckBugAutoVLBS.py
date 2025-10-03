@@ -102,33 +102,19 @@ def update_accounts_online_status(current_accounts):
     except Exception as e:
         print(f"❌ Lỗi cập nhật trạng thái online: {e}")
 
-def update_accounts_status_to_mongodb():
-    """
-    Cập nhật trạng thái tài khoản lên MongoDB
-    Tự động tạo collection 'account_status' nếu chưa tồn tại
-    """
+def is_monitoring_enabled():
+    """Check if monitoring is enabled by checking if pass_monitor.txt exists and contains correct password"""
     try:
-        print("📤 Đang cập nhật trạng thái tài khoản lên MongoDB...")
-
-        # Đọc dữ liệu tài khoản hiện tại
-        filepath = os.path.join(GF.join_directory_data(), 'accounts.json')
-        with open(filepath, 'r', encoding='utf-8') as f:
-            accounts_data = json.load(f)
-
-        # Kết nối và cập nhật
-        if mongodb_manager.connect():
-            success = mongodb_manager.update_account_status(accounts_data['accounts'], collection_name="account_status")
-            mongodb_manager.close()
-
-            if success:
-                print(f"✅ Đã cập nhật trạng thái {len(accounts_data['accounts'])} tài khoản lên MongoDB!")
-            else:
-                print("❌ Cập nhật trạng thái tài khoản lên MongoDB thất bại!")
-        else:
-            print("❌ Không thể kết nối MongoDB!")
-
+        import os
+        pass_monitor_path = os.path.join(os.getcwd(), 'pass_monitor.txt')
+        if os.path.exists(pass_monitor_path):
+            with open(pass_monitor_path, "r", encoding='utf-8') as file:
+                password = file.read().strip()
+                return password == '0919562182qQ!'  # Check against the actual password
+        return False
     except Exception as e:
-        print(f"❌ Lỗi cập nhật trạng thái tài khoản lên MongoDB: {e}")
+        print(f"Error checking monitoring status: {e}")
+        return False
 
 # === CÁC HÀM TOÀN CỤC ===
 # Hàm này sẽ tải danh sách tài khoản từ file accounts.json
@@ -770,7 +756,7 @@ def auto_check_loop(minutes, ten_may):
         if is_first_run:
             print("🔔 Lần chạy đầu tiên, không gửi báo cáo Discord.")
             is_first_run = False
-        else:
+        elif is_monitoring_enabled():
             send_discord_report(report, ten_may, loop_time_str)
             run_kill_hung_vo_lam()
             fixErrorAccounts(error_accounts_array)
@@ -779,6 +765,8 @@ def auto_check_loop(minutes, ten_may):
             # fixLowBloodAccounts()
             fix_account_stuck_on_map_Sa_Mac()
             relogin_lost_accounts()
+        else:
+            print("ℹ️ Monitoring bị tắt (sai mật khẩu), bỏ qua các tác vụ monitoring")
 
         # === Cập nhật giao diện người dùng với thông tin hiện tại ===
         trigger_ui_update(current_accounts, ten_may)

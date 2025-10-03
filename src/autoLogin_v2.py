@@ -332,17 +332,26 @@ class AutoLoginApp:
         self.dashboard_tab.load_to_gui()
         self.account_tab.load_to_gui()
 
-        # Send account status to MongoDB after test
-        self.show_progress("Đang cập nhật trạng thái lên MongoDB...", 90)
+        # Check password before sending to MongoDB
+        self.show_progress("Đang kiểm tra mật khẩu...", 85)
         try:
-            from modules.mongodb_manager import mongodb_manager
-            if mongodb_manager.connect():
-                # Update server status (includes account counts) - uses existing server_status collection
-                mongodb_manager.update_server_status()
-                mongodb_manager.close()
-                print("✅ Đã cập nhật trạng thái tài khoản lên MongoDB (server_status collection)")
+            # Get password from pass_monitor.txt file
+            pass_monitor = self._get_pass_monitor_from_file()
+            if pass_monitor == SPECIAL_MONITOR_PASSWORD:
+                # Send account status to MongoDB after test
+                self.show_progress("Đang cập nhật trạng thái lên MongoDB...", 90)
+                from modules.mongodb_manager import mongodb_manager
+                if mongodb_manager.connect():
+                    # Update server status (includes account counts) - uses existing server_status collection
+                    mongodb_manager.update_server_status()
+                    mongodb_manager.close()
+                    print("✅ Đã cập nhật trạng thái tài khoản lên MongoDB (server_status collection)")
+                else:
+                    print("❌ Không thể kết nối MongoDB")
+            else:
+                print("❌ Mật khẩu không đúng, bỏ qua cập nhật MongoDB")
         except Exception as e:
-            print(f"❌ Lỗi cập nhật MongoDB: {e}")
+            print(f"❌ Lỗi kiểm tra mật khẩu hoặc cập nhật MongoDB: {e}")
 
         self.show_progress("Hoàn thành!", 100)
         from tkinter import messagebox
@@ -361,10 +370,6 @@ class AutoLoginApp:
             
             # Force update all UI components
             self.dashboard_tab.load_to_gui()
-            self.account_tab.load_to_gui()
-
-            print("✅ Đã cập nhật giao diện sau khi đăng nhập")
-
             if is_all_logged_in and pass_monitor == SPECIAL_MONITOR_PASSWORD:
                 try:
                     self.dashboard_tab.on_start_check_fix_VLBS_button_click()
@@ -425,27 +430,20 @@ class AutoLoginApp:
             print(f"Error getting title_mail: {e}")
             return DEFAULT_TITLE_MAIL
     
-    def run_after_ui(self):
-        """Chạy sau khi UI load xong"""
+    def _get_pass_monitor_from_file(self) -> str:
+        """Lấy password monitor từ file pass_monitor.txt"""
         try:
-            sleep_time = data_manager.get_sleep_time()
-            is_start_up = sleep_time.get('start_up', 0)
-            
-            if is_start_up == 1:
-                if system_manager.is_system_just_booted():
-                    print("is_start_up: True - System just booted, starting auto login...")
-                    pass_accounts = self.dashboard_tab.get_pass_accounts()
-                    login_manager.start_login(
-                        is_auto_click_vlbs=True,
-                        pass_accounts=pass_accounts,
-                        show_confirm=False
-                    )
-                else:
-                    print("is_start_up: True - But system has been running for a while, skipping auto login.")
+            import os
+            pass_monitor_path = os.path.join(os.getcwd(), 'pass_monitor.txt')
+            if os.path.exists(pass_monitor_path):
+                with open(pass_monitor_path, "r", encoding='utf-8') as file:
+                    return file.read().strip()
             else:
-                print("is_start_up: False")
+                print(f"File pass_monitor.txt không tồn tại tại: {pass_monitor_path}")
+                return ""
         except Exception as e:
-            print(f"Error in run_after_ui: {e}")
+            print(f"Error reading pass_monitor.txt: {e}")
+            return ""
 
 
 # ================================================================
