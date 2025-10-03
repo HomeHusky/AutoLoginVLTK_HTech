@@ -196,11 +196,12 @@ def update_mongodb_server_status():
         return False
 
 # === LƯU DỮ LIỆU VÀO MONGODB ===
-def save_money_data_to_mongo(ten_may, total_profit):
+def save_money_data_to_mongo(ten_may, total_profit, report=None):
     """
     Lưu dữ liệu tiền từng account lên MongoDB
     :param json_data: dict kiểu {"acc1": [{"money": .., "time": ..}, ...], ...}
     :param ten_may: tên máy (str)
+    :param report: danh sách báo cáo chi tiết (như gửi Discord)
     """
     client, collection = MONGO_CONN.connect_mongo()
     
@@ -209,6 +210,9 @@ def save_money_data_to_mongo(ten_may, total_profit):
         "loi_nhuan": total_profit,
         "time": datetime.now()
     }
+    if report:
+        document["report"] = report
+    
     collection.insert_one(document)
     
     client.close()
@@ -774,7 +778,7 @@ def auto_check_loop(minutes, ten_may):
         # Lưu snapshot vào file
         save_snapshot(ten_may, report)
         # Lưu dữ liệu vào MongoDB
-        save_money_data_to_mongo(ten_may, total_profit)
+        save_money_data_to_mongo(ten_may, total_profit, report)
         # Tóm tắt thu nhập trong 24 giờ qua
         summarize_last_24h_income(ten_may)
         # Xóa các snapshot cũ hơn 2 ngày
