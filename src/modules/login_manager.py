@@ -81,6 +81,8 @@ class LoginManager:
                 )
                 if self.current_auto_name:
                     print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
+                    # Update auto name after check
+                    self.current_auto_name = GF.getNameAutoVLBS()
                     return True
                 else:
                     print("Không thể mở Auto VLBS!")
