@@ -80,8 +80,8 @@ class AutoUpdateManager:
             
         except Exception as e:
             self.is_running = False
-            # messagebox.showerror("Error", f"Không thể chạy AutoUpdate: {e}")
-            print(f"Không thể chạy AutoUpdate: {e}")
+            messagebox.showerror("Error", f"Không thể chạy AutoUpdate: {e}")
+            # print(f"Không thể chạy AutoUpdate: {e}")
             return False
     
     def stop_auto_update(self) -> bool:
@@ -190,7 +190,7 @@ class AutoUpdateManager:
             
         except Exception as e:
             print(f"Lỗi khi mở {exe_type}: {e}")
-            messagebox.showerror("Lỗi", f"Không thể mở file {path}: {str(e)}")
+            # messagebox.showerror("Lỗi", f"Không thể mở file {path}: {str(e)}")
     
     # ==================== CALLBACK METHODS ====================
     

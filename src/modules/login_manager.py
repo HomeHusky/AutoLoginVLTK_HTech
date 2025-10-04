@@ -11,7 +11,7 @@ import json
 import os
 from typing import Callable, Optional, List
 from tkinter import messagebox
-from datetime import datetime
+from datetime import datetime, timezone
 
 import GlobalFunction as GF
 import startLogin as START_LOGIN
@@ -276,7 +276,7 @@ class LoginManager:
         self.check_auto_vlbs_status(1)
         
         # Check if all accounts logged in
-        time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        time_stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         is_all_logged_in = self.all_accounts_logged_in()
         
         # Get pass monitor

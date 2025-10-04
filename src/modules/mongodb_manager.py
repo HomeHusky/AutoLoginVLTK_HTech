@@ -9,7 +9,7 @@ Tự động tạo collection và quản lý thông tin máy chủ
 import os
 import json
 from typing import Optional, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
@@ -148,14 +148,15 @@ class MongoDBManager:
             ten_may = self.get_title_mail()
             account_stats = self.count_online_offline_accounts()
             
-            # Tạo document
+            # Tạo document with UTC timezone
+            current_time = datetime.now(timezone.utc)
             server_data = {
                 "ten_may": ten_may,
                 "so_acc_online": account_stats["online"],
                 "so_acc_offline": account_stats["offline"],
                 "tong_so_acc": account_stats["total"],
-                "cap_nhat_luc": datetime.now(),
-                "timestamp": datetime.now().isoformat()
+                "cap_nhat_luc": current_time,
+                "timestamp": current_time.isoformat()
             }
             
             # Lấy collection
@@ -173,7 +174,7 @@ class MongoDBManager:
                 print(f"✅ Đã cập nhật thông tin máy '{ten_may}': {account_stats['online']} online, {account_stats['offline']} offline")
             else:
                 # Thêm mới
-                server_data["ngay_tao"] = datetime.now()
+                server_data["ngay_tao"] = current_time
                 collection.insert_one(server_data)
                 print(f"✅ Đã thêm mới máy '{ten_may}': {account_stats['online']} online, {account_stats['offline']} offline")
             
