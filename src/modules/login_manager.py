@@ -74,13 +74,13 @@ class LoginManager:
             
             # Nếu không tìm thấy Auto VLBS và auto_open = True
             if not self.current_auto_name and auto_open:
-                print("Không tìm thấy Auto VLBS, đang tự động mở...")
+                # print("Không tìm thấy Auto VLBS, đang tự động mở...")
                 self.current_auto_name = START_LOGIN.auto_open_autoVLBS(
                     self.auto_tool_path, 
                     self.sleep_time
                 )
                 if self.current_auto_name:
-                    print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
+                    # print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
                     # Update auto name after check
                     self.current_auto_name = GF.getNameAutoVLBS()
                     return True
@@ -101,21 +101,21 @@ class LoginManager:
                 if not GF.checkAutoVlbsBackGroundRunning():
                     # Nếu auto_open = True, thử mở Auto VLBS
                     if auto_open and try_count > 0:
-                        print("Auto VLBS không chạy, đang tự động mở...")
+                        # print("Auto VLBS không chạy, đang tự động mở...")
                         self.current_auto_name = START_LOGIN.auto_open_autoVLBS(
                             self.auto_tool_path, 
                             self.sleep_time
                         )
                         if self.current_auto_name:
-                            print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
+                            # print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
                             return True
                     
                     # Retry if try_count > 0
                     if try_count > 0:
-                        print(f"Auto VLBS không chạy, thử lại... (còn {try_count} lần)")
+                        # print(f"Auto VLBS không chạy, thử lại... (còn {try_count} lần)")
                         return self.check_auto_vlbs_status(try_count - 1, auto_open=False)
                     else:
-                        print("Đã hết số lần thử, Auto VLBS không chạy!")
+                        # print("Đã hết số lần thử, Auto VLBS không chạy!")
                         messagebox.showerror("Error", "Có lỗi xảy ra khi kiểm tra Auto VLBS!")
                         return False
                 else:
