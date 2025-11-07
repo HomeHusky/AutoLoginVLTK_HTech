@@ -290,7 +290,8 @@ def runStartLogin(isAutoClickVLBS, callback, currentAutoName, pass_accounts, cal
         print(f"🎮 Phát hiện server fix game, đang mở: {fix_game_path}")
         try:
             # Mở game fix
-            subprocess.Popen(fix_game_path)
+            working_dir = os.path.dirname(auto_tool_path)
+            subprocess.Popen(fix_game_path, cwd=working_dir)
             print("✅ Đã mở game fix thành công!")
             print("⏳ Chờ 15 giây để game fix khởi động...")
             time.sleep(15)
