@@ -51,7 +51,10 @@ class LoginManager:
             self.auto_tool_path = START_LOGIN.load_auto_tool_path()
             self.sleep_time = START_LOGIN.load_sleepTime()
         except Exception as e:
-            print(f"Error initializing LoginManager: {e}")
+            try:
+                print(f"Error initializing LoginManager: {e}")
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                print(f"Error initializing LoginManager: [Lỗi chứa ký tự đặc biệt không hiển thị được]")
     
     # ==================== STATUS CHECK METHODS ====================
     

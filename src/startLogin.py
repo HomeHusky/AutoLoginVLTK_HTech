@@ -27,17 +27,17 @@ def enable_mouse():
     ctypes.windll.user32.BlockInput(False)  # Kích hoạt lại chuột và bàn phím
 
 def load_accounts(file_path='accounts.json'):
-    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data['accounts']
 
 def load_auto_tool_path(file_path='accounts.json'):
-    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data['auto_tool_path']
 
 def load_sleepTime(file_path='global_time.json'):
-    with open(os.path.join(GF.join_directory_config(), file_path), 'r') as file:
+    with open(os.path.join(GF.join_directory_config(), file_path), 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data['sleepTime']
 

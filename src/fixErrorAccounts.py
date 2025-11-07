@@ -56,17 +56,17 @@ stop_flag = False
 global_time_sleep = GF.load_global_time_sleep()
 
 def load_accounts(file_path='accounts.json'):
-    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data['accounts']
 
 def load_auto_tool_path(file_path='accounts.json'):
-    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as file:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data['auto_tool_path']
 
 def load_sleepTime(file_path='global_time.json'):
-    with open(os.path.join(GF.join_directory_config(), file_path), 'r') as file:
+    with open(os.path.join(GF.join_directory_config(), file_path), 'r', encoding='utf-8') as file:
         data = json.load(file)
         return data['sleepTime']
     
@@ -655,7 +655,7 @@ def fix_account_stuck_on_map_Sa_Mac():
 # test hàm connect mongodb
 def load_title_mail(filepath='monitor_time.json'):
     try:
-        with open(os.path.join(GF.join_directory_data(), filepath), 'r') as f:
+        with open(os.path.join(GF.join_directory_data(), filepath), 'r', encoding='utf-8') as f:
             data = json.load(f)
             return float(data['title_mail'])
     except FileNotFoundError:
@@ -664,7 +664,7 @@ def load_title_mail(filepath='monitor_time.json'):
         return 1.0
 
 def load_accounts_data(file_path='accounts.json'):
-    with open(os.path.join(GF.join_directory_data(), file_path), 'r') as f:
+    with open(os.path.join(GF.join_directory_data(), file_path), 'r', encoding='utf-8') as f:
         data = json.load(f)
         return data
     
