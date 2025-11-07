@@ -8,3 +8,4 @@ autoLogin.spec
 .env
 *.log
 web_monitor/
+setup_git_token.ps1
