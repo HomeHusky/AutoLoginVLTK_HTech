@@ -7,3 +7,4 @@ autoLogin.spec
 /pass_monitor.txt
 .env
 *.log
+web_monitor/
