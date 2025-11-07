@@ -128,7 +128,10 @@ class LoginManager:
             return True
             
         except Exception as e:
-            print(f"Error checking Auto VLBS status: {e}")
+            try:
+                print(f"Error checking Auto VLBS status: {e}")
+            except UnicodeEncodeError:
+                print(f"Error checking Auto VLBS status: [Lỗi chứa ký tự đặc biệt không hiển thị được]")
             return False
     
     def all_accounts_logged_in(self) -> bool:

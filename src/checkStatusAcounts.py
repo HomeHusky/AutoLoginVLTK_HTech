@@ -26,7 +26,10 @@ def get_dlg(currentAutoName, backend):
                 print("Kết nối thành công!")
                 break  # Nếu kết nối thành công, thoát vòng lặp
             except Exception as e:
-                print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
+                try:
+                    print(f"Lỗi khi kết nối (lần {attempt + 1}): {e}")
+                except UnicodeEncodeError:
+                    print(f"Lỗi khi kết nối (lần {attempt + 1}): [Lỗi chứa ký tự đặc biệt]")
                 time.sleep(1)  # Đợi 1 giây trước khi thử lại
         # Lấy cửa sổ chính của ứng dụng
         dlg = app.window(title_re='^Quan ly nhan vat.*')
@@ -176,7 +179,10 @@ def getCheckData(currentAutoName):
                     else:
                         list_control = dlg.child_window(control_type="List")  # mặc định nếu chỉ có 1  
             except Exception as e:
-                print("Error as line 64:", e)
+                try:
+                    print("Error as line 64:", e)
+                except UnicodeEncodeError:
+                    print("Error as line 64: [Lỗi chứa ký tự đặc biệt]")
         if not list_control:
             print("Không tìm thấy bảng!")
             return []
@@ -187,33 +193,57 @@ def getCheckData(currentAutoName):
                 print("Truong hop 1")
                 for item in items:
                     if useAutoVLBS:
-                        item_text = item.window_text()  # Lấy văn bản của mục
-                        data.append(item_text)
+                        try:
+                            item_text = item.window_text()  # Lấy văn bản của mục
+                            # Xử lý encoding nếu cần
+                            if isinstance(item_text, bytes):
+                                item_text = item_text.decode('utf-8', errors='ignore')
+                            data.append(item_text)
+                        except Exception as e:
+                            print(f"Lỗi khi đọc item text: {str(e)[:100]}")
+                            continue
             else:
                 print("Truong hop 2")
                 for item in items:
                     count = 0
                     for child in item.children():
-                        if count == 1: 
-                            data.append(child.window_text())
+                        if count == 1:
+                            try:
+                                child_text = child.window_text()
+                                # Xử lý encoding nếu cần
+                                if isinstance(child_text, bytes):
+                                    child_text = child_text.decode('utf-8', errors='ignore')
+                                data.append(child_text)
+                            except Exception as e:
+                                print(f"Lỗi khi đọc child text: {str(e)[:100]}")
                         count += 1
         time.sleep(global_time_sleep)
 
         return data
     except Exception as e:
-        print("Lỗi update Status: " + str(e))
+        try:
+            print("Lỗi update Status: " + str(e))
+        except UnicodeEncodeError:
+            print("Lỗi update Status: [Lỗi chứa ký tự đặc biệt]")
         return None
 
 def update_login_status(json_data, checkData):
     for account in json_data['accounts']:
         try:
-            print("Account:", account)
+            try:
+                print("Account:", account)
+            except UnicodeEncodeError:
+                print("Account: [Có chứa ký tự đặc biệt không hiển thị được]")
+            
             if account['ingame'] in checkData:
                 account['is_logged_in'] = True
             else:
                 account['is_logged_in'] = False
         except Exception as e:
-            print("Error line 91 checkStatusAccounts.py:", e)
+            try:
+                print("Error line 91 checkStatusAccounts.py:", e)
+            except UnicodeEncodeError:
+                print("Error line 91 checkStatusAccounts.py: [Lỗi chứa ký tự đặc biệt]")
     return json_data
 
 def set_all_is_logged_accounts_to_false(file_path):
@@ -246,7 +276,10 @@ def checkStatusAcounts(auto_tool_path, currentAutoName, sleepTime):
     data = GF.read_json_file('accounts.json')
 
     checkData = getCheckData(currentAutoName)
-    print("CHECKDATA: ", checkData)
+    try:
+        print("CHECKDATA: ", checkData)
+    except UnicodeEncodeError:
+        print("CHECKDATA: [Có chứa ký tự đặc biệt không hiển thị được]")
 
     # Cập nhật trạng thái đăng nhập dựa trên checkData
     updated_data = update_login_status(data, checkData)
