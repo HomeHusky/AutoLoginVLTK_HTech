@@ -336,10 +336,17 @@ class PathManagerTab:
         # auto_tool_path = START_LOGIN.load_auto_tool_path()
         # sleepTime = START_LOGIN.load_sleepTime()
         
+        # Xử lý startup cho ứng dụng chính
         if int(start_up) == 1:
             self.set_startup(True)
         else:
             self.set_startup(False)
+        
+        # Xử lý startup cho game fix
+        if int(has_fix_game_server) == 1 and fix_game_path:
+            self.set_fix_game_startup(True, fix_game_path)
+        else:
+            self.set_fix_game_startup(False, None)
         
         messagebox.showinfo("Success", "Đã lưu thành công dữ liệu Auto Tool!")
     
@@ -378,6 +385,40 @@ class PathManagerTab:
             if not new_auto_tool_path:
                 messagebox.showwarning("Warning", "Vui lòng nhập đường dẫn tool auto!")
                 return
+    
+    def set_fix_game_startup(self, enable: bool, fix_game_path: str = None):
+        """Tạo hoặc xóa shortcut trong Startup để chạy game fix khi mở máy.
+        Game fix sẽ được đặt tên bắt đầu bằng '0_' để chạy trước ứng dụng chính.
+        """
+        startup_folder = winshell.startup()
+        shortcut_path = os.path.join(startup_folder, "0_FixGame.lnk")
+        
+        if enable and fix_game_path:
+            if not os.path.exists(fix_game_path):
+                print(f"⚠️ File game fix không tồn tại: {fix_game_path}")
+                return
+            
+            try:
+                working_dir = os.path.dirname(fix_game_path)
+                
+                shell = Dispatch('WScript.Shell')
+                shortcut = shell.CreateShortCut(shortcut_path)
+                shortcut.Targetpath = fix_game_path
+                shortcut.WorkingDirectory = working_dir
+                shortcut.save()
+                print(f"✅ Đã tạo shortcut game fix: {shortcut_path}")
+                print(f"   Game fix sẽ chạy trước ứng dụng chính khi khởi động Windows")
+            except Exception as e:
+                print(f"❌ Lỗi tạo shortcut game fix: {e}")
+        else:
+            if os.path.exists(shortcut_path):
+                try:
+                    os.remove(shortcut_path)
+                    print("❌ Đã xóa shortcut game fix khỏi startup.")
+                except Exception as e:
+                    print(f"❌ Lỗi xóa shortcut game fix: {e}")
+            else:
+                print("ℹ️ Không có shortcut game fix để xóa.")
     
     def set_startup(self, enable: bool):
         """Tạo hoặc xóa shortcut trong Startup để chạy quick_run.bat khi mở máy."""
