@@ -86,12 +86,12 @@ class LoginManager:
                     # print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
                     # Update auto name after check
                     self.current_auto_name = GF.getNameAutoVLBS()
-                    return True
+                    # Không return ngay, tiếp tục kiểm tra status bên dưới
                 else:
                     print("Không thể mở Auto VLBS!")
                     return False
             
-            # Check status
+            # Check status (sẽ chạy cả khi vừa mở AutoVLBS)
             if not checkStatusAcounts.checkStatusAcounts(
                 self.auto_tool_path, 
                 self.current_auto_name, 
@@ -111,7 +111,8 @@ class LoginManager:
                         )
                         if self.current_auto_name:
                             # print(f"Đã mở Auto VLBS thành công: {self.current_auto_name}")
-                            return True
+                            # Gọi lại để kiểm tra status sau khi mở
+                            return self.check_auto_vlbs_status(try_count - 1, auto_open=False)
                     
                     # Retry if try_count > 0
                     if try_count > 0:
