@@ -563,6 +563,15 @@ def fix_account_stuck_on_map_Sa_Mac():
                         else:
                             print("Không có mục nào trong danh sách!")
                     time.sleep(1)
+        # Khởi tạo và sử dụng biến trạng thái kẹt Sa Mạc giữa các lần gọi
+        global _prev_stuck_sa_mac_accounts
+        try:
+            _prev_stuck_sa_mac_accounts
+        except NameError:
+            _prev_stuck_sa_mac_accounts = set()
+
+        current_stuck_accounts = set()
+
         items = list_control.children(control_type="ListItem")
         for i, item in enumerate(items):
             account_name = ""
@@ -574,47 +583,56 @@ def fix_account_stuck_on_map_Sa_Mac():
                 if countChild == 8:
                     account_map = child.window_text()
                     if account_map.lower().startswith("sa m¹c ®Þa biÓu".lower()):
-                        print(f"Account {account_name} đang ở bản đồ Sa mạc Địa Biểu!")
-                        scroll_to_list_item(list_control, i)
-                        # Nhấp chuột phải vào mục này
-                        item.click_input(double=True) # Nhấp đúp vào mục để mở game
-                        pyautogui.hotkey('alt', 'x')
-                        time.sleep(global_time_sleep)
-                        pyautogui.press('enter')
-                        time.sleep(global_time_sleep)
-                        pyautogui.press('enter')
-                        time.sleep(global_time_sleep)
-                        pyautogui.press('enter')
-                        time.sleep(global_time_sleep)
-                        pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
-                        time.sleep(global_time_sleep)
-                        pyautogui.press('enter')
-                        time.sleep(4)
-                        time.sleep(global_time_sleep)
-                        pyautogui.press('enter')
-                        time.sleep(3)
-                        pyautogui.hotkey('ctrl', 'g')
-                        time.sleep(global_time_sleep)
-                        pyautogui.press('esc')
-                        time.sleep(2)
-                        time.sleep(global_time_sleep)
-                        # item.right_click_input()
-                        # item.type_keys("{DOWN}")  # 1
-                        # item.type_keys("{DOWN}")  # 2
-                        # item.type_keys("{DOWN}")  # 3
-                        # item.type_keys("{DOWN}")  # 4
-                        # item.type_keys("{DOWN}")  # 5
-                        # item.type_keys("{DOWN}")  # 6
-                        # item.type_keys("{DOWN}")  # 7
-                        # pyautogui.press('enter')
-                        # time.sleep(2)
-                        item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
-                        time.sleep(global_time_sleep)
-                        # item.right_click_input()
-                        # item.type_keys("{DOWN}")  # 1
-                        # pyautogui.press('enter')
-                        print(f"✅ Đã sửa lỗi kẹt map Sa Mạc cho tài khoản: {account_name}")
+                        # Đánh dấu là đang kẹt ở Sa Mạc trong lần kiểm tra hiện tại
+                        current_stuck_accounts.add(account_name)
+                        if account_name in _prev_stuck_sa_mac_accounts:
+                            print(f"Account {account_name} vẫn kẹt Sa Mạc ở lần kiểm tra liên tiếp => tiến hành fix")
+                            print(f"Account {account_name} đang ở bản đồ Sa mạc Địa Biểu!")
+                            scroll_to_list_item(list_control, i)
+                            # Nhấp chuột phải vào mục này
+                            item.click_input(double=True) # Nhấp đúp vào mục để mở game
+                            pyautogui.hotkey('alt', 'x')
+                            time.sleep(global_time_sleep)
+                            pyautogui.press('enter')
+                            time.sleep(global_time_sleep)
+                            pyautogui.press('enter')
+                            time.sleep(global_time_sleep)
+                            pyautogui.press('enter')
+                            time.sleep(global_time_sleep)
+                            pyautogui.write(get_password_by_ingame(account_name), interval=0.1)
+                            time.sleep(global_time_sleep)
+                            pyautogui.press('enter')
+                            time.sleep(4)
+                            time.sleep(global_time_sleep)
+                            pyautogui.press('enter')
+                            time.sleep(3)
+                            pyautogui.hotkey('ctrl', 'g')
+                            time.sleep(global_time_sleep)
+                            pyautogui.press('esc')
+                            time.sleep(2)
+                            time.sleep(global_time_sleep)
+                            # item.right_click_input()
+                            # item.type_keys("{DOWN}")  # 1
+                            # item.type_keys("{DOWN}")  # 2
+                            # item.type_keys("{DOWN}")  # 3
+                            # item.type_keys("{DOWN}")  # 4
+                            # item.type_keys("{DOWN}")  # 5
+                            # item.type_keys("{DOWN}")  # 6
+                            # item.type_keys("{DOWN}")  # 7
+                            # pyautogui.press('enter')
+                            # time.sleep(2)
+                            item.click_input(double=True) # Nhấp đúp vào mục để ẩn game
+                            time.sleep(global_time_sleep)
+                            # item.right_click_input()
+                            # item.type_keys("{DOWN}")  # 1
+                            # pyautogui.press('enter')
+                            print(f"✅ Đã sửa lỗi kẹt map Sa Mạc cho tài khoản: {account_name}")
+                        else:
+                            print(f"Phát hiện lần đầu kẹt Sa Mạc: {account_name} -> sẽ kiểm tra lại ở lần kế tiếp trước khi fix")
                 countChild += 1
+
+        # Cập nhật trạng thái cho lần kiểm tra tiếp theo
+        _prev_stuck_sa_mac_accounts = current_stuck_accounts
 
         # messagebox.showinfo("Dữ liệu:", gom_accounts_info_data)
     except Exception as e:
