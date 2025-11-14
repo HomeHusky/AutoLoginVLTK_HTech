@@ -320,7 +320,10 @@ class AccountManagerTab:
         password = self.entry_password.get().strip()
         ingame = self.entry_ingame.get().strip()
         game_path = self.entry_game_path.get().strip()
-        auto_update_path = game_path.replace("game.exe", "AutoUpdate.exe")
+        # Xử lý cả trường hợp game.exe và Game.exe
+        auto_update_path = game_path
+        if game_path.lower().endswith('game.exe'):
+            auto_update_path = game_path[:-8] + 'AutoUpdate.exe'
         solanxuong = self.entry_solanxuong.get().strip()
         solanxuong2 = self.entry_solanxuong2.get().strip()
         
@@ -389,8 +392,13 @@ class AccountManagerTab:
             original_ingame = data['accounts'][index]['ingame']
             self.entry_ingame.insert(0, original_ingame)
             
-            self.entry_game_path.insert(0, values[3])  # game_path ở index 3
-            self.entry_auto_update_path.insert(0, values[3].replace("game.exe", "AutoUpdate.exe"))
+            game_path = values[3]  # game_path ở index 3
+            self.entry_game_path.insert(0, game_path)
+            # Xử lý cả trường hợp game.exe và Game.exe
+            auto_update_path = game_path
+            if game_path.lower().endswith('game.exe'):
+                auto_update_path = game_path[:-8] + 'AutoUpdate.exe'
+            self.entry_auto_update_path.insert(0, auto_update_path)
             
             if data['accounts'][index]['is_gom_tien'] == 1:
                 self.gom_checkbox.select()
@@ -453,7 +461,7 @@ class AccountManagerTab:
                 'password': self.entry_password.get(),
                 'ingame': data['accounts'][index]['ingame'],
                 'game_path': self.entry_game_path.get(),
-                'auto_update_path': self.entry_game_path.get().replace("game.exe", "AutoUpdate.exe"),
+                'auto_update_path': auto_update_path,  # Sử dụng biến đã xử lý ở trên
                 'is_logged_in': data['accounts'][index].get('is_logged_in', False),
                 'is_gom_tien': self.check_checkbox(self.varGomCheckBox),
                 'kpi_gom': self.entry_kpi_gom.get().strip() if self.check_checkbox(self.varGomCheckBox) else "",
@@ -592,7 +600,11 @@ class AccountManagerTab:
             self.entry_game_path.delete(0, tk.END)
             self.entry_game_path.insert(0, file_path)
             self.entry_auto_update_path.delete(0, tk.END)
-            self.entry_auto_update_path.insert(0, file_path.replace("game.exe", "AutoUpdate.exe"))
+            # Xử lý cả trường hợp game.exe và Game.exe
+            auto_update_path = file_path
+            if file_path.lower().endswith('game.exe'):
+                auto_update_path = file_path[:-8] + 'AutoUpdate.exe'
+            self.entry_auto_update_path.insert(0, auto_update_path)
     
     def reload_server(self):
         """Reload danh sách server"""
@@ -607,7 +619,7 @@ class AccountManagerTab:
         
         for acc in accounts_data.get("accounts", []):
             path = acc.get("game_path")
-            if not path or not path.endswith("game.exe"):
+            if not path or not path.lower().endswith("game.exe"):
                 continue
             
             if path not in seen_paths:
@@ -630,9 +642,14 @@ class AccountManagerTab:
         """Xử lý khi chọn server"""
         server = self.selected_server.get()
         path = self.servers[server]
-        self.entry_game_path.insert(0, path)
+        game_path = path
+        self.entry_game_path.insert(0, game_path)
         self.entry_auto_update_path.delete(0, tk.END)
-        self.entry_auto_update_path.insert(0, path.replace("game.exe", "AutoUpdate.exe"))
+        # Xử lý cả trường hợp game.exe và Game.exe
+        auto_update_path = game_path
+        if game_path.lower().endswith('game.exe'):
+            auto_update_path = game_path[:-8] + 'AutoUpdate.exe'
+        self.entry_auto_update_path.insert(0, auto_update_path)
         print(f"Server đã chọn: {server}")
         print(f"Đường dẫn: {path}")
     
