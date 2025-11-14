@@ -455,13 +455,19 @@ class AccountManagerTab:
             index = self.tree_accounts.index(selected_item[0])
             data = self.data_manager.load_data()
             
+            # Xử lý đường dẫn AutoUpdate dựa trên game_path
+            game_path = self.entry_game_path.get()
+            auto_update_path = game_path
+            if game_path.lower().endswith('game.exe'):
+                auto_update_path = game_path[:-8] + 'AutoUpdate.exe'
+            
             data['accounts'][index] = {
                 'is_select': data['accounts'][index].get('is_select', False),
                 'username': self.entry_username.get(),
                 'password': self.entry_password.get(),
                 'ingame': data['accounts'][index]['ingame'],
-                'game_path': self.entry_game_path.get(),
-                'auto_update_path': auto_update_path,  # Sử dụng biến đã xử lý ở trên
+                'game_path': game_path,
+                'auto_update_path': auto_update_path,
                 'is_logged_in': data['accounts'][index].get('is_logged_in', False),
                 'is_gom_tien': self.check_checkbox(self.varGomCheckBox),
                 'kpi_gom': self.entry_kpi_gom.get().strip() if self.check_checkbox(self.varGomCheckBox) else "",
