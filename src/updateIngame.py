@@ -127,7 +127,7 @@ def checkExistIngame(ingame, data):
         if account.get('ingame') == ingame:
             return True
 
-def check_valid_ingame_value(username_to_update, autoName):
+def check_valid_ingame_value(username_to_update, game_path, autoName):
     max_retries = 3  # Số lần thử lại
     retry_count = 0  # Đếm số lần đã thử
     data = None
