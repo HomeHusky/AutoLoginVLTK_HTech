@@ -114,11 +114,13 @@ def run_update_ingame(username_to_update, ingame_value_to_update):
     print("Cập nhật INGAME thành công!")
     return ingame_value_to_update
 
-def getIngameValueByUserName(username, data):
+def getIngameValueByUserName(username, game_path, data):
     for account in data['accounts']:
-        if account.get('username') == username:
-            ingame = account.get('ingame')
-            return ingame
+        if (
+            account.get('username') == username and 
+            account.get('game_path') == game_path
+        ):
+            return account.get('ingame')
 
 def checkExistIngame(ingame, data):
     for account in data['accounts']:
@@ -136,7 +138,7 @@ def check_valid_ingame_value(username_to_update, autoName):
 
     while retry_count < max_retries:
         ingame_value_to_update = getIngame(autoName)
-        ingame_in_jsonfile_with_username = getIngameValueByUserName(username_to_update, data)
+        ingame_in_jsonfile_with_username = getIngameValueByUserName(username_to_update, game_path, data)
 
         print(f"VLBS: {ingame_value_to_update}, JSON: {ingame_in_jsonfile_with_username}")
 

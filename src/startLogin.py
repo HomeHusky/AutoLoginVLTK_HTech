@@ -227,7 +227,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         time.sleep(global_time_sleep)
         pyautogui.hotkey("alt", "s")
 
-    InGameName = updateIngame.check_valid_ingame_value(account['username'], currentAutoName)
+    InGameName = updateIngame.check_valid_ingame_value(account['username'], account['game_path'], currentAutoName)
     if InGameName == False:
         print(f"Có lỗi khi đăng nhập 2: {account['username']}")
         # GF.close_application('Vo Lam Truyen Ky')
@@ -235,7 +235,7 @@ def auto_login(account, sleepTime, currentAutoName, isAutoClickVLBS, isChangeSer
         # pyautogui.press('enter')
         return 2
 
-    if not autoClickVLBS.start_click(account['username'], currentAutoName, isAutoClickVLBS):
+    if not autoClickVLBS.start_click(account['username'], account['game_path'], currentAutoName, isAutoClickVLBS):
         print(f"Account tự tắt sau khi chạy auto")
         return 4
     print(f"Đã đăng nhập vào tài khoản: {account['username']}")

@@ -9,7 +9,7 @@ import updateIngame
 
 global_time_sleep = GF.load_global_time_sleep()
 
-def start_click(username, name, isAutoClickVLBS):
+def start_click(username, game_path, name, isAutoClickVLBS):
     try:
         print("isAutoClickVLBS in autoClickVLBS.py:", isAutoClickVLBS)
         print("name AutoVLBS:", name)
@@ -18,7 +18,7 @@ def start_click(username, name, isAutoClickVLBS):
         if name == None:
             name = GF.getNameAutoVLBS()
 
-        ingameByUsername = getIngameValueByUserName(username)
+        ingameByUsername = getIngameValueByUserNameAndGamePath(username, game_path)
 
         if GF.checkQuanlynhanvat():
             if not run_down_enter(ingameByUsername, name, isAutoClickVLBS):
@@ -40,16 +40,18 @@ def start_click(username, name, isAutoClickVLBS):
     except Exception as e:
         print(f"Lỗi dòng 30 file autoClickVLBS.py: ", e)
 
-def getIngameValueByUserName(username):
+def getIngameValueByUserNameAndGamePath(username, game_path):
     data = None
     # Đọc file JSON với encoding 'utf-8'
     with open(os.path.join(GF.join_directory_data(), 'accounts.json'), 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     for account in data['accounts']:
-        if account.get('username') == username:
-            ingame = account.get('ingame')
-            return ingame
+        if (
+            account.get('username') == username and 
+            account.get('game_path') == game_path
+        ):
+            return account.get('ingame')
 
 def run_right_click(name):
     try:
