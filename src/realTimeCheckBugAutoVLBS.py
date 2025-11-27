@@ -496,7 +496,7 @@ def send_email_report(report_data, loop_time_str, ten_may):
     # ===== Soạn HTML nội dung email =====
     html_rows = ""
     for item in report_data:
-        color = {"Tăng": "green", "Giảm": "red", "Không đổi": "gray"}.get(item["status"], "black")
+        color = {"Tăng": "green", "Đạt 50% KPI": "orange", "Giảm": "red", "Không đổi": "gray"}.get(item["status"], "black")
         html_rows += f"""
             <tr>
                 <td>{item['account']}</td>
@@ -723,6 +723,9 @@ def auto_check_loop(minutes, ten_may):
                     if profit >= kpi_required:
                         status = "Tăng"
                         print(f"[{timestamp}] ✅ {name} ({account_type}) tăng tiền: {old_money} → {money} (+{profit:.2f})")
+                    elif profit >= kpi_required * 0.5:
+                        status = "Đạt 50% KPI"
+                        print(f"[{timestamp}] 🟡 {name} ({account_type}) tăng tiền: {old_money} → {money} (+{profit:.2f}) (Đạt 50% KPI: {profit:.2f}/{kpi_required:.2f})")
                     else:
                         status = "Chưa đạt KPI"
                         print(f"[{timestamp}] ⚠️ {name} ({account_type}) tăng tiền: {old_money} → {money} (+{profit:.2f}) (Chưa đạt KPI: {kpi_required:.2f})")

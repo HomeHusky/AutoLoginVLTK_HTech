@@ -21,6 +21,9 @@ def format_report_discord(report, ten_may, timestamp):
         if status == "Tăng":
             emoji = "🟢"
             total_profit += new - old
+        elif status == "Đạt 50% KPI":
+            emoji = "🟡"
+            total_profit += new - old
         elif status == "Chưa đạt KPI":
             emoji = "⚠️"
             total_profit += new - old
